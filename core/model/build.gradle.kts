@@ -26,7 +26,7 @@ kotlin {
 }
 
 dependencies {
-    // kotlinx-datetime for cross-platform date/time handling
-    // WHY: java.time works but kotlinx-datetime is better for potential KMP migration
     implementation(libs.kotlinx.datetime)
+    testImplementation(libs.junit)
+    testImplementation(kotlin("test"))
 }
