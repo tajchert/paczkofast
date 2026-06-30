@@ -62,5 +62,9 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.okhttp.mockwebserver3)
 }

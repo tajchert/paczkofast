@@ -1,8 +1,5 @@
 package pl.tajchert.paczko.fast.core.network.di
 
-import pl.tajchert.paczko.fast.core.network.TaskNetworkDataSource
-import pl.tajchert.paczko.fast.core.network.fake.FakeTaskNetworkDataSource
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,15 +22,6 @@ import javax.inject.Singleton
  * 1. JSON serializer configuration
  * 2. OkHttp client with logging
  * 3. Retrofit instance (for production use)
- * 4. Network data source binding
- *
- * ## Flavor-based Implementation
- *
- * For a production app, you would have:
- * - `demo` flavor binding FakeTaskNetworkDataSource
- * - `prod` flavor binding RetrofitTaskNetworkDataSource
- *
- * In this sample, we use the fake implementation for simplicity.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -95,27 +83,4 @@ object NetworkModule {
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
-}
-
-/**
- * Module for binding network data source implementation.
- *
- * Using abstract class with @Binds for interface bindings.
- */
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class NetworkDataSourceModule {
-
-    /**
-     * Binds the fake implementation for development.
-     *
-     * In a real app with flavors, you would have:
-     * - src/demo/kotlin with FakeTaskNetworkDataSource binding
-     * - src/prod/kotlin with RetrofitTaskNetworkDataSource binding
-     */
-    @Binds
-    @Singleton
-    abstract fun bindsTaskNetworkDataSource(
-        impl: FakeTaskNetworkDataSource,
-    ): TaskNetworkDataSource
 }
