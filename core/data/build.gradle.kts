@@ -43,7 +43,6 @@ dependencies {
     // Project modules
     implementation(projects.core.model)
     implementation(projects.core.common)
-    implementation(projects.core.database)
     implementation(projects.core.datastore)
     implementation(projects.core.network)
 
@@ -59,6 +58,8 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
 }

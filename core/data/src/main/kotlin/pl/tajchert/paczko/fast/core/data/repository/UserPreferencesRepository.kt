@@ -1,9 +1,6 @@
 package pl.tajchert.paczko.fast.core.data.repository
 
 import pl.tajchert.paczko.fast.core.datastore.UserPreferencesDataSource
-import pl.tajchert.paczko.fast.core.model.DarkThemeConfig
-import pl.tajchert.paczko.fast.core.model.TaskSortOrder
-import pl.tajchert.paczko.fast.core.model.ThemeBrand
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -13,8 +10,7 @@ import javax.inject.Inject
  *
  * ## Architecture
  *
- * Unlike [TaskRepository], this doesn't follow offline-first because
- * user preferences are purely local - they never sync to a server.
+ * User preferences are purely local - they never sync to a server.
  *
  * The default implementation is a thin wrapper around
  * [UserPreferencesDataSource] that provides a cleaner API to consumers.
@@ -34,20 +30,7 @@ interface UserPreferencesRepository {
      */
     val userPreferences: Flow<UserPreferences>
 
-    /**
-     * Set the theme brand.
-     */
-    suspend fun setThemeBrand(themeBrand: ThemeBrand)
-
-    /**
-     * Set the dark theme configuration.
-     */
-    suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig)
-
-    /**
-     * Set the task sort order.
-     */
-    suspend fun setSortOrder(sortOrder: TaskSortOrder)
+    suspend fun setDarkTheme(darkTheme: Boolean)
 }
 
 /**
@@ -59,15 +42,7 @@ class DefaultUserPreferencesRepository @Inject constructor(
 
     override val userPreferences: Flow<UserPreferences> = dataSource.userPreferences
 
-    override suspend fun setThemeBrand(themeBrand: ThemeBrand) {
-        dataSource.setThemeBrand(themeBrand)
-    }
-
-    override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
-        dataSource.setDarkThemeConfig(darkThemeConfig)
-    }
-
-    override suspend fun setSortOrder(sortOrder: TaskSortOrder) {
-        dataSource.setSortOrder(sortOrder)
+    override suspend fun setDarkTheme(darkTheme: Boolean) {
+        dataSource.setDarkTheme(darkTheme)
     }
 }

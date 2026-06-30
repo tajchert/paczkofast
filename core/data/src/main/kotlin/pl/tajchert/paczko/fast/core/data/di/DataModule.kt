@@ -1,13 +1,15 @@
 package pl.tajchert.paczko.fast.core.data.di
 
-import pl.tajchert.paczko.fast.core.data.repository.DefaultTaskRepository
-import pl.tajchert.paczko.fast.core.data.repository.DefaultUserPreferencesRepository
-import pl.tajchert.paczko.fast.core.data.repository.TaskRepository
-import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import pl.tajchert.paczko.fast.core.data.auth.DataStoreTokenProvider
+import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
+import pl.tajchert.paczko.fast.core.data.repository.DefaultAuthRepository
+import pl.tajchert.paczko.fast.core.data.repository.DefaultUserPreferencesRepository
+import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
+import pl.tajchert.paczko.fast.core.network.auth.TokenProvider
 import javax.inject.Singleton
 
 /**
@@ -31,17 +33,17 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class DataModule {
 
-    /**
-     * Binds the default implementation of TaskRepository.
-     *
-     * Consumers inject TaskRepository interface, not DefaultTaskRepository.
-     * This enables swapping implementations for testing.
-     */
     @Binds
     @Singleton
-    internal abstract fun bindsTaskRepository(
-        impl: DefaultTaskRepository,
-    ): TaskRepository
+    internal abstract fun bindsAuthRepository(
+        impl: DefaultAuthRepository,
+    ): AuthRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun bindsTokenProvider(
+        impl: DataStoreTokenProvider,
+    ): TokenProvider
 
     /**
      * Binds the default implementation of UserPreferencesRepository.

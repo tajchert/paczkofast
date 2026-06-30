@@ -8,10 +8,26 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import pl.tajchert.paczko.fast.core.network.InpostAuthApi
+import pl.tajchert.paczko.fast.core.network.InpostCollectApi
+import pl.tajchert.paczko.fast.core.network.InpostParcelApi
+import pl.tajchert.paczko.fast.core.network.auth.AuthHeaderInterceptor
+import pl.tajchert.paczko.fast.core.network.auth.RefreshingAuthenticator
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+private const val INPOST_BASE_URL = "https://api-inmobile-pl.easypack24.net/global/"
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class UnauthenticatedNetwork
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AuthenticatedNetwork
 
 /**
  * Hilt module for network dependencies.
@@ -45,42 +61,85 @@ object NetworkModule {
     }
 
     /**
-     * Provides OkHttp client with logging.
+     * Provides OkHttp client with logging and no auth dependencies.
      *
-     * ## Logging Levels
-     *
-     * - BASIC: Request/response lines only
-     * - HEADERS: + headers
-     * - BODY: + request/response bodies (use only in debug!)
+     * InpostAuthApi uses this path so RefreshingAuthenticator can refresh
+     * tokens without depending on the authenticated client it is attached to.
      */
     @Provides
     @Singleton
-    fun providesOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                // In production, set this based on BuildConfig.DEBUG
-                level = HttpLoggingInterceptor.Level.BASIC
-            }
-        )
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+    @UnauthenticatedNetwork
+    fun providesUnauthenticatedOkHttpClient(): OkHttpClient = baseOkHttpBuilder()
+        .addInterceptor(loggingInterceptor())
         .build()
 
     /**
-     * Provides Retrofit instance.
-     *
-     * Note: This is configured but not used in the sample (we use fake).
-     * In production, you would use this with a real API.
+     * Provides OkHttp client that attaches auth headers and refreshes once
+     * after a 401 response.
      */
     @Provides
     @Singleton
-    fun providesRetrofit(
-        okHttpClient: OkHttpClient,
+    @AuthenticatedNetwork
+    fun providesAuthenticatedOkHttpClient(
+        authHeaderInterceptor: AuthHeaderInterceptor,
+        refreshingAuthenticator: RefreshingAuthenticator,
+    ): OkHttpClient = baseOkHttpBuilder()
+        .addInterceptor(authHeaderInterceptor)
+        .addInterceptor(loggingInterceptor())
+        .authenticator(refreshingAuthenticator)
+        .build()
+
+    @Provides
+    @Singleton
+    @UnauthenticatedNetwork
+    fun providesUnauthenticatedRetrofit(
+        @UnauthenticatedNetwork okHttpClient: OkHttpClient,
         json: Json,
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.example.com/") // Replace with real API
+    ): Retrofit = retrofit(okHttpClient = okHttpClient, json = json)
+
+    @Provides
+    @Singleton
+    @AuthenticatedNetwork
+    fun providesAuthenticatedRetrofit(
+        @AuthenticatedNetwork okHttpClient: OkHttpClient,
+        json: Json,
+    ): Retrofit = retrofit(okHttpClient = okHttpClient, json = json)
+
+    private fun retrofit(okHttpClient: OkHttpClient, json: Json): Retrofit = Retrofit.Builder()
+        .baseUrl(INPOST_BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
+
+    @Provides
+    @Singleton
+    fun providesInpostAuthApi(
+        @UnauthenticatedNetwork retrofit: Retrofit,
+    ): InpostAuthApi =
+        retrofit.create(InpostAuthApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesInpostParcelApi(
+        @AuthenticatedNetwork retrofit: Retrofit,
+    ): InpostParcelApi =
+        retrofit.create(InpostParcelApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesInpostCollectApi(
+        @AuthenticatedNetwork retrofit: Retrofit,
+    ): InpostCollectApi =
+        retrofit.create(InpostCollectApi::class.java)
+
+    private fun baseOkHttpBuilder(): OkHttpClient.Builder = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+
+    private fun loggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+        redactHeader("Authorization")
+        // In production, set this based on BuildConfig.DEBUG
+        level = HttpLoggingInterceptor.Level.BASIC
+    }
 }

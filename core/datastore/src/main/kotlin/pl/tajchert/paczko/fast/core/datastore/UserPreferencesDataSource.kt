@@ -4,13 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import pl.tajchert.paczko.fast.core.model.DarkThemeConfig
-import pl.tajchert.paczko.fast.core.model.TaskSortOrder
-import pl.tajchert.paczko.fast.core.model.ThemeBrand
-import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import pl.tajchert.paczko.fast.core.datastore.di.UserPreferencesDataStore
+import pl.tajchert.paczko.fast.core.model.UserPreferences
 import javax.inject.Inject
 
 /**
@@ -48,6 +45,7 @@ import javax.inject.Inject
  * ```
  */
 class UserPreferencesDataSource @Inject constructor(
+    @UserPreferencesDataStore
     private val dataStore: DataStore<Preferences>,
 ) {
     /**
@@ -60,20 +58,12 @@ class UserPreferencesDataSource @Inject constructor(
      */
     val userPreferences: Flow<UserPreferences> = dataStore.data.map { preferences ->
         UserPreferences(
-            themeBrand = preferences[THEME_BRAND]
-                ?.let { ThemeBrand.valueOf(it) }
-                ?: ThemeBrand.DEFAULT,
-            darkThemeConfig = preferences[DARK_THEME_CONFIG]
-                ?.let { DarkThemeConfig.valueOf(it) }
-                ?: DarkThemeConfig.FOLLOW_SYSTEM,
-            sortOrder = preferences[SORT_ORDER]
-                ?.let { TaskSortOrder.valueOf(it) }
-                ?: TaskSortOrder.CREATED_DATE,
+            darkTheme = preferences[DARK_THEME] ?: false,
         )
     }
 
     /**
-     * Set the theme brand preference.
+     * Set the dark theme preference.
      *
      * ## Transaction Safety
      *
@@ -82,27 +72,9 @@ class UserPreferencesDataSource @Inject constructor(
      * - If an exception occurs, no changes are applied
      * - Concurrent edits are serialized
      */
-    suspend fun setThemeBrand(themeBrand: ThemeBrand) {
+    suspend fun setDarkTheme(darkTheme: Boolean) {
         dataStore.edit { preferences ->
-            preferences[THEME_BRAND] = themeBrand.name
-        }
-    }
-
-    /**
-     * Set the dark theme configuration.
-     */
-    suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
-        dataStore.edit { preferences ->
-            preferences[DARK_THEME_CONFIG] = darkThemeConfig.name
-        }
-    }
-
-    /**
-     * Set the task sort order.
-     */
-    suspend fun setSortOrder(sortOrder: TaskSortOrder) {
-        dataStore.edit { preferences ->
-            preferences[SORT_ORDER] = sortOrder.name
+            preferences[DARK_THEME] = darkTheme
         }
     }
 
@@ -115,8 +87,6 @@ class UserPreferencesDataSource @Inject constructor(
          * We use descriptive string keys that match the property names.
          * This makes debugging easier when inspecting DataStore files.
          */
-        private val THEME_BRAND = stringPreferencesKey("theme_brand")
-        private val DARK_THEME_CONFIG = stringPreferencesKey("dark_theme_config")
-        private val SORT_ORDER = stringPreferencesKey("sort_order")
+        private val DARK_THEME = booleanPreferencesKey("dark_theme")
     }
 }

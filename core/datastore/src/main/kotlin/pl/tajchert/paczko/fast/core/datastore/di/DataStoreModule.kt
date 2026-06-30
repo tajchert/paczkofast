@@ -10,7 +10,18 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import pl.tajchert.paczko.fast.core.datastore.AuthTokensDataSource
+import pl.tajchert.paczko.fast.core.datastore.DataStoreAuthTokensDataSource
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class UserPreferencesDataStore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AuthTokensDataStore
 
 /**
  * Hilt module providing DataStore instances.
@@ -42,9 +53,25 @@ internal object DataStoreModule {
      */
     @Provides
     @Singleton
+    @UserPreferencesDataStore
     fun providesUserPreferencesDataStore(
         @ApplicationContext context: Context,
     ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
         produceFile = { context.preferencesDataStoreFile("user_preferences") },
     )
+
+    @Provides
+    @Singleton
+    @AuthTokensDataStore
+    fun providesAuthTokensDataStore(
+        @ApplicationContext context: Context,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        produceFile = { context.preferencesDataStoreFile("auth_tokens") },
+    )
+
+    @Provides
+    @Singleton
+    fun providesAuthTokensDataSource(
+        impl: DataStoreAuthTokensDataSource,
+    ): AuthTokensDataSource = impl
 }
