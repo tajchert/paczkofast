@@ -1,11 +1,11 @@
 package pl.tajchert.paczko.fast.core.database.di
 
-import pl.tajchert.paczko.fast.core.database.TaskDatabase
-import pl.tajchert.paczko.fast.core.database.dao.TaskDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import pl.tajchert.paczko.fast.core.database.PaczkofastDatabase
+import pl.tajchert.paczko.fast.core.database.dao.ParcelDao
 
 /**
  * Hilt module providing DAO instances.
@@ -29,5 +29,5 @@ import dagger.hilt.components.SingletonComponent
 internal object DaosModule {
 
     @Provides
-    fun providesTaskDao(database: TaskDatabase): TaskDao = database.taskDao()
+    fun providesParcelDao(database: PaczkofastDatabase): ParcelDao = database.parcelDao()
 }

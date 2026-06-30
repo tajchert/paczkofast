@@ -2,12 +2,12 @@ package pl.tajchert.paczko.fast.core.database.di
 
 import android.content.Context
 import androidx.room.Room
-import pl.tajchert.paczko.fast.core.database.TaskDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import pl.tajchert.paczko.fast.core.database.PaczkofastDatabase
 import javax.inject.Singleton
 
 /**
@@ -37,11 +37,11 @@ internal object DatabaseModule {
      */
     @Provides
     @Singleton
-    fun providesTaskDatabase(
+    fun providesPaczkofastDatabase(
         @ApplicationContext context: Context,
-    ): TaskDatabase = Room.databaseBuilder(
+    ): PaczkofastDatabase = Room.databaseBuilder(
         context,
-        TaskDatabase::class.java,
+        PaczkofastDatabase::class.java,
         "paczkofast-database",
     )
         // For development: destroy and recreate on schema changes

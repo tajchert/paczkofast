@@ -7,7 +7,9 @@ import dagger.hilt.components.SingletonComponent
 import pl.tajchert.paczko.fast.core.data.auth.DataStoreTokenProvider
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.data.repository.DefaultAuthRepository
+import pl.tajchert.paczko.fast.core.data.repository.DefaultParcelRepository
 import pl.tajchert.paczko.fast.core.data.repository.DefaultUserPreferencesRepository
+import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.network.auth.TokenProvider
 import javax.inject.Singleton
@@ -38,6 +40,12 @@ abstract class DataModule {
     internal abstract fun bindsAuthRepository(
         impl: DefaultAuthRepository,
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun bindsParcelRepository(
+        impl: DefaultParcelRepository,
+    ): ParcelRepository
 
     @Binds
     @Singleton
