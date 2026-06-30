@@ -3,7 +3,6 @@ package pl.tajchert.paczko.fast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
-import pl.tajchert.paczko.fast.core.model.DarkThemeConfig
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,10 +75,6 @@ class MainActivityViewModel @Inject constructor(
 fun MainActivityUiState.shouldUseDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
     return when (this) {
         is MainActivityUiState.Loading -> isSystemInDarkTheme
-        is MainActivityUiState.Success -> when (preferences.darkThemeConfig) {
-            DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme
-            DarkThemeConfig.LIGHT -> false
-            DarkThemeConfig.DARK -> true
-        }
+        is MainActivityUiState.Success -> preferences.darkTheme
     }
 }

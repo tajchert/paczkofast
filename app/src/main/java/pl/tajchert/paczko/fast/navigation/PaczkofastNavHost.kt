@@ -1,7 +1,11 @@
 package pl.tajchert.paczko.fast.navigation
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -9,8 +13,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
+import pl.tajchert.paczko.fast.feature.auth.impl.navigation.authEntries
 import pl.tajchert.paczko.fast.feature.tasks.api.TaskListRoute
-import pl.tajchert.paczko.fast.feature.tasks.impl.navigation.tasksEntries
 
 // =============================================================================
 // APP NAVIGATION DISPLAY (Navigation 3)
@@ -59,7 +64,7 @@ import pl.tajchert.paczko.fast.feature.tasks.impl.navigation.tasksEntries
 @Composable
 fun PaczkofastNavHost(
     modifier: Modifier = Modifier,
-    backStack: NavBackStack<NavKey> = rememberNavBackStack(TaskListRoute),
+    backStack: NavBackStack<NavKey> = rememberNavBackStack(AuthRoute),
 ) {
     NavDisplay(
         backStack = backStack,
@@ -75,11 +80,23 @@ fun PaczkofastNavHost(
             rememberViewModelStoreNavEntryDecorator(),
         ),
         entryProvider = entryProvider {
-            // Tasks feature
-            tasksEntries(
-                onNavigate = { backStack.add(it) },
-                onBack = { backStack.removeLastOrNull() },
+            authEntries(
+                onAuthenticated = {
+                    backStack.clear()
+                    backStack.add(TaskListRoute)
+                },
             )
+
+            entry<TaskListRoute> {
+                Scaffold { padding ->
+                    Text(
+                        text = "Paczkofast",
+                        modifier = Modifier
+                            .padding(padding)
+                            .padding(16.dp),
+                    )
+                }
+            }
 
             // Add more features here:
             // settingsEntries(...)

@@ -76,6 +76,12 @@ include(":feature:tasks:api")
 // Tasks feature - screens, ViewModels, implementation
 include(":feature:tasks:impl")
 
+// Auth feature - public navigation routes
+include(":feature:auth:api")
+
+// Auth feature - screens, ViewModels, implementation
+include(":feature:auth:impl")
+
 // =============================================================================
 // Type-safe project accessors (e.g., projects.core.model)
 // =============================================================================
