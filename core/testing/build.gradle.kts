@@ -30,7 +30,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.core.testing"
+    namespace = "pl.tajchert.paczko.fast.core.testing"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

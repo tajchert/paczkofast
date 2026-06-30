@@ -1,5 +1,5 @@
 // =============================================================================
-// ANDROID SAMPLE PROJECT - ROOT BUILD FILE
+// PACZKOFAST PROJECT - ROOT BUILD FILE
 // =============================================================================
 // Configuration common to all sub-projects/modules.
 // Uses version catalog (gradle/libs.versions.toml) for dependency management.

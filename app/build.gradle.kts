@@ -29,11 +29,11 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample"
+    namespace = "pl.tajchert.paczko.fast"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.demo.sample"
+        applicationId = "pl.tajchert.paczko.fast"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1

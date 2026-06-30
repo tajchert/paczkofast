@@ -24,7 +24,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.core.database"
+    namespace = "pl.tajchert.paczko.fast.core.database"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

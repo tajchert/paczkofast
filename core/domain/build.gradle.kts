@@ -26,7 +26,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.core.domain"
+    namespace = "pl.tajchert.paczko.fast.core.domain"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

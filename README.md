@@ -1,4 +1,4 @@
-# Android Template
+# Paczkofast
 
 Production-ready Android project template optimized for LLM-assisted development. Based on Google's "Now in Android" reference architecture.
 
@@ -33,7 +33,7 @@ core/                   # Shared infrastructure
   ├── domain/          # Use cases / business logic
   └── testing/         # Fakes, test rules, utilities
 feature/                # Feature modules (API/Impl split)
-  └── tasks/           # Sample feature
+  └── tasks/           # Tasks feature
       ├── api/         # Navigation routes only
       └── impl/        # Screens, ViewModels
 ```
@@ -43,7 +43,7 @@ feature/                # Feature modules (API/Impl split)
 | Resource | Description |
 |----------|-------------|
 | [MODERN_ANDROID_GUIDE.md](MODERN_ANDROID_GUIDE.md) | Comprehensive architecture guide covering modules, layers, DI, Compose, navigation, data layer, testing, and more (20 chapters) |
-| `feature/tasks/` | Complete sample feature demonstrating all patterns |
+| `feature/tasks/` | Complete reference feature demonstrating all patterns |
 | Code comments | Inline explanations throughout the codebase |
 
 ## Key Patterns
@@ -65,5 +65,5 @@ feature/                # Feature modules (API/Impl split)
 
 1. Create `feature/<name>/api` module with navigation routes
 2. Create `feature/<name>/impl` module with screens and ViewModels
-3. Add navigation to `SampleNavHost` in the app module
+3. Add navigation to `PaczkofastNavHost` in the app module
 4. Follow patterns from `feature/tasks/` as reference

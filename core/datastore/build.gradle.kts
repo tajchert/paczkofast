@@ -24,7 +24,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.core.datastore"
+    namespace = "pl.tajchert.paczko.fast.core.datastore"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

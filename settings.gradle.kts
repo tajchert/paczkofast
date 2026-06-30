@@ -1,5 +1,5 @@
 // =============================================================================
-// ANDROID SAMPLE PROJECT - SETTINGS
+// PACZKOFAST PROJECT - SETTINGS
 // =============================================================================
 // Module configuration for multi-module architecture following Now in Android patterns.
 // =============================================================================
@@ -23,7 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "android-sample-compose"
+rootProject.name = "Paczkofast"
 
 // =============================================================================
 // MODULES

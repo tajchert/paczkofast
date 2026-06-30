@@ -14,8 +14,8 @@
 // ## Usage
 //
 // All feature modules should depend on this module and use:
-// - SampleTheme {} for wrapping content
-// - SampleButton, SampleCard, etc. instead of Material components directly
+// - PaczkofastTheme {} for wrapping content
+// - PaczkofastButton, PaczkofastCard, etc. instead of Material components directly
 // =============================================================================
 
 plugins {
@@ -24,7 +24,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.core.designsystem"
+    namespace = "pl.tajchert.paczko.fast.core.designsystem"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

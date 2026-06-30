@@ -28,7 +28,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.core.network"
+    namespace = "pl.tajchert.paczko.fast.core.network"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

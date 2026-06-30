@@ -30,7 +30,7 @@ plugins {
 }
 
 android {
-    namespace = "com.demo.sample.feature.tasks.api"
+    namespace = "pl.tajchert.paczko.fast.feature.tasks.api"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

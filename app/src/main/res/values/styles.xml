@@ -2,17 +2,17 @@
 <resources>
 
     <!-- Base application theme for Compose -->
-    <style name="Theme.Sample" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Paczkofast" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <!-- Splash screen theme -->
-    <style name="Theme.Sample.Splash" parent="Theme.SplashScreen">
+    <style name="Theme.Paczkofast.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@android:color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
-        <item name="postSplashScreenTheme">@style/Theme.Sample</item>
+        <item name="postSplashScreenTheme">@style/Theme.Paczkofast</item>
     </style>
 
 </resources>
