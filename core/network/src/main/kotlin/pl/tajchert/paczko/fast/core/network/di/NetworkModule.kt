@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -133,13 +134,24 @@ object NetworkModule {
         retrofit.create(InpostCollectApi::class.java)
 
     private fun baseOkHttpBuilder(): OkHttpClient.Builder = OkHttpClient.Builder()
+        .addInterceptor(commonHeadersInterceptor())
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
+
+    private fun commonHeadersInterceptor(): Interceptor = Interceptor { chain ->
+        val request = chain.request().newBuilder()
+            .header(ACCEPT_HEADER, APPLICATION_JSON)
+            .build()
+        chain.proceed(request)
+    }
 
     private fun loggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         redactHeader("Authorization")
         // In production, set this based on BuildConfig.DEBUG
         level = HttpLoggingInterceptor.Level.BASIC
     }
+
+    private const val ACCEPT_HEADER = "Accept"
+    private const val APPLICATION_JSON = "application/json"
 }
