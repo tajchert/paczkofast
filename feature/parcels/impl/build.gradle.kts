@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.domain)
     implementation(projects.core.model)
+    implementation(projects.core.ui)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)

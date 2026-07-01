@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -25,6 +26,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastLoadingIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastTopAppBar
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
+import pl.tajchert.paczko.fast.core.ui.QrCodeImage
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelDetailRoute
 
 @Composable
@@ -132,8 +134,8 @@ private fun ParcelDetailBody(
 
         DetailSection(title = "Collection") {
             DetailRow(label = "Open code", value = parcel.openCode)
-            parcel.qrCode?.takeIf { it.isNotBlank() }?.let { qrPayload ->
-                DetailRow(label = "QR payload", value = qrPayload)
+            parcel.qrCode?.takeIf { it.isNotBlank() }?.let { qrCode ->
+                QrCodeImage(payload = qrCode, modifier = Modifier.size(240.dp))
             }
         }
 

@@ -68,6 +68,7 @@ okhttp = "5.3.2"
 # Image Loading
 # -----------------------------------------------------------------------------
 coil = "3.4.0"
+zxing = "3.5.3"
 
 # -----------------------------------------------------------------------------
 # Testing
@@ -163,6 +164,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 # -----------------------------------------------------------------------------
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 
 # -----------------------------------------------------------------------------
 # Testing

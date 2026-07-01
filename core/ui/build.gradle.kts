@@ -49,12 +49,16 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.bundles.compose.debug)
+    implementation(libs.zxing.core)
 
     // Date/Time
     implementation(libs.kotlinx.datetime)
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 }
