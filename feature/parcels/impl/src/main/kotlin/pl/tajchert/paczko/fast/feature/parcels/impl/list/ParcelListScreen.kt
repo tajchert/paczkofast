@@ -34,6 +34,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastTopAppBar
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
 
 @Composable
 fun ParcelListScreen(
@@ -195,6 +196,15 @@ private fun ParcelCard(
                     text = "Expires: $expiryDate",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            parcelMetadataLines(parcel).forEach { metadataLine ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = metadataLine,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }

@@ -28,6 +28,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastTopAppBar
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.ui.QrCodeImage
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelDetailRoute
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
 
 @Composable
 fun ParcelDetailScreen(
@@ -130,6 +131,18 @@ private fun ParcelDetailBody(
         DetailSection(title = "Dates") {
             DetailRow(label = "Stored", value = parcel.storedDate)
             DetailRow(label = "Expires", value = parcel.expiryDate)
+        }
+
+        val metadataLines = parcelMetadataLines(parcel)
+        if (metadataLines.isNotEmpty()) {
+            DetailSection(title = "Package info") {
+                metadataLines.forEach { line ->
+                    Text(
+                        text = line,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
         }
 
         DetailSection(title = "Collection") {
