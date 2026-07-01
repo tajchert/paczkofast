@@ -76,7 +76,12 @@ class MainActivity : ComponentActivity() {
             val darkTheme = shouldUseDarkTheme(uiState)
 
             PaczkofastTheme(darkTheme = darkTheme) {
-                PaczkofastNavHost()
+                when (val state = uiState) {
+                    MainActivityUiState.Loading -> Unit
+                    is MainActivityUiState.Success -> PaczkofastNavHost(
+                        startDestination = state.initialRoute,
+                    )
+                }
             }
         }
     }

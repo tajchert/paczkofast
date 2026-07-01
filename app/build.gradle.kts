@@ -118,7 +118,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // Testing
+    testImplementation(projects.core.testing)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.test.ext.junit)

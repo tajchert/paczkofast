@@ -60,8 +60,9 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.navigation.parcelEntries
  */
 @Composable
 fun PaczkofastNavHost(
+    startDestination: NavKey = AuthRoute,
     modifier: Modifier = Modifier,
-    backStack: NavBackStack<NavKey> = rememberNavBackStack(AuthRoute),
+    backStack: NavBackStack<NavKey> = rememberNavBackStack(startDestination),
 ) {
     NavDisplay(
         backStack = backStack,

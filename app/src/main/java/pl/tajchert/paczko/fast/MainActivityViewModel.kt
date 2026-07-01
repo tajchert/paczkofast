@@ -2,12 +2,16 @@ package pl.tajchert.paczko.fast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
+import pl.tajchert.paczko.fast.core.domain.ObserveAuthSessionUseCase
 import pl.tajchert.paczko.fast.core.model.UserPreferences
+import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
+import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -18,7 +22,8 @@ import javax.inject.Inject
 // are shown. Specifically:
 //
 // - Theme configuration (dark/light/system)
-// - Whether to show splash screen (while loading preferences)
+// - Initial route based on stored authentication
+// - Whether to show splash screen while startup state loads
 //
 // ## Why a Separate ViewModel?
 //
@@ -37,29 +42,37 @@ sealed interface MainActivityUiState {
     data object Loading : MainActivityUiState
 
     /**
-     * Preferences loaded - show content with proper theme.
+     * Startup state loaded - show content with proper theme and initial route.
      */
     data class Success(
         val preferences: UserPreferences,
+        val initialRoute: NavKey,
     ) : MainActivityUiState
 }
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     userPreferencesRepository: UserPreferencesRepository,
+    observeAuthSession: ObserveAuthSessionUseCase,
 ) : ViewModel() {
 
     /**
      * UI state for the main activity.
      *
-     * Starts as Loading, then emits Success once preferences are available.
+     * Starts as Loading, then emits Success once preferences and auth state are available.
      */
-    val uiState: StateFlow<MainActivityUiState> = userPreferencesRepository
-        .userPreferences
-        .map { MainActivityUiState.Success(it) }
+    val uiState: StateFlow<MainActivityUiState> = combine(
+        userPreferencesRepository.userPreferences,
+        observeAuthSession(),
+    ) { preferences, authSession ->
+        MainActivityUiState.Success(
+            preferences = preferences,
+            initialRoute = if (authSession.isAuthenticated) ParcelListRoute else AuthRoute,
+        )
+    }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.Eagerly,
             initialValue = MainActivityUiState.Loading,
         )
 }
