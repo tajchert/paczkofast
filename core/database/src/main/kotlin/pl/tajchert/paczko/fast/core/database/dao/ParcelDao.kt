@@ -9,7 +9,7 @@ import pl.tajchert.paczko.fast.core.database.entity.ParcelEntity
 
 @Dao
 interface ParcelDao {
-    @Query("SELECT * FROM parcels ORDER BY storedDate DESC, shipmentNumber ASC")
+    @Query("SELECT * FROM parcels ORDER BY COALESCE(storedDate, expiryDate) DESC, shipmentNumber ASC")
     fun observeParcels(): Flow<List<ParcelEntity>>
 
     @Query("SELECT * FROM parcels WHERE shipmentNumber = :shipmentNumber")
