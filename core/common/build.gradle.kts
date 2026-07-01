@@ -31,6 +31,12 @@ android {
 }
 
 dependencies {
+    // Project modules
+    implementation(projects.core.model)
+
+    // AndroidX
+    implementation(libs.androidx.core.ktx)
+
     // Hilt for dependency injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

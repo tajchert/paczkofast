@@ -43,6 +43,7 @@ android {
 dependencies {
     // Project modules
     implementation(projects.core.model)
+    implementation(projects.core.common)
     implementation(projects.core.data)
 
     // Hilt
