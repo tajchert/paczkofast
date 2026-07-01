@@ -9,12 +9,12 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface InpostAuthApi {
-    @POST("v1/account")
+    @POST("/v1/account")
     suspend fun requestSmsCode(@Body body: SendSmsCodeRequestDto): SendSmsCodeResponseDto
 
-    @POST("v1/account/verification")
+    @POST("/v1/account/verification")
     suspend fun confirmSmsCode(@Body body: ConfirmSmsRequestDto): ConfirmSmsResponseDto
 
-    @POST("v1/authenticate")
+    @POST("/v1/authenticate")
     suspend fun refreshToken(@Body body: RefreshTokenRequestDto): ConfirmSmsResponseDto
 }
