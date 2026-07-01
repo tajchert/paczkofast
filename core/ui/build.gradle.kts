@@ -6,10 +6,10 @@
 // ## vs core:designsystem
 //
 // - **core:designsystem**: Generic Material 3 components (Button, Card, etc.)
-// - **core:ui**: App-specific components (TaskCard, PriorityBadge, etc.)
+// - **core:ui**: App-specific components shared across features.
 //
 // Components in this module:
-// - Know about domain models (Task, TaskPriority)
+// - May know about domain models when a shared UI primitive needs them
 // - Are reused across multiple features
 // - Build on top of designsystem components
 // =============================================================================

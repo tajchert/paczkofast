@@ -33,7 +33,7 @@ core/                   # Shared infrastructure
   ├── domain/          # Use cases / business logic
   └── testing/         # Fakes, test rules, utilities
 feature/                # Feature modules (API/Impl split)
-  └── tasks/           # Tasks feature
+  └── parcels/         # Parcels feature
       ├── api/         # Navigation routes only
       └── impl/        # Screens, ViewModels
 ```
@@ -43,7 +43,7 @@ feature/                # Feature modules (API/Impl split)
 | Resource | Description |
 |----------|-------------|
 | [MODERN_ANDROID_GUIDE.md](MODERN_ANDROID_GUIDE.md) | Comprehensive architecture guide covering modules, layers, DI, Compose, navigation, data layer, testing, and more (20 chapters) |
-| `feature/tasks/` | Complete reference feature demonstrating all patterns |
+| `feature/parcels/` | Active parcel list and detail feature |
 | Code comments | Inline explanations throughout the codebase |
 
 ## Key Patterns
@@ -66,4 +66,4 @@ feature/                # Feature modules (API/Impl split)
 1. Create `feature/<name>/api` module with navigation routes
 2. Create `feature/<name>/impl` module with screens and ViewModels
 3. Add navigation to `PaczkofastNavHost` in the app module
-4. Follow patterns from `feature/tasks/` as reference
+4. Follow patterns from existing feature modules as reference

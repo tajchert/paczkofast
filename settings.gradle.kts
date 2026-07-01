@@ -70,11 +70,11 @@ include(":core:testing")
 // Feature modules - user-facing features with API/impl split
 // -----------------------------------------------------------------------------
 
-// Tasks feature - public navigation routes
-include(":feature:tasks:api")
+// Parcels feature - public navigation routes
+include(":feature:parcels:api")
 
-// Tasks feature - screens, ViewModels, implementation
-include(":feature:tasks:impl")
+// Parcels feature - screens, ViewModels, implementation
+include(":feature:parcels:impl")
 
 // Auth feature - public navigation routes
 include(":feature:auth:api")

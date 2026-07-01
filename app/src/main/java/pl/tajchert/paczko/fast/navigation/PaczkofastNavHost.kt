@@ -1,11 +1,7 @@
 package pl.tajchert.paczko.fast.navigation
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -15,7 +11,8 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
 import pl.tajchert.paczko.fast.feature.auth.impl.navigation.authEntries
-import pl.tajchert.paczko.fast.feature.tasks.api.TaskListRoute
+import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
+import pl.tajchert.paczko.fast.feature.parcels.impl.navigation.parcelEntries
 
 // =============================================================================
 // APP NAVIGATION DISPLAY (Navigation 3)
@@ -35,7 +32,7 @@ import pl.tajchert.paczko.fast.feature.tasks.api.TaskListRoute
 // Each feature contributes its entries via an extension function:
 // ```kotlin
 // entryProvider = entryProvider {
-//     tasksEntries(...)      // Tasks feature
+//     parcelEntries(...)     // Parcels feature
 //     settingsEntries(...)   // Settings feature (future)
 //     profileEntries(...)    // Profile feature (future)
 // }
@@ -83,20 +80,14 @@ fun PaczkofastNavHost(
             authEntries(
                 onAuthenticated = {
                     backStack.clear()
-                    backStack.add(TaskListRoute)
+                    backStack.add(ParcelListRoute)
                 },
             )
 
-            entry<TaskListRoute> {
-                Scaffold { padding ->
-                    Text(
-                        text = "Paczkofast",
-                        modifier = Modifier
-                            .padding(padding)
-                            .padding(16.dp),
-                    )
-                }
-            }
+            parcelEntries(
+                onNavigate = { key -> backStack.add(key) },
+                onBack = { backStack.removeLastOrNull() },
+            )
 
             // Add more features here:
             // settingsEntries(...)

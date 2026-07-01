@@ -81,7 +81,8 @@ dependencies {
     // Project modules
     implementation(projects.feature.auth.api)
     implementation(projects.feature.auth.impl)
-    implementation(projects.feature.tasks.api)
+    implementation(projects.feature.parcels.api)
+    implementation(projects.feature.parcels.impl)
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
     implementation(projects.core.model)
