@@ -12,6 +12,7 @@ import pl.tajchert.paczko.fast.core.network.dto.PhoneNumberDto
 import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenRequestDto
 import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeRequestDto
+import pl.tajchert.paczko.fast.core.network.auth.normalizedAuthToken
 import javax.inject.Inject
 
 class DefaultAuthRepository @Inject constructor(
@@ -70,12 +71,12 @@ class DefaultAuthRepository @Inject constructor(
     )
 
     private fun ConfirmSmsResponseDto.toAuthSession(): AuthSession = AuthSession(
-        authToken = authToken,
+        authToken = authToken.normalizedAuthToken(),
         refreshToken = refreshToken,
     )
 
     private fun RefreshTokenResponseDto.toAuthSession(storedRefreshToken: String): AuthSession = AuthSession(
-        authToken = authToken,
+        authToken = authToken.normalizedAuthToken(),
         refreshToken = refreshToken ?: storedRefreshToken,
     )
 

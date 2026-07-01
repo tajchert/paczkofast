@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import pl.tajchert.paczko.fast.core.datastore.AuthTokensDataSource
 import pl.tajchert.paczko.fast.core.network.auth.TokenProvider
+import pl.tajchert.paczko.fast.core.network.auth.normalizedAuthToken
 import javax.inject.Inject
 
 class DataStoreTokenProvider @Inject constructor(
@@ -20,7 +21,7 @@ class DataStoreTokenProvider @Inject constructor(
     override fun saveTokens(authToken: String, refreshToken: String) {
         runBlocking {
             authTokensDataSource.saveTokens(
-                authToken = authToken,
+                authToken = authToken.normalizedAuthToken(),
                 refreshToken = refreshToken,
             )
         }

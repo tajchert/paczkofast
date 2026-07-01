@@ -41,7 +41,7 @@ class DefaultAuthRepositoryTest {
     @Test
     fun confirmSmsCodeSendsAndroidPlatformAndStoresReturnedTokens() = runTest {
         authApi.confirmSmsCodeResponse = ConfirmSmsResponseDto(
-            authToken = "confirmed-auth-token",
+            authToken = "Bearer confirmed-auth-token",
             refreshToken = "confirmed-refresh-token",
         )
 
@@ -93,7 +93,7 @@ class DefaultAuthRepositoryTest {
             refreshToken = "old-refresh-token",
         )
         authApi.refreshTokenResponse = RefreshTokenResponseDto(
-            authToken = "refreshed-auth-token",
+            authToken = "Bearer refreshed-auth-token",
         )
 
         repository.refreshToken()

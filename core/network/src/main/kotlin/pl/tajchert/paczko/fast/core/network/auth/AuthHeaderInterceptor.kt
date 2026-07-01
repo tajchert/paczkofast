@@ -13,7 +13,7 @@ class AuthHeaderInterceptor @Inject constructor(
             chain.request()
         } else {
             chain.request().newBuilder()
-                .header(AUTHORIZATION_HEADER, "Bearer $authToken")
+                .header(AUTHORIZATION_HEADER, authToken.asBearerAuthorizationHeader())
                 .build()
         }
 

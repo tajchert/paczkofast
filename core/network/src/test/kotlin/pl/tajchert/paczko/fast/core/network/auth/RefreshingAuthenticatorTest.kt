@@ -25,7 +25,7 @@ class RefreshingAuthenticatorTest {
         server = MockWebServer()
         server.start()
         tokenProvider = FakeTokenProvider(
-            authToken = "expired-auth-token",
+            authToken = "Bearer expired-auth-token",
             refreshToken = "stored-refresh-token",
         )
         authApi = FakeInpostAuthApi()
@@ -39,7 +39,7 @@ class RefreshingAuthenticatorTest {
     @Test
     fun refreshesTokensAndRetriesUnauthorizedRequest() {
         authApi.refreshTokenResponse = RefreshTokenResponseDto(
-            authToken = "refreshed-auth-token",
+            authToken = "Bearer refreshed-auth-token",
         )
         server.enqueue(MockResponse.Builder().code(401).build())
         server.enqueue(MockResponse.Builder().code(200).body("ok").build())

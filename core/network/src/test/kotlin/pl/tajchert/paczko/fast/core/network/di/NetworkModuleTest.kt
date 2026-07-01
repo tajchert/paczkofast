@@ -9,6 +9,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.junit.After
 import org.junit.Before
 import pl.tajchert.paczko.fast.core.network.InpostAuthApi
+import pl.tajchert.paczko.fast.core.network.InpostParcelApi
 import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsRequestDto
 import pl.tajchert.paczko.fast.core.network.dto.PhoneNumberDto
 import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenRequestDto
@@ -82,6 +83,19 @@ class NetworkModuleTest {
         assertEquals("/v1/authenticate", server.takeRequest().url.encodedPath)
     }
 
+    @Test
+    fun parcelApiCallsHostRootTrackedParcelPaths() = runTest {
+        server.enqueue(jsonResponse("""{"parcels":[],"removedParcelList":[],"more":false}"""))
+        server.enqueue(jsonResponse("""{"shipmentNumber":"123","status":"ready_to_pickup"}"""))
+        val api = parcelApi()
+
+        api.getTrackedParcels()
+        api.getTrackedParcel("123")
+
+        assertEquals("/v4/parcels/tracked", server.takeRequest().url.encodedPath)
+        assertEquals("/v4/parcels/tracked/123", server.takeRequest().url.encodedPath)
+    }
+
     private fun authApi(): InpostAuthApi = Retrofit.Builder()
         .baseUrl(server.url("/global/"))
         .client(NetworkModule.providesUnauthenticatedOkHttpClient())
@@ -90,6 +104,15 @@ class NetworkModuleTest {
         )
         .build()
         .create(InpostAuthApi::class.java)
+
+    private fun parcelApi(): InpostParcelApi = Retrofit.Builder()
+        .baseUrl(server.url("/global/"))
+        .client(NetworkModule.providesUnauthenticatedOkHttpClient())
+        .addConverterFactory(
+            NetworkModule.providesJson().asConverterFactory("application/json".toMediaType()),
+        )
+        .build()
+        .create(InpostParcelApi::class.java)
 
     private fun jsonResponse(body: String): MockResponse = MockResponse.Builder()
         .code(200)

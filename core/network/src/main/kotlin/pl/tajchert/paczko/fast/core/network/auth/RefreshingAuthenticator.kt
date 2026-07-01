@@ -29,12 +29,13 @@ class RefreshingAuthenticator @Inject constructor(
                 )
             }
             val retainedRefreshToken = refreshedTokens.refreshToken ?: refreshToken
+            val normalizedAuthToken = refreshedTokens.authToken.normalizedAuthToken()
             tokenProvider.saveTokens(
-                authToken = refreshedTokens.authToken,
+                authToken = normalizedAuthToken,
                 refreshToken = retainedRefreshToken,
             )
             response.request.newBuilder()
-                .header(AUTHORIZATION_HEADER, "Bearer ${refreshedTokens.authToken}")
+                .header(AUTHORIZATION_HEADER, normalizedAuthToken.asBearerAuthorizationHeader())
                 .build()
         } catch (exception: Exception) {
             tokenProvider.clearTokens()

@@ -6,9 +6,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface InpostParcelApi {
-    @GET("v4/parcels/tracked")
+    @GET("/v4/parcels/tracked")
     suspend fun getTrackedParcels(): TrackedParcelsResponseDto
 
-    @GET("v4/parcels/tracked/{shipmentNumber}")
+    @GET("/v4/parcels/tracked/{shipmentNumber}")
     suspend fun getTrackedParcel(@Path("shipmentNumber") shipmentNumber: String): ParcelDto
 }
