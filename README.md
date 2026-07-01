@@ -1,69 +1,22 @@
 # Paczkofast
 
-Production-ready Android project template optimized for LLM-assisted development. Based on Google's "Now in Android" reference architecture.
+Paczkofast is a small native Android app for fast InPost parcel checking and Paczkomat collection.
 
-## Tech Stack
+## Scope
 
-| Category | Technology |
-|----------|------------|
-| UI | Jetpack Compose, Material 3 |
-| Navigation | Jetpack Navigation 3 |
-| Architecture | MVVM + Clean Architecture, Multi-module |
-| DI | Hilt |
-| Database | Room (offline-first) |
-| Preferences | Preferences DataStore |
-| Network | Retrofit, OkHttp, Kotlinx Serialization |
-| Async | Coroutines, Flow |
-| Build | Kotlin 2.4.0, AGP 9.2.1, Version Catalog |
-| SDK | Compile/Target 36, Min 34 |
+- SMS login
+- Tracked parcel list
+- Parcel status and pickup details
+- Pickup QR rendering from `qrCode`
+- Remote collect flow: validate, open, opened status, closed status, closed confirmation, claim
 
-## Project Structure
+## Build
 
-```
-app/                    # Single-activity entry point
-core/                   # Shared infrastructure
-  ├── model/           # Pure Kotlin domain models
-  ├── common/          # Dispatchers, Result wrapper, utilities
-  ├── database/        # Room database, entities, DAOs
-  ├── datastore/       # Preferences DataStore
-  ├── designsystem/    # Material 3 theme, wrapped components
-  ├── ui/              # App-specific UI components
-  ├── network/         # Retrofit, DTOs, API abstraction
-  ├── data/            # Repository implementations
-  ├── domain/          # Use cases / business logic
-  └── testing/         # Fakes, test rules, utilities
-feature/                # Feature modules (API/Impl split)
-  └── parcels/         # Parcels feature
-      ├── api/         # Navigation routes only
-      └── impl/        # Screens, ViewModels
+```bash
+./gradlew :app:compileDebugKotlin
+./gradlew test
 ```
 
-## Documentation
+## API Note
 
-| Resource | Description |
-|----------|-------------|
-| [MODERN_ANDROID_GUIDE.md](MODERN_ANDROID_GUIDE.md) | Comprehensive architecture guide covering modules, layers, DI, Compose, navigation, data layer, testing, and more (20 chapters) |
-| `feature/parcels/` | Active parcel list and detail feature |
-| Code comments | Inline explanations throughout the codebase |
-
-## Key Patterns
-
-- **Offline-first**: Room is the single source of truth
-- **Unidirectional Data Flow**: Data up via Flow, events down via callbacks
-- **State hoisting**: Separates stateful (ViewModel) from stateless (composables)
-- **API/Impl split**: Features expose only navigation routes, hiding implementation
-- **Fakes over mocks**: Testing uses real implementations with fake data
-
-## Quick Start
-
-1. Clone the repository
-2. Open in Android Studio
-3. Sync Gradle
-4. Run on device/emulator (API 34+)
-
-## Adding a New Feature
-
-1. Create `feature/<name>/api` module with navigation routes
-2. Create `feature/<name>/impl` module with screens and ViewModels
-3. Add navigation to `PaczkofastNavHost` in the app module
-4. Follow patterns from existing feature modules as reference
+The InPost Mobile API used by this app is unofficial and may change without notice.

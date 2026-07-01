@@ -27,10 +27,10 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  *
  * ```kotlin
  * PaczkofastCard(
- *     onClick = { navigateToDetail(task.id) },
+ *     onClick = { navigateToDetail(parcel.id) },
  * ) {
- *     Text(task.title)
- *     Text(task.description)
+ *     Text(parcel.title)
+ *     Text(parcel.status)
  * }
  * ```
  *

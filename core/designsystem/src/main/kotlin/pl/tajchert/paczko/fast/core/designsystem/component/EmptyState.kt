@@ -27,7 +27,7 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  * ## When to Use
  *
  * Show this component when:
- * - A list is empty (no tasks, no search results)
+ * - A list is empty (no parcels, no search results)
  * - Content hasn't been created yet
  * - A filter returns no results
  *
@@ -40,13 +40,13 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  * ## Usage
  *
  * ```kotlin
- * if (tasks.isEmpty()) {
+ * if (parcels.isEmpty()) {
  *     PaczkofastEmptyState(
- *         icon = Icons.Outlined.CheckCircle,
- *         title = "No tasks yet",
- *         description = "Create your first task to get started",
- *         actionLabel = "Create Task",
- *         onAction = { navigateToCreateTask() },
+ *         icon = Icons.Outlined.Inbox,
+ *         title = "No parcels yet",
+ *         description = "Add a shipment to start tracking delivery updates",
+ *         actionLabel = "Add Parcel",
+ *         onAction = { navigateToAddParcel() },
  *     )
  * }
  * ```
@@ -169,9 +169,9 @@ private fun PaczkofastEmptyStatePreview() {
     PaczkofastTheme {
         PaczkofastEmptyState(
             icon = Icons.Outlined.Inbox,
-            title = "No tasks yet",
-            description = "Create your first task to get started",
-            actionLabel = "Create Task",
+            title = "No parcels yet",
+            description = "Add a shipment to start tracking delivery updates",
+            actionLabel = "Add Parcel",
             onAction = {},
         )
     }
@@ -193,7 +193,7 @@ private fun PaczkofastEmptyStateMinimalPreview() {
 private fun PaczkofastErrorStatePreview() {
     PaczkofastTheme {
         PaczkofastErrorState(
-            message = "Unable to load tasks. Please check your connection.",
+            message = "Unable to load parcels. Please check your connection.",
             onRetry = {},
         )
     }

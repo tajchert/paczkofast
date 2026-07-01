@@ -19,8 +19,8 @@ import kotlinx.coroutines.flow.onStart
  * ## Usage with StateFlow in ViewModel
  *
  * ```kotlin
- * val uiState: StateFlow<Result<List<Task>>> = taskRepository
- *     .observeTasks()
+ * val uiState: StateFlow<Result<List<Parcel>>> = parcelRepository
+ *     .observeParcels()
  *     .asResult()  // Wraps in Result with Loading/Success/Error
  *     .stateIn(
  *         scope = viewModelScope,
@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.onStart
  * ```kotlin
  * when (val result = uiState) {
  *     is Result.Loading -> LoadingIndicator()
- *     is Result.Success -> TaskList(result.data)
+ *     is Result.Success -> ParcelList(result.data)
  *     is Result.Error -> ErrorMessage(result.exception)
  * }
  * ```
@@ -84,11 +84,11 @@ sealed interface Result<out T> {
  *
  * ```kotlin
  * // In Repository
- * fun observeTasks(): Flow<List<Task>> = taskDao.observeAllTasks()
+ * fun observeParcels(): Flow<List<Parcel>> = parcelDao.observeAllParcels()
  *
  * // In ViewModel
- * val tasksResult: StateFlow<Result<List<Task>>> = repository
- *     .observeTasks()
+ * val parcelsResult: StateFlow<Result<List<Parcel>>> = repository
+ *     .observeParcels()
  *     .asResult()
  *     .stateIn(viewModelScope, ...)
  * ```

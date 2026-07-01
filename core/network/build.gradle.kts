@@ -9,12 +9,12 @@
 // - API interface definitions
 // - Network DTOs (Data Transfer Objects)
 // - Retrofit configuration
-// - Fake implementation for demo/testing
+// - Test doubles for integration and unit tests
 //
 // ## Key Patterns
 //
-// 1. **Interface Abstraction**: TaskNetworkDataSource interface allows swapping
-//    between real API and fake implementation
+// 1. **Interface Abstraction**: data source interfaces allow swapping
+//    between real API clients and test implementations
 // 2. **DTOs separate from domain models**: Network responses have their own
 //    data classes with serialization annotations
 // 3. **Error Handling**: Network errors are caught and converted to app errors

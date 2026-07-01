@@ -37,7 +37,7 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  * Scaffold(
  *     topBar = {
  *         PaczkofastTopAppBar(
- *             title = "Tasks",
+ *             title = "Parcels",
  *             onNavigationClick = { navController.popBackStack() },
  *         )
  *     }
@@ -95,7 +95,7 @@ fun PaczkofastTopAppBar(
 private fun PaczkofastTopAppBarPreview() {
     PaczkofastTheme {
         PaczkofastTopAppBar(
-            title = "Tasks",
+            title = "Parcels",
         )
     }
 }
@@ -105,7 +105,7 @@ private fun PaczkofastTopAppBarPreview() {
 private fun PaczkofastTopAppBarWithBackPreview() {
     PaczkofastTheme {
         PaczkofastTopAppBar(
-            title = "Task Details",
+            title = "Parcel Details",
             onNavigationClick = {},
         )
     }

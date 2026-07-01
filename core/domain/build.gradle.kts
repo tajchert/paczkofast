@@ -15,7 +15,7 @@
 // ## Key Patterns
 //
 // - Use cases are classes with a single `invoke()` operator function
-// - They can be called like functions: `getSortedTasks()`
+// - They can be called like functions: `getTrackedParcels()`
 // - They return Flow for reactive data or suspend for one-shot operations
 // =============================================================================
 

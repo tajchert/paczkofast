@@ -1,7 +1,7 @@
 # =============================================================================
 # APP-SPECIFIC PROGUARD / R8 RULES
 # =============================================================================
-# Most libraries used in this template (Compose, Hilt, Room, Retrofit,
+# Most libraries used in this app (Compose, Hilt, Room, Retrofit,
 # kotlinx-serialization, Coil) ship their own consumer rules, so this file
 # only needs rules specific to your app code.
 #
