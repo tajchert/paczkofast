@@ -9,17 +9,17 @@ class InpostDtoSerializationTest {
     private val json = Json { ignoreUnknownKeys = true; explicitNulls = false }
 
     @Test
-    fun confirmSmsRequestUsesStructuredPhoneNumberWithoutPlus() {
+    fun confirmSmsRequestUsesAppPhoneAndPlatformFormat() {
         val body = json.encodeToString(
             ConfirmSmsRequestDto(
-                phoneNumber = PhoneNumberDto(prefix = "48", value = "600123456"),
+                phoneNumber = PhoneNumberDto(prefix = "+48", value = "600123456"),
                 smsCode = "1234",
-                devicePlatform = "android",
+                devicePlatform = "Android",
             ),
         )
 
         assertEquals(
-            """{"phoneNumber":{"prefix":"48","value":"600123456"},"smsCode":"1234","devicePlatform":"android"}""",
+            """{"phoneNumber":{"prefix":"+48","value":"600123456"},"smsCode":"1234","devicePlatform":"Android"}""",
             body,
         )
     }

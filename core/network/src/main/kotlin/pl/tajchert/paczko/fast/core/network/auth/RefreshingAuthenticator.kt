@@ -28,9 +28,10 @@ class RefreshingAuthenticator @Inject constructor(
                     ),
                 )
             }
+            val retainedRefreshToken = refreshedTokens.refreshToken ?: refreshToken
             tokenProvider.saveTokens(
                 authToken = refreshedTokens.authToken,
-                refreshToken = refreshedTokens.refreshToken,
+                refreshToken = retainedRefreshToken,
             )
             response.request.newBuilder()
                 .header(AUTHORIZATION_HEADER, "Bearer ${refreshedTokens.authToken}")
@@ -53,7 +54,7 @@ class RefreshingAuthenticator @Inject constructor(
         }
 
     private companion object {
-        const val ANDROID_PLATFORM = "android"
+        const val ANDROID_PLATFORM = "Android"
         const val AUTHORIZATION_HEADER = "Authorization"
         const val MAX_AUTH_ATTEMPTS = 2
     }

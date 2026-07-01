@@ -10,6 +10,7 @@ import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsRequestDto
 import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.PhoneNumberDto
 import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenRequestDto
+import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeRequestDto
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ class DefaultAuthRepository @Inject constructor(
                 phoneOS = ANDROID_PLATFORM,
             ),
         )
-        return response.toAuthSession().also { session ->
+        return response.toAuthSession(storedRefreshToken).also { session ->
             authTokensDataSource.saveTokens(
                 authToken = session.authToken,
                 refreshToken = session.refreshToken,
@@ -64,7 +65,7 @@ class DefaultAuthRepository @Inject constructor(
     }
 
     private fun PhoneNumber.toDto(): PhoneNumberDto = PhoneNumberDto(
-        prefix = prefix,
+        prefix = "$PHONE_PREFIX_SIGN$prefix",
         value = value,
     )
 
@@ -73,7 +74,13 @@ class DefaultAuthRepository @Inject constructor(
         refreshToken = refreshToken,
     )
 
+    private fun RefreshTokenResponseDto.toAuthSession(storedRefreshToken: String): AuthSession = AuthSession(
+        authToken = authToken,
+        refreshToken = refreshToken ?: storedRefreshToken,
+    )
+
     private companion object {
-        const val ANDROID_PLATFORM = "android"
+        const val ANDROID_PLATFORM = "Android"
+        const val PHONE_PREFIX_SIGN = "+"
     }
 }

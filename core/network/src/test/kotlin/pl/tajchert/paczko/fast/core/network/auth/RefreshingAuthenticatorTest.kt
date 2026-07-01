@@ -10,8 +10,8 @@ import pl.tajchert.paczko.fast.core.network.InpostAuthApi
 import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsRequestDto
 import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenRequestDto
+import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeRequestDto
-import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeResponseDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -38,9 +38,8 @@ class RefreshingAuthenticatorTest {
 
     @Test
     fun refreshesTokensAndRetriesUnauthorizedRequest() {
-        authApi.refreshTokenResponse = ConfirmSmsResponseDto(
+        authApi.refreshTokenResponse = RefreshTokenResponseDto(
             authToken = "refreshed-auth-token",
-            refreshToken = "refreshed-refresh-token",
         )
         server.enqueue(MockResponse.Builder().code(401).build())
         server.enqueue(MockResponse.Builder().code(200).body("ok").build())
@@ -59,12 +58,12 @@ class RefreshingAuthenticatorTest {
         assertEquals(
             RefreshTokenRequestDto(
                 refreshToken = "stored-refresh-token",
-                phoneOS = "android",
+                phoneOS = "Android",
             ),
             authApi.refreshTokenBody,
         )
         assertEquals("refreshed-auth-token", tokenProvider.authToken())
-        assertEquals("refreshed-refresh-token", tokenProvider.refreshToken())
+        assertEquals("stored-refresh-token", tokenProvider.refreshToken())
         assertEquals("Bearer expired-auth-token", server.takeRequest().headers["Authorization"])
         assertEquals("Bearer refreshed-auth-token", server.takeRequest().headers["Authorization"])
     }
@@ -121,12 +120,11 @@ private class FakeTokenProvider(
 private class FakeInpostAuthApi : InpostAuthApi {
     var refreshTokenBody: RefreshTokenRequestDto? = null
     var refreshTokenCalls = 0
-    var refreshTokenResponse = ConfirmSmsResponseDto(
+    var refreshTokenResponse = RefreshTokenResponseDto(
         authToken = "refreshed-auth-token",
-        refreshToken = "refreshed-refresh-token",
     )
 
-    override suspend fun requestSmsCode(body: SendSmsCodeRequestDto): SendSmsCodeResponseDto {
+    override suspend fun requestSmsCode(body: SendSmsCodeRequestDto) {
         error("Not used in this test")
     }
 
@@ -134,7 +132,7 @@ private class FakeInpostAuthApi : InpostAuthApi {
         error("Not used in this test")
     }
 
-    override suspend fun refreshToken(body: RefreshTokenRequestDto): ConfirmSmsResponseDto {
+    override suspend fun refreshToken(body: RefreshTokenRequestDto): RefreshTokenResponseDto {
         refreshTokenCalls += 1
         refreshTokenBody = body
         return refreshTokenResponse

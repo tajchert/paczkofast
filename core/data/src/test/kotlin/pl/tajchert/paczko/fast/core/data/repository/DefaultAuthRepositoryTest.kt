@@ -12,8 +12,8 @@ import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsRequestDto
 import pl.tajchert.paczko.fast.core.network.dto.ConfirmSmsResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.PhoneNumberDto
 import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenRequestDto
+import pl.tajchert.paczko.fast.core.network.dto.RefreshTokenResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeRequestDto
-import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeResponseDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,7 +32,7 @@ class DefaultAuthRepositoryTest {
 
         assertEquals(
             SendSmsCodeRequestDto(
-                phoneNumber = PhoneNumberDto(prefix = "48", value = "600123456"),
+                phoneNumber = PhoneNumberDto(prefix = "+48", value = "600123456"),
             ),
             authApi.requestSmsCodeBody,
         )
@@ -52,9 +52,9 @@ class DefaultAuthRepositoryTest {
 
         assertEquals(
             ConfirmSmsRequestDto(
-                phoneNumber = PhoneNumberDto(prefix = "48", value = "600123456"),
+                phoneNumber = PhoneNumberDto(prefix = "+48", value = "600123456"),
                 smsCode = "123456",
-                devicePlatform = "android",
+                devicePlatform = "Android",
             ),
             authApi.confirmSmsCodeBody,
         )
@@ -92,9 +92,8 @@ class DefaultAuthRepositoryTest {
             authToken = "old-auth-token",
             refreshToken = "old-refresh-token",
         )
-        authApi.refreshTokenResponse = ConfirmSmsResponseDto(
+        authApi.refreshTokenResponse = RefreshTokenResponseDto(
             authToken = "refreshed-auth-token",
-            refreshToken = "refreshed-refresh-token",
         )
 
         repository.refreshToken()
@@ -102,14 +101,14 @@ class DefaultAuthRepositoryTest {
         assertEquals(
             RefreshTokenRequestDto(
                 refreshToken = "old-refresh-token",
-                phoneOS = "android",
+                phoneOS = "Android",
             ),
             authApi.refreshTokenBody,
         )
         assertEquals(
             AuthSession(
                 authToken = "refreshed-auth-token",
-                refreshToken = "refreshed-refresh-token",
+                refreshToken = "old-refresh-token",
             ),
             tokensDataSource.currentSession,
         )
@@ -150,19 +149,16 @@ private class FakeInpostAuthApi : InpostAuthApi {
     var confirmSmsCodeBody: ConfirmSmsRequestDto? = null
     var refreshTokenBody: RefreshTokenRequestDto? = null
 
-    var requestSmsCodeResponse = SendSmsCodeResponseDto(expirationTime = "2026-07-01T12:00:00Z")
     var confirmSmsCodeResponse = ConfirmSmsResponseDto(
         authToken = "auth-token",
         refreshToken = "refresh-token",
     )
-    var refreshTokenResponse = ConfirmSmsResponseDto(
+    var refreshTokenResponse = RefreshTokenResponseDto(
         authToken = "refreshed-auth-token",
-        refreshToken = "refreshed-refresh-token",
     )
 
-    override suspend fun requestSmsCode(body: SendSmsCodeRequestDto): SendSmsCodeResponseDto {
+    override suspend fun requestSmsCode(body: SendSmsCodeRequestDto) {
         requestSmsCodeBody = body
-        return requestSmsCodeResponse
     }
 
     override suspend fun confirmSmsCode(body: ConfirmSmsRequestDto): ConfirmSmsResponseDto {
@@ -170,7 +166,7 @@ private class FakeInpostAuthApi : InpostAuthApi {
         return confirmSmsCodeResponse
     }
 
-    override suspend fun refreshToken(body: RefreshTokenRequestDto): ConfirmSmsResponseDto {
+    override suspend fun refreshToken(body: RefreshTokenRequestDto): RefreshTokenResponseDto {
         refreshTokenBody = body
         return refreshTokenResponse
     }

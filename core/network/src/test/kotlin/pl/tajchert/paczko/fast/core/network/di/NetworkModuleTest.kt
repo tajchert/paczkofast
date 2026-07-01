@@ -53,27 +53,27 @@ class NetworkModuleTest {
 
     @Test
     fun authApiCallsHostRootSmsPaths() = runTest {
-        server.enqueue(jsonResponse("""{"expirationTime":null}"""))
+        server.enqueue(MockResponse.Builder().code(200).build())
         server.enqueue(jsonResponse("""{"authToken":"auth-token","refreshToken":"refresh-token"}"""))
-        server.enqueue(jsonResponse("""{"authToken":"auth-token","refreshToken":"refresh-token"}"""))
+        server.enqueue(jsonResponse("""{"authToken":"auth-token"}"""))
         val api = authApi()
 
         api.requestSmsCode(
             SendSmsCodeRequestDto(
-                phoneNumber = PhoneNumberDto(prefix = "48", value = "000000000"),
+                phoneNumber = PhoneNumberDto(prefix = "+48", value = "000000000"),
             ),
         )
         api.confirmSmsCode(
             ConfirmSmsRequestDto(
-                phoneNumber = PhoneNumberDto(prefix = "48", value = "000000000"),
+                phoneNumber = PhoneNumberDto(prefix = "+48", value = "000000000"),
                 smsCode = "0000",
-                devicePlatform = "android",
+                devicePlatform = "Android",
             ),
         )
         api.refreshToken(
             RefreshTokenRequestDto(
                 refreshToken = "refresh-token",
-                phoneOS = "android",
+                phoneOS = "Android",
             ),
         )
 

@@ -14,11 +14,6 @@ data class SendSmsCodeRequestDto(
 )
 
 @Serializable
-data class SendSmsCodeResponseDto(
-    val expirationTime: String? = null,
-)
-
-@Serializable
 data class ConfirmSmsRequestDto(
     val phoneNumber: PhoneNumberDto,
     val smsCode: String,
@@ -29,6 +24,12 @@ data class ConfirmSmsRequestDto(
 data class ConfirmSmsResponseDto(
     val authToken: String,
     val refreshToken: String,
+)
+
+@Serializable
+data class RefreshTokenResponseDto(
+    val authToken: String,
+    val refreshToken: String? = null,
 )
 
 @Serializable
