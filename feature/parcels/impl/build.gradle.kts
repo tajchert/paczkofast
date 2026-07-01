@@ -27,6 +27,7 @@ android {
 dependencies {
     implementation(projects.feature.parcels.api)
     implementation(projects.core.common)
+    implementation(projects.core.data)
     implementation(projects.core.designsystem)
     implementation(projects.core.domain)
     implementation(projects.core.model)
@@ -35,6 +36,7 @@ dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     implementation(libs.bundles.compose)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.bundles.compose.debug)
 
