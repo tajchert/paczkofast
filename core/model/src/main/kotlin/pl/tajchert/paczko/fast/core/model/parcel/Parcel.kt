@@ -15,7 +15,23 @@ data class Parcel(
     val storedDate: String?,
     val operations: ParcelOperations,
     val mobileCollectPossible: Boolean?,
+    val multiCompartmentUuid: String? = null,
+    val multiPackageShipmentNumbers: List<String> = emptyList(),
+    val ownershipStatus: String? = null,
 ) {
     val canCollectRemotely: Boolean
         get() = operations.collect && mobileCollectPossible == true && openCode.isNullOrBlank().not()
+
+    val isMultiPackage: Boolean
+        get() = multiCompartmentUuid.isNullOrBlank().not() || multiPackageShipmentNumbers.isNotEmpty()
+
+    val isSharedFromSomeone: Boolean
+        get() {
+            val normalizedStatus = ownershipStatus?.trim()?.uppercase()
+            return normalizedStatus != null && normalizedStatus !in OWNER_STATUSES
+        }
+
+    private companion object {
+        val OWNER_STATUSES = setOf("OWNER", "OWNED")
+    }
 }

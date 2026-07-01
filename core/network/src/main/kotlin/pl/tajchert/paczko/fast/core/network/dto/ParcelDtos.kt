@@ -20,13 +20,21 @@ data class ParcelDto(
     val expiryDate: String? = null,
     val storedDate: String? = null,
     val pickUpPoint: PickupPointDto? = null,
+    val multiCompartment: MultiCompartmentDto? = null,
     val operations: ParcelOperationsDto = ParcelOperationsDto(),
     val mobileCollectPossible: Boolean? = null,
+    val ownershipStatus: String? = null,
 )
 
 @Serializable
 data class ParcelOperationsDto(
     val collect: Boolean = false,
+)
+
+@Serializable
+data class MultiCompartmentDto(
+    val uuid: String? = null,
+    val shipmentNumbers: List<String> = emptyList(),
 )
 
 @Serializable

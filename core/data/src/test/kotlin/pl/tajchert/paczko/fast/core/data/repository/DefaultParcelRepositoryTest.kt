@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.runTest
 import pl.tajchert.paczko.fast.core.database.dao.ParcelDao
 import pl.tajchert.paczko.fast.core.database.entity.ParcelEntity
 import pl.tajchert.paczko.fast.core.network.InpostParcelApi
+import pl.tajchert.paczko.fast.core.network.dto.MultiCompartmentDto
 import pl.tajchert.paczko.fast.core.network.dto.ParcelDto
 import pl.tajchert.paczko.fast.core.network.dto.ParcelOperationsDto
 import pl.tajchert.paczko.fast.core.network.dto.TrackedParcelsResponseDto
@@ -46,6 +47,32 @@ class DefaultParcelRepositoryTest {
 
         assertEquals(emptyList(), dao.saved.map { it.shipmentNumber })
         assertEquals(1, dao.appliedPages)
+    }
+
+    @Test
+    fun refreshTrackedParcelsPersistsMultiPackageAndOwnershipMetadata() = runTest {
+        val network = FakeParcelApi(
+            TrackedParcelsResponseDto(
+                parcels = listOf(
+                    parcelDto("multi-shared").copy(
+                        multiCompartment = MultiCompartmentDto(
+                            uuid = "multi-uuid",
+                            shipmentNumbers = listOf("multi-shared", "sibling"),
+                        ),
+                        ownershipStatus = "SHARED_TO_ME",
+                    ),
+                ),
+                more = false,
+            ),
+        )
+        val dao = FakeParcelDao()
+        val repository = DefaultParcelRepository(network, dao)
+
+        repository.refreshTrackedParcels()
+
+        assertEquals("multi-uuid", dao.saved.single().multiCompartmentUuid)
+        assertEquals("multi-shared,sibling", dao.saved.single().multiPackageShipmentNumbers)
+        assertEquals("SHARED_TO_ME", dao.saved.single().ownershipStatus)
     }
 }
 

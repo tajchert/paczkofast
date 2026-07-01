@@ -53,4 +53,31 @@ class InpostDtoSerializationTest {
         assertEquals("opaque-qr", response.parcels.single().qrCode)
         assertEquals(listOf("222"), response.removedParcelList)
     }
+
+    @Test
+    fun trackedParcelsResponseKeepsMultiPackageAndOwnershipMetadata() {
+        val response = json.decodeFromString<TrackedParcelsResponseDto>(
+            """
+            {
+              "parcels": [{
+                "shipmentNumber": "111",
+                "status": "ready_to_pickup",
+                "multiCompartment": {
+                  "uuid": "multi-uuid",
+                  "shipmentNumbers": ["111", "222"]
+                },
+                "ownershipStatus": "SHARED_TO_ME",
+                "operations": { "collect": true },
+                "mobileCollectPossible": true
+              }],
+              "more": false
+            }
+            """.trimIndent(),
+        )
+
+        val parcel = response.parcels.single()
+        assertEquals("multi-uuid", parcel.multiCompartment?.uuid)
+        assertEquals(listOf("111", "222"), parcel.multiCompartment?.shipmentNumbers)
+        assertEquals("SHARED_TO_ME", parcel.ownershipStatus)
+    }
 }

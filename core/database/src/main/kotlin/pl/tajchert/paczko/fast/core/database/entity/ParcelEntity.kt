@@ -19,4 +19,7 @@ data class ParcelEntity(
     val storedDate: String?,
     val collectOperation: Boolean,
     val mobileCollectPossible: Boolean?,
+    val multiCompartmentUuid: String? = null,
+    val multiPackageShipmentNumbers: String? = null,
+    val ownershipStatus: String? = null,
 )

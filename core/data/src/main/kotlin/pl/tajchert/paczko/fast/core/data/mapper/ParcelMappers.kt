@@ -23,6 +23,9 @@ fun ParcelDto.toEntity() = ParcelEntity(
     storedDate = storedDate,
     collectOperation = operations.collect,
     mobileCollectPossible = mobileCollectPossible,
+    multiCompartmentUuid = multiCompartment?.uuid,
+    multiPackageShipmentNumbers = multiCompartment?.shipmentNumbers.toStoredShipmentNumbers(),
+    ownershipStatus = ownershipStatus,
 )
 
 fun ParcelEntity.toDomain() = Parcel(
@@ -44,4 +47,21 @@ fun ParcelEntity.toDomain() = Parcel(
     storedDate = storedDate,
     operations = ParcelOperations(collect = collectOperation),
     mobileCollectPossible = mobileCollectPossible,
+    multiCompartmentUuid = multiCompartmentUuid,
+    multiPackageShipmentNumbers = multiPackageShipmentNumbers.toShipmentNumberList(),
+    ownershipStatus = ownershipStatus,
 )
+
+private fun List<String>?.toStoredShipmentNumbers(): String? =
+    this
+        ?.map(String::trim)
+        ?.filter(String::isNotEmpty)
+        ?.joinToString(",")
+        ?.takeIf(String::isNotBlank)
+
+private fun String?.toShipmentNumberList(): List<String> =
+    this
+        ?.split(",")
+        ?.map(String::trim)
+        ?.filter(String::isNotEmpty)
+        .orEmpty()
