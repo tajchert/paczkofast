@@ -33,6 +33,8 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
+    title: String = "Paczkofast",
+    showLogo: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
@@ -47,9 +49,11 @@ fun HomeHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            LogoMark()
+            if (showLogo) {
+                LogoMark()
+            }
             Text(
-                text = "Paczkofast",
+                text = title,
                 style = MaterialTheme.typography.titleLarge,
                 color = PaczkofastTheme.colors.textPrimary,
             )

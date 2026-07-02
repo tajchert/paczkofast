@@ -69,6 +69,8 @@ private class FakeAuthRepository(
 ) : AuthRepository {
     override fun observeAuthSession(): Flow<AuthSession> = MutableStateFlow(session)
 
+    override fun observePhoneNumber(): Flow<String?> = MutableStateFlow(null)
+
     override suspend fun requestSmsCode(phoneNumber: PhoneNumber) = Unit
 
     override suspend fun confirmSmsCode(phoneNumber: PhoneNumber, smsCode: String): AuthSession = session

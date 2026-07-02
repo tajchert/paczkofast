@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
@@ -19,8 +19,12 @@ class SettingsViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    val uiState: StateFlow<SettingsUiState> = userPreferencesRepository.userPreferences
-        .map { SettingsUiState(themeMode = it.themeMode) }
+    val uiState: StateFlow<SettingsUiState> = combine(
+        userPreferencesRepository.userPreferences,
+        authRepository.observePhoneNumber(),
+    ) { preferences, phoneNumber ->
+        SettingsUiState(themeMode = preferences.themeMode, phoneNumber = phoneNumber)
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
@@ -43,4 +47,5 @@ class SettingsViewModel @Inject constructor(
 
 data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val phoneNumber: String? = null,
 )

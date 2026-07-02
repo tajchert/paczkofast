@@ -36,6 +36,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.component.HistoryParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastBottomBar
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
@@ -50,6 +51,11 @@ import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
 import pl.tajchert.paczko.fast.feature.parcels.impl.TRANSIT_SEGMENTS
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
+import pl.tajchert.paczko.fast.feature.parcels.impl.historyMonthKey
+import pl.tajchert.paczko.fast.feature.parcels.impl.historyMonthLabel
+import pl.tajchert.paczko.fast.feature.parcels.impl.historyOutcome
+import pl.tajchert.paczko.fast.feature.parcels.impl.historyOutcomeLine
+import pl.tajchert.paczko.fast.feature.parcels.impl.historyDateLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.historySortKey
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
 import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
@@ -57,6 +63,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.lockerLine
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
 import pl.tajchert.paczko.fast.feature.parcels.impl.transitCompletedSegments
+import java.time.YearMonth
 
 /**
  * Home screen ("2a Home — Black Amber"): ready-for-pickup parcels on top —
@@ -98,7 +105,13 @@ private fun ParcelListContent(
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
-        topBar = { HomeHeader() },
+        topBar = {
+            if (selectedTab == BottomNavDestination.History) {
+                HomeHeader(title = "History", showLogo = false)
+            } else {
+                HomeHeader()
+            }
+        },
         bottomBar = {
             PaczkofastBottomBar(
                 selected = selectedTab,
@@ -269,28 +282,52 @@ private fun HistoryList(
     onParcelClick: (shipmentNumber: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currentMonth = remember { YearMonth.now() }
+    // Parcels arrive newest-first, so months fall out in descending order.
+    val months = remember(parcels) {
+        parcels.groupBy { historyMonthKey(it) }.toList()
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        item(key = "history-header") {
-            SectionHeader(
-                label = "History",
-                count = parcels.size,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-        }
-        items(items = parcels, key = Parcel::shipmentNumber) { parcel ->
-            TransitParcelCard(
-                title = formatShipmentNumber(parcel.shipmentNumber),
-                statusText = humanizeStatus(parcel.status),
-                completedSegments = TRANSIT_SEGMENTS,
-                totalSegments = TRANSIT_SEGMENTS,
-                onClick = { onParcelClick(parcel.shipmentNumber) },
-            )
+        months.forEach { (month, monthParcels) ->
+            val muted = month != null && month != currentMonth
+            if (month != null) {
+                item(key = "month-$month") {
+                    MonthHeader(
+                        label = historyMonthLabel(month),
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                }
+            }
+            items(items = monthParcels, key = Parcel::shipmentNumber) { parcel ->
+                HistoryParcelCard(
+                    title = formatShipmentNumber(parcel.shipmentNumber),
+                    outcomeLine = historyOutcomeLine(parcel),
+                    dateText = historyDateLabel(parcel),
+                    outcome = historyOutcome(parcel),
+                    muted = muted,
+                    onClick = { onParcelClick(parcel.shipmentNumber) },
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun MonthHeader(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = label.uppercase(),
+        style = MaterialTheme.typography.labelSmall,
+        color = PaczkofastTheme.colors.textMuted,
+        modifier = modifier.padding(horizontal = 4.dp),
+    )
 }
 
 @Composable

@@ -6,14 +6,16 @@ import pl.tajchert.paczko.fast.feature.settings.api.SettingsRoute
 import pl.tajchert.paczko.fast.feature.settings.impl.SettingsScreen
 
 fun EntryProviderScope<NavKey>.settingsEntries(
-    onBack: () -> Unit,
+    onOpenParcels: () -> Unit,
+    onOpenHistory: () -> Unit,
     onLoggedOut: () -> Unit,
     appVersion: String,
 ) {
     entry<SettingsRoute> {
         SettingsScreen(
             appVersion = appVersion,
-            onBack = onBack,
+            onOpenParcels = onOpenParcels,
+            onOpenHistory = onOpenHistory,
             onLoggedOut = onLoggedOut,
         )
     }

@@ -54,10 +54,13 @@ class SettingsViewModelTest {
     }
 }
 
-private class FakeAuthRepository : AuthRepository {
+private class FakeAuthRepository(
+    private val phoneNumber: String? = null,
+) : AuthRepository {
     var logoutCount = 0
     override fun observeAuthSession(): Flow<AuthSession> =
         MutableStateFlow(AuthSession(authToken = "a", refreshToken = "b"))
+    override fun observePhoneNumber(): Flow<String?> = MutableStateFlow(phoneNumber)
     override suspend fun requestSmsCode(phoneNumber: PhoneNumber) = Unit
     override suspend fun confirmSmsCode(phoneNumber: PhoneNumber, smsCode: String): AuthSession =
         AuthSession(authToken = "a", refreshToken = "b")

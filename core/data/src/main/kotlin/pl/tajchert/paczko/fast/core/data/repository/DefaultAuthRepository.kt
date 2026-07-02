@@ -2,6 +2,7 @@ package pl.tajchert.paczko.fast.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import pl.tajchert.paczko.fast.core.datastore.AuthTokensDataSource
 import pl.tajchert.paczko.fast.core.model.auth.AuthSession
 import pl.tajchert.paczko.fast.core.model.auth.PhoneNumber
@@ -21,6 +22,9 @@ class DefaultAuthRepository @Inject constructor(
 ) : AuthRepository {
     override fun observeAuthSession(): Flow<AuthSession> = authTokensDataSource.authSession
 
+    override fun observePhoneNumber(): Flow<String?> =
+        authTokensDataSource.phoneNumber.map { it?.let(::formatPhoneNumber) }
+
     override suspend fun requestSmsCode(phoneNumber: PhoneNumber) {
         authApi.requestSmsCode(
             SendSmsCodeRequestDto(phoneNumber = phoneNumber.toDto()),
@@ -39,6 +43,9 @@ class DefaultAuthRepository @Inject constructor(
             authTokensDataSource.saveTokens(
                 authToken = session.authToken,
                 refreshToken = session.refreshToken,
+            )
+            authTokensDataSource.savePhoneNumber(
+                "$PHONE_PREFIX_SIGN${phoneNumber.prefix}${phoneNumber.value}",
             )
         }
     }
@@ -83,5 +90,24 @@ class DefaultAuthRepository @Inject constructor(
     private companion object {
         const val ANDROID_PLATFORM = "Android"
         const val PHONE_PREFIX_SIGN = "+"
+
+        /**
+         * Formats a stored "+48601480312" number for display as
+         * "+48 601 480 312": a country prefix followed by the national number
+         * grouped in threes.
+         */
+        fun formatPhoneNumber(raw: String): String {
+            if (!raw.startsWith(PHONE_PREFIX_SIGN)) return raw
+            val digits = raw.drop(1)
+            // Polish numbers use a two-digit country code; fall back gracefully
+            // for anything shorter.
+            val prefixLength = if (digits.length > 9) digits.length - 9 else 2
+            val prefix = digits.take(prefixLength)
+            val national = digits.drop(prefixLength)
+            val grouped = national.chunked(3).joinToString(" ")
+            return listOf("$PHONE_PREFIX_SIGN$prefix", grouped)
+                .filter { it.isNotBlank() }
+                .joinToString(" ")
+        }
     }
 }

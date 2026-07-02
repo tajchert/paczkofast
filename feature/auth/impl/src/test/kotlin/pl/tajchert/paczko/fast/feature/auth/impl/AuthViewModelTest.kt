@@ -158,6 +158,8 @@ private class FakeAuthRepository(
 
     override fun observeAuthSession(): Flow<AuthSession> = flowOf(authSession)
 
+    override fun observePhoneNumber(): Flow<String?> = flowOf(null)
+
     override suspend fun requestSmsCode(phoneNumber: PhoneNumber) {
         requestRequests += 1
         requestCompleted?.await()

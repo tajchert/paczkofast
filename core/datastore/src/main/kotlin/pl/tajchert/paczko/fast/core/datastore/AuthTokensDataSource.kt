@@ -13,7 +13,13 @@ import javax.inject.Inject
 interface AuthTokensDataSource {
     val authSession: Flow<AuthSession>
 
+    /** The phone number the user last logged in with, or null if unknown. */
+    val phoneNumber: Flow<String?>
+
     suspend fun saveTokens(authToken: String, refreshToken: String)
+
+    /** Persists the logged-in phone number for display (e.g. Settings). */
+    suspend fun savePhoneNumber(phoneNumber: String)
 
     suspend fun clearTokens()
 }
@@ -29,6 +35,10 @@ class DataStoreAuthTokensDataSource @Inject constructor(
         )
     }
 
+    override val phoneNumber: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[PHONE_NUMBER]?.takeIf { it.isNotBlank() }
+    }
+
     override suspend fun saveTokens(authToken: String, refreshToken: String) {
         dataStore.edit { preferences ->
             preferences[AUTH_TOKEN] = authToken
@@ -36,15 +46,23 @@ class DataStoreAuthTokensDataSource @Inject constructor(
         }
     }
 
+    override suspend fun savePhoneNumber(phoneNumber: String) {
+        dataStore.edit { preferences ->
+            preferences[PHONE_NUMBER] = phoneNumber
+        }
+    }
+
     override suspend fun clearTokens() {
         dataStore.edit { preferences ->
             preferences.remove(AUTH_TOKEN)
             preferences.remove(REFRESH_TOKEN)
+            preferences.remove(PHONE_NUMBER)
         }
     }
 
     private companion object {
         val AUTH_TOKEN = stringPreferencesKey("auth_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+        val PHONE_NUMBER = stringPreferencesKey("phone_number")
     }
 }

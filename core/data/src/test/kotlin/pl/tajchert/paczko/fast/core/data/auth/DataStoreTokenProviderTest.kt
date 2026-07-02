@@ -48,11 +48,19 @@ private class FakeAuthTokensDataSource : AuthTokensDataSource {
 
     override val authSession: Flow<AuthSession> = authSessionFlow
 
+    private val phoneNumberFlow = MutableStateFlow<String?>(null)
+    override val phoneNumber: Flow<String?> = phoneNumberFlow
+
     override suspend fun saveTokens(authToken: String, refreshToken: String) {
         authSessionFlow.value = AuthSession(authToken = authToken, refreshToken = refreshToken)
     }
 
+    override suspend fun savePhoneNumber(phoneNumber: String) {
+        phoneNumberFlow.value = phoneNumber
+    }
+
     override suspend fun clearTokens() {
         authSessionFlow.value = AuthSession(authToken = "", refreshToken = "")
+        phoneNumberFlow.value = null
     }
 }

@@ -2,11 +2,15 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.detail
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -29,6 +34,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.LockerCard
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastLoadingIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
+import pl.tajchert.paczko.fast.core.designsystem.component.OutlinedStatusChip
 import pl.tajchert.paczko.fast.core.designsystem.component.PrimaryActionButton
 import pl.tajchert.paczko.fast.core.designsystem.component.StatusChip
 import pl.tajchert.paczko.fast.core.designsystem.component.TimelineEvent
@@ -153,11 +159,11 @@ private fun ParcelDetailBody(
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 StatusChip(text = humanizeStatus(parcel.status))
                 parcelSizeLabel(sizeCode)?.let { sizeLabel ->
-                    StatusChip(text = sizeLabel)
+                    OutlinedStatusChip(text = "Size $sizeLabel")
                 }
             }
             Text(
-                text = "Parcel",
+                text = senderName?.takeIf { it.isNotBlank() } ?: "Parcel",
                 style = MaterialTheme.typography.headlineSmall,
                 color = PaczkofastTheme.colors.textPrimary,
             )
@@ -169,12 +175,7 @@ private fun ParcelDetailBody(
                 ),
                 color = PaczkofastTheme.colors.textMuted,
             )
-            val metadataLines = buildList {
-                addAll(parcelMetadataLines(parcel))
-                senderName?.takeIf { it.isNotBlank() }?.let { add("From $it") }
-                shipmentType?.takeIf { it.isNotBlank() }?.let { add(humanizeStatus(it)) }
-            }
-            metadataLines.forEach { line ->
+            parcelMetadataLines(parcel).forEach { line ->
                 Text(
                     text = line,
                     style = MaterialTheme.typography.bodySmall,
@@ -182,6 +183,11 @@ private fun ParcelDetailBody(
                 )
             }
         }
+
+        SenderTypeCard(
+            senderName = senderName,
+            shipmentType = shipmentType?.let(::humanizeStatus),
+        )
 
         countdown?.let {
             DeadlineCard(
@@ -234,6 +240,64 @@ private fun ParcelDetailBody(
                 TrackingTimeline(events = timeline)
             }
         }
+    }
+}
+
+/**
+ * Bordered card listing the sender and shipment type as labeled rows
+ * ("SENDER  Zalando SE" / "TYPE  Courier → locker"). Renders nothing when
+ * neither field is known.
+ */
+@Composable
+private fun SenderTypeCard(
+    senderName: String?,
+    shipmentType: String?,
+    modifier: Modifier = Modifier,
+) {
+    val sender = senderName?.takeIf { it.isNotBlank() }
+    val type = shipmentType?.takeIf { it.isNotBlank() }
+    if (sender == null && type == null) return
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.large)
+            .background(PaczkofastTheme.colors.cardSurfaceSubtle)
+            .border(1.dp, PaczkofastTheme.colors.cardBorderSubtle, MaterialTheme.shapes.large)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        sender?.let { MetadataRow(label = "Sender", value = it, emphasize = true) }
+        type?.let { MetadataRow(label = "Type", value = it, emphasize = false) }
+    }
+}
+
+@Composable
+private fun MetadataRow(
+    label: String,
+    value: String,
+    emphasize: Boolean,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            text = label.uppercase(),
+            style = MaterialTheme.typography.labelSmall,
+            color = PaczkofastTheme.colors.textMuted,
+            modifier = Modifier.width(64.dp),
+        )
+        Text(
+            text = value,
+            style = if (emphasize) {
+                MaterialTheme.typography.labelMedium.copy(fontSize = 13.5.sp)
+            } else {
+                MaterialTheme.typography.bodyMedium
+            },
+            color = if (emphasize) {
+                PaczkofastTheme.colors.textPrimary
+            } else {
+                PaczkofastTheme.colors.textSecondary
+            },
+        )
     }
 }
 

@@ -8,16 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +19,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,7 +27,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.saveable.rememberSaveable
-import pl.tajchert.paczko.fast.core.designsystem.component.HoldToConfirmButton
+import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
+import pl.tajchert.paczko.fast.core.designsystem.component.HoldToOpenPanel
+import pl.tajchert.paczko.fast.core.designsystem.component.PrimaryActionButton
+import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 
 @Composable
@@ -84,7 +79,6 @@ fun CollectScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CollectContent(
     shipmentNumber: String,
@@ -95,75 +89,57 @@ private fun CollectContent(
 ) {
     Scaffold(
         modifier = modifier,
+        containerColor = PaczkofastTheme.colors.background,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "Collect parcel") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back",
-                        )
-                    }
-                },
-            )
+            DetailTopBar(title = "Open box", onBack = onBack)
         },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .padding(horizontal = 20.dp, vertical = 8.dp),
         ) {
-            Text(
-                text = shipmentNumber,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-            )
             if (uiState.state is CollectState.Idle) {
-                uiState.lockerName?.let { name ->
-                    Text(
-                        text = "Locker $name",
-                        style = MaterialTheme.typography.labelMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 12.dp),
-                    )
-                }
-                uiState.distanceMeters?.let { meters ->
-                    Text(
-                        text = "You're $meters m away",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 4.dp),
-                    )
-                }
-                HoldToConfirmButton(
-                    text = "Hold to open",
+                HoldToOpenPanel(
+                    distanceText = uiState.distanceMeters?.let { "$it m" },
+                    lockerCaption = uiState.lockerName?.let { "to locker $it" } ?: "to the locker",
+                    subline = "Stand at the locker before you start",
                     onConfirmed = onConfirmed,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
+                    modifier = Modifier.fillMaxSize(),
                 )
             } else {
-                Text(
-                    text = collectMessage(uiState.state),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 12.dp),
+                CollectStatus(
+                    state = uiState.state,
+                    onClose = onBack,
                 )
-                if (uiState.state is CollectState.Failed || uiState.state is CollectState.Completed) {
-                    Button(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 24.dp),
-                    ) {
-                        Text(text = "Close")
-                    }
-                }
             }
+        }
+    }
+}
+
+@Composable
+private fun CollectStatus(
+    state: CollectState,
+    onClose: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = collectMessage(state),
+            style = MaterialTheme.typography.displaySmall,
+            color = PaczkofastTheme.colors.textPrimary,
+            textAlign = TextAlign.Center,
+        )
+        if (state is CollectState.Failed || state is CollectState.Completed) {
+            PrimaryActionButton(
+                text = "Close",
+                onClick = onClose,
+                modifier = Modifier.padding(top = 28.dp),
+            )
         }
     }
 }

@@ -65,6 +65,17 @@ class DefaultAuthRepositoryTest {
             ),
             tokensDataSource.currentSession,
         )
+        assertEquals("+48600123456", tokensDataSource.currentPhoneNumber)
+    }
+
+    @Test
+    fun observePhoneNumberFormatsStoredNumber() = runTest {
+        tokensDataSource.savePhoneNumber("+48601480312")
+
+        repository.observePhoneNumber().test {
+            assertEquals("+48 601 480 312", awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -132,15 +143,26 @@ private class FakeAuthTokensDataSource : AuthTokensDataSource {
 
     override val authSession: Flow<AuthSession> = authSessionFlow
 
+    private val phoneNumberFlow = MutableStateFlow<String?>(null)
+    override val phoneNumber: Flow<String?> = phoneNumberFlow
+
     val currentSession: AuthSession
         get() = authSessionFlow.value
+
+    val currentPhoneNumber: String?
+        get() = phoneNumberFlow.value
 
     override suspend fun saveTokens(authToken: String, refreshToken: String) {
         authSessionFlow.value = AuthSession(authToken = authToken, refreshToken = refreshToken)
     }
 
+    override suspend fun savePhoneNumber(phoneNumber: String) {
+        phoneNumberFlow.value = phoneNumber
+    }
+
     override suspend fun clearTokens() {
         authSessionFlow.value = AuthSession(authToken = "", refreshToken = "")
+        phoneNumberFlow.value = null
     }
 }
 

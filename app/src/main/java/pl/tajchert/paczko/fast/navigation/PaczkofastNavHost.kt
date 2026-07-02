@@ -95,7 +95,10 @@ fun PaczkofastNavHost(
             )
 
             settingsEntries(
-                onBack = { backStack.removeLastOrNull() },
+                // Settings sits on top of the parcel list; returning to either
+                // tab just pops back to it (its own tab state is preserved).
+                onOpenParcels = { backStack.removeLastOrNull() },
+                onOpenHistory = { backStack.removeLastOrNull() },
                 onLoggedOut = {
                     backStack.clear()
                     backStack.add(AuthRoute)

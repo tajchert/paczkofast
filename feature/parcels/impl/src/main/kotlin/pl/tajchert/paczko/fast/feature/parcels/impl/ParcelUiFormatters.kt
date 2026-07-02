@@ -1,5 +1,6 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl
 
+import pl.tajchert.paczko.fast.core.designsystem.component.HistoryOutcome
 import pl.tajchert.paczko.fast.core.designsystem.component.TimelineEvent
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
@@ -7,6 +8,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -213,3 +215,105 @@ internal fun lockerLine(parcel: Parcel): String {
 /** "0000 0000 0000 0000 0000 0000" — shipment number grouped in fours. */
 internal fun formatShipmentNumber(shipmentNumber: String): String =
     shipmentNumber.chunked(4).joinToString(" ")
+
+// -----------------------------------------------------------------------------
+// History tab
+// -----------------------------------------------------------------------------
+
+/** Successfully-collected/delivered statuses — a positive (amber) outcome. */
+private val OUTCOME_PICKED_UP = setOf(
+    "delivered",
+    "claimed",
+    "collected_by_customer",
+    "collected_from_sender",
+)
+
+/** Statuses where the pickup window simply ran out. */
+private val OUTCOME_EXPIRED = setOf(
+    "pickup_time_expired",
+    "avizo",
+)
+
+/**
+ * Classifies a finished parcel into the [HistoryOutcome] shown on its history
+ * row. Anything finished that wasn't collected or expired (returned,
+ * undelivered, canceled) is treated as [HistoryOutcome.Returned].
+ */
+internal fun historyOutcome(parcel: Parcel): HistoryOutcome = when (parcel.status.lowercase()) {
+    in OUTCOME_PICKED_UP -> HistoryOutcome.PickedUp
+    in OUTCOME_EXPIRED -> HistoryOutcome.Expired
+    else -> HistoryOutcome.Returned
+}
+
+/**
+ * The muted outcome line under a history row's title, e.g.
+ * "Picked up · Locker WAW04B", "Expired · returned to sender" or
+ * "Returned to sender".
+ */
+internal fun historyOutcomeLine(parcel: Parcel): String = when (historyOutcome(parcel)) {
+    HistoryOutcome.PickedUp -> listOfNotNull(
+        "Picked up",
+        parcel.pickupPoint?.name?.let { "Locker $it" },
+    ).joinToString(" · ")
+
+    HistoryOutcome.Expired -> "Expired · returned to sender"
+    HistoryOutcome.Returned -> humanizeStatus(parcel.status)
+}
+
+private val HISTORY_DATE_TIME_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.ENGLISH)
+private val HISTORY_DATE_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
+private val HISTORY_MONTH_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH)
+private val HISTORY_MONTH_YEAR_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
+
+/**
+ * Trailing date label for a history row. Parcels finished in the current month
+ * show the time ("2 Jul, 14:32"); older ones show the date only ("28 Jun").
+ * Falls back to an empty string when no completion date is known.
+ */
+internal fun historyDateLabel(
+    parcel: Parcel,
+    now: Instant = Instant.now(),
+    zone: ZoneId = ZoneId.systemDefault(),
+): String {
+    val instant = historyInstant(parcel) ?: return ""
+    val date = instant.atZone(zone)
+    val nowDate = now.atZone(zone)
+    val sameMonth = date.year == nowDate.year && date.month == nowDate.month
+    return if (sameMonth) {
+        HISTORY_DATE_TIME_FORMAT.format(date)
+    } else {
+        HISTORY_DATE_FORMAT.format(date)
+    }
+}
+
+/** Grouping key for the History tab's month sections, newest month first. */
+internal fun historyMonthKey(
+    parcel: Parcel,
+    zone: ZoneId = ZoneId.systemDefault(),
+): YearMonth? = historyInstant(parcel)?.let { YearMonth.from(it.atZone(zone)) }
+
+/**
+ * Uppercase month heading, e.g. "July" for the current year, "June 2025" for
+ * an earlier year.
+ */
+internal fun historyMonthLabel(
+    yearMonth: YearMonth,
+    now: Instant = Instant.now(),
+    zone: ZoneId = ZoneId.systemDefault(),
+): String {
+    val format = if (yearMonth.year == now.atZone(zone).year) {
+        HISTORY_MONTH_FORMAT
+    } else {
+        HISTORY_MONTH_YEAR_FORMAT
+    }
+    return format.format(yearMonth)
+}
+
+private fun historyInstant(parcel: Parcel): Instant? {
+    val key = parcel.historySortKey()
+    return if (key == Long.MIN_VALUE) null else Instant.ofEpochMilli(key)
+}
