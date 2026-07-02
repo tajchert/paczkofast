@@ -69,5 +69,4 @@ private fun parcelEntity(
     expiryDate = expiryDate,
     storedDate = storedDate,
     collectOperation = true,
-    mobileCollectPossible = true,
 )

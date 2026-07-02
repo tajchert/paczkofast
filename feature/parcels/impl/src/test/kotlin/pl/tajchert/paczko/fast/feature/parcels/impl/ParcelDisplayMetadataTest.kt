@@ -49,7 +49,6 @@ private fun parcel(
     expiryDate = null,
     storedDate = null,
     operations = ParcelOperations(collect = true),
-    mobileCollectPossible = true,
     multiCompartmentUuid = multiCompartmentUuid,
     multiPackageShipmentNumbers = multiPackageShipmentNumbers,
     ownershipStatus = ownershipStatus,

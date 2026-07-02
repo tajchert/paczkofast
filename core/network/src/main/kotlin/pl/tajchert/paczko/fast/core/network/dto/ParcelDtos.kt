@@ -22,7 +22,6 @@ data class ParcelDto(
     val pickUpPoint: PickupPointDto? = null,
     val multiCompartment: MultiCompartmentDto? = null,
     val operations: ParcelOperationsDto = ParcelOperationsDto(),
-    val mobileCollectPossible: Boolean? = null,
     val ownershipStatus: String? = null,
 )
 

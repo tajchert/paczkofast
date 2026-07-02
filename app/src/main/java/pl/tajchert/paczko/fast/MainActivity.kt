@@ -3,10 +3,12 @@ package pl.tajchert.paczko.fast
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -74,6 +76,22 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val darkTheme = shouldUseDarkTheme(uiState)
+
+            // Keep system bar icon contrast in sync with the app theme,
+            // which can differ from the system dark mode setting.
+            DisposableEffect(darkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(
+                        android.graphics.Color.TRANSPARENT,
+                        android.graphics.Color.TRANSPARENT,
+                    ) { darkTheme },
+                    navigationBarStyle = SystemBarStyle.auto(
+                        android.graphics.Color.TRANSPARENT,
+                        android.graphics.Color.TRANSPARENT,
+                    ) { darkTheme },
+                )
+                onDispose {}
+            }
 
             PaczkofastTheme(darkTheme = darkTheme) {
                 when (val state = uiState) {

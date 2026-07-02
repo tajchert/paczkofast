@@ -2,167 +2,167 @@ package pl.tajchert.paczko.fast.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 
 /**
- * Typography scale for the Paczkofast app.
+ * Typography for the Paczkofast app.
  *
- * ## Material 3 Type Scale
+ * The design uses two families:
+ * - **Manrope** — body text, card titles, labels (weights 400–800)
+ * - **Space Grotesk** — display text: wordmark, screen titles, buttons,
+ *   pickup deadlines and codes
  *
- * Material 3 defines a type scale with these roles:
- * - Display: Large, impactful headlines
- * - Headline: Section headers
- * - Title: Smaller headers, dialog titles
- * - Body: Paragraph text
- * - Label: Buttons, input labels
- *
- * ## Customization
- *
- * This uses the system default font (FontFamily.Default).
- * To use a custom font:
- *
- * ```kotlin
- * private val MyFontFamily = FontFamily(
- *     Font(R.font.my_font_regular, FontWeight.Normal),
- *     Font(R.font.my_font_medium, FontWeight.Medium),
- *     Font(R.font.my_font_bold, FontWeight.Bold),
- * )
- *
- * val PaczkofastTypography = Typography(
- *     displayLarge = TextStyle(
- *         fontFamily = MyFontFamily,
- *         ...
- *     ),
- *     ...
- * )
- * ```
- *
- * ## Usage
- *
- * Access typography through MaterialTheme:
- *
- * ```kotlin
- * Text(
- *     text = "Hello",
- *     style = MaterialTheme.typography.headlineMedium,
- * )
- * ```
+ * Both are bundled as variable fonts; specific weights are instantiated
+ * via [FontVariation.Settings].
  */
+
+@OptIn(androidx.compose.ui.text.ExperimentalTextApi::class)
+private fun variableFont(resId: Int, weight: FontWeight) = Font(
+    resId = resId,
+    weight = weight,
+    variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)),
+)
+
+val ManropeFamily = FontFamily(
+    variableFont(R.font.manrope, FontWeight.Normal),
+    variableFont(R.font.manrope, FontWeight.Medium),
+    variableFont(R.font.manrope, FontWeight.SemiBold),
+    variableFont(R.font.manrope, FontWeight.Bold),
+    variableFont(R.font.manrope, FontWeight.ExtraBold),
+)
+
+val SpaceGroteskFamily = FontFamily(
+    variableFont(R.font.space_grotesk, FontWeight.Medium),
+    variableFont(R.font.space_grotesk, FontWeight.SemiBold),
+    variableFont(R.font.space_grotesk, FontWeight.Bold),
+)
+
 val PaczkofastTypography = Typography(
-    // Display styles - for large, impactful text
+    // Display styles — Space Grotesk, large impactful text
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 57.sp,
-        lineHeight = 64.sp,
-        letterSpacing = (-0.25).sp,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
+        lineHeight = 46.sp,
+        letterSpacing = (-0.5).sp,
     ),
     displayMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 45.sp,
-        lineHeight = 52.sp,
-        letterSpacing = 0.sp,
-    ),
-    displaySmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 36.sp,
-        lineHeight = 44.sp,
-        letterSpacing = 0.sp,
-    ),
-
-    // Headline styles - for section headers
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = 0.sp,
+        lineHeight = 38.sp,
+        letterSpacing = (-0.25).sp,
     ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
-        letterSpacing = 0.sp,
-    ),
-    headlineSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 24.sp,
+    // e.g. "You're 8 m away" headline of the open-box flow
+    displaySmall = TextStyle(
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 26.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
     ),
 
-    // Title styles - for smaller headers
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
+    // Headline styles — Manrope extra-bold, e.g. sender name on detail
+    headlineLarge = TextStyle(
+        fontFamily = ManropeFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 28.sp,
+        lineHeight = 34.sp,
+        letterSpacing = 0.sp,
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = ManropeFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 24.sp,
+        lineHeight = 30.sp,
+        letterSpacing = 0.sp,
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = ManropeFamily,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
     ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.15.sp,
+
+    // Title styles — Space Grotesk for app/screen titles and deadlines
+    // App wordmark "Paczkofast"
+    titleLarge = TextStyle(
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
+        letterSpacing = (-0.3).sp,
     ),
+    // Screen titles ("Parcel details"), countdown numbers
+    titleMedium = TextStyle(
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.sp,
+    ),
+    // "Pick up by Fri 3 Jul, 12:56"
     titleSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.1.sp,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.5.sp,
+        lineHeight = 19.sp,
+        letterSpacing = 0.sp,
     ),
 
-    // Body styles - for paragraph text
+    // Body styles — Manrope
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = ManropeFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
+        lineHeight = 23.sp,
+        letterSpacing = 0.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = ManropeFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.25.sp,
+        fontSize = 13.5.sp,
+        lineHeight = 19.sp,
+        letterSpacing = 0.sp,
     ),
+    // Card metadata lines ("Locker WAW04B · Górczewska 12 · 350 m")
     bodySmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = ManropeFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.4.sp,
+        fontSize = 12.5.sp,
+        lineHeight = 17.sp,
+        letterSpacing = 0.sp,
     ),
 
-    // Label styles - for buttons, input labels
+    // Label styles
+    // Primary action buttons ("Open box remotely") — Space Grotesk
     labelLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
         lineHeight = 20.sp,
-        letterSpacing = 0.1.sp,
+        letterSpacing = 0.sp,
     ),
+    // Emphasised small labels ("46 h left", count badges)
     labelMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
+        fontFamily = ManropeFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 12.5.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.5.sp,
+        letterSpacing = 0.sp,
     ),
+    // Uppercase section labels ("READY FOR PICKUP")
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
+        fontFamily = ManropeFamily,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 1.5.sp,
     ),
 )

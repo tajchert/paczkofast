@@ -58,7 +58,7 @@ class UserPreferencesDataSource @Inject constructor(
      */
     val userPreferences: Flow<UserPreferences> = dataStore.data.map { preferences ->
         UserPreferences(
-            darkTheme = preferences[DARK_THEME] ?: false,
+            darkTheme = preferences[DARK_THEME] ?: true,
         )
     }
 

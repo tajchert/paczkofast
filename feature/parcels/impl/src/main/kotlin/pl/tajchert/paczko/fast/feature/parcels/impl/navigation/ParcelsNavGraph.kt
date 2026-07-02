@@ -18,6 +18,9 @@ fun EntryProviderScope<NavKey>.parcelEntries(
             onParcelClick = { shipmentNumber ->
                 onNavigate(ParcelDetailRoute(shipmentNumber = shipmentNumber))
             },
+            onCollectClick = { shipmentNumber ->
+                onNavigate(ParcelCollectRoute(shipmentNumber = shipmentNumber))
+            },
         )
     }
 

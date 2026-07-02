@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 class ParcelTest {
     @Test
-    fun collectableParcelRequiresCollectOperationAndMobileCollectFlag() {
+    fun collectableParcelRequiresCollectOperationAndOpenCode() {
         val parcel = Parcel(
             shipmentNumber = "123",
             status = "ready_to_pickup",
@@ -17,11 +17,9 @@ class ParcelTest {
             expiryDate = null,
             storedDate = null,
             operations = ParcelOperations(collect = true),
-            mobileCollectPossible = true,
         )
 
         assertTrue(parcel.canCollectRemotely)
-        assertFalse(parcel.copy(mobileCollectPossible = false).canCollectRemotely)
         assertFalse(parcel.copy(operations = ParcelOperations(collect = false)).canCollectRemotely)
         assertFalse(parcel.copy(openCode = "").canCollectRemotely)
         assertFalse(parcel.copy(openCode = null).canCollectRemotely)
@@ -39,7 +37,6 @@ class ParcelTest {
             expiryDate = null,
             storedDate = null,
             operations = ParcelOperations(collect = true),
-            mobileCollectPossible = true,
             multiCompartmentUuid = "multi-uuid",
             multiPackageShipmentNumbers = listOf("123", "456"),
             ownershipStatus = "SHARED_TO_ME",

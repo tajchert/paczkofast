@@ -83,7 +83,6 @@ private fun parcelDto(number: String) = ParcelDto(
     openCode = "123456",
     qrCode = "qr-$number",
     operations = ParcelOperationsDto(collect = true),
-    mobileCollectPossible = true,
 )
 
 private fun parcelEntity(number: String) = ParcelEntity(
@@ -100,7 +99,6 @@ private fun parcelEntity(number: String) = ParcelEntity(
     expiryDate = null,
     storedDate = null,
     collectOperation = true,
-    mobileCollectPossible = true,
 )
 
 private class FakeParcelApi(

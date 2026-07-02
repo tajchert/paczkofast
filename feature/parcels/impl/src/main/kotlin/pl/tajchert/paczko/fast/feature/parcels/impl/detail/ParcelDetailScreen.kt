@@ -1,35 +1,56 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.detail
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import pl.tajchert.paczko.fast.core.designsystem.component.DeadlineCard
+import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
+import pl.tajchert.paczko.fast.core.designsystem.component.LockerCard
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastLoadingIndicator
-import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastTopAppBar
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
+import pl.tajchert.paczko.fast.core.designsystem.component.PrimaryActionButton
+import pl.tajchert.paczko.fast.core.designsystem.component.StatusChip
+import pl.tajchert.paczko.fast.core.designsystem.component.TimelineEvent
+import pl.tajchert.paczko.fast.core.designsystem.component.TrackingTimeline
+import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
-import pl.tajchert.paczko.fast.core.ui.QrCodeImage
+import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.core.ui.QrPanel
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelDetailRoute
+import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
+import pl.tajchert.paczko.fast.feature.parcels.impl.formatTimelineTime
+import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
+import pl.tajchert.paczko.fast.feature.parcels.impl.isDelivered
+import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
+import pl.tajchert.paczko.fast.feature.parcels.impl.list.previewParcels
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
+import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
 
+/**
+ * Parcel detail screen ("2c Parcel detail — Black Amber"): status chip,
+ * deadline countdown, QR panel, remote-open action, locker card and
+ * tracking timeline.
+ */
 @Composable
 fun ParcelDetailScreen(
     route: ParcelDetailRoute,
@@ -57,10 +78,11 @@ private fun ParcelDetailContent(
 ) {
     Scaffold(
         modifier = modifier,
+        containerColor = PaczkofastTheme.colors.background,
         topBar = {
-            PaczkofastTopAppBar(
+            DetailTopBar(
                 title = "Parcel details",
-                onNavigationClick = onBack,
+                onBack = onBack,
             )
         },
     ) { paddingValues ->
@@ -102,96 +124,181 @@ private fun ParcelDetailBody(
     onCollect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val countdown = pickupCountdown(parcel)
+
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        // Status + shipment identity
+        Column(
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            StatusChip(text = humanizeStatus(parcel.status))
             Text(
-                text = parcel.shipmentNumber,
+                text = "Parcel",
                 style = MaterialTheme.typography.headlineSmall,
+                color = PaczkofastTheme.colors.textPrimary,
             )
             Text(
-                text = parcel.status,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
+                text = formatShipmentNumber(parcel.shipmentNumber),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 12.sp,
+                ),
+                color = PaczkofastTheme.colors.textMuted,
+            )
+            parcelMetadataLines(parcel).forEach { line ->
+                Text(
+                    text = line,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = PaczkofastTheme.colors.accentText,
+                )
+            }
+        }
+
+        countdown?.let {
+            DeadlineCard(
+                deadlineText = it.deadlineText,
+                countdownText = it.countdownText,
+                progress = it.progress,
+                urgent = it.urgent,
             )
         }
 
-        HorizontalDivider()
-
-        DetailSection(title = "Pickup point") {
-            DetailRow(label = "Machine", value = parcel.pickupPoint?.name)
-            DetailRow(label = "Address", value = parcel.pickupPoint?.addressLine)
-            DetailRow(label = "Location", value = parcel.pickupPoint?.locationDescription)
-        }
-
-        DetailSection(title = "Dates") {
-            DetailRow(label = "Stored", value = parcel.storedDate)
-            DetailRow(label = "Expires", value = parcel.expiryDate)
-        }
-
-        val metadataLines = parcelMetadataLines(parcel)
-        if (metadataLines.isNotEmpty()) {
-            DetailSection(title = "Package info") {
-                metadataLines.forEach { line ->
-                    Text(
-                        text = line,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            }
-        }
-
-        DetailSection(title = "Collection") {
-            DetailRow(label = "Open code", value = parcel.openCode)
-            parcel.qrCode?.takeIf { it.isNotBlank() }?.let { qrCode ->
-                QrCodeImage(payload = qrCode, modifier = Modifier.size(240.dp))
-            }
+        parcel.qrCode?.takeIf(String::isNotBlank)?.let { qrCode ->
+            QrPanel(
+                payload = qrCode,
+                code = parcel.openCode,
+                qrSize = 150,
+            )
         }
 
         if (parcel.canCollectRemotely) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
+            PrimaryActionButton(
+                text = "Open box remotely",
                 onClick = onCollect,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = "Open compartment")
+            )
+        }
+
+        parcel.pickupPoint?.let { point ->
+            LockerCard(
+                lockerName = "Locker ${point.name}",
+                address = point.addressLine ?: point.name,
+                note = point.locationDescription,
+                onNavigate = navigateAction(point) { intent ->
+                    context.startActivity(intent)
+                },
+            )
+        }
+
+        val timeline = trackingEvents(parcel)
+        if (timeline.isNotEmpty()) {
+            Column(modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)) {
+                Text(
+                    text = "TRACKING",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = PaczkofastTheme.colors.textMuted,
+                    modifier = Modifier.padding(bottom = 14.dp),
+                )
+                TrackingTimeline(events = timeline)
             }
         }
     }
 }
 
-@Composable
-private fun DetailSection(
-    title: String,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-        content()
+/**
+ * Builds the geo intent action for the locker, or null when the pickup
+ * point has no coordinates or address to navigate to.
+ */
+private fun navigateAction(
+    point: PickupPoint,
+    startActivity: (Intent) -> Unit,
+): (() -> Unit)? {
+    val uri = when {
+        point.latitude != null && point.longitude != null ->
+            "geo:${point.latitude},${point.longitude}?q=${point.latitude},${point.longitude}(${Uri.encode(point.name)})"
+
+        !point.addressLine.isNullOrBlank() ->
+            "geo:0,0?q=${Uri.encode(point.addressLine)}"
+
+        else -> return null
+    }
+    return { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri))) }
+}
+
+/**
+ * Canonical delivery pipeline shown on the detail screen, newest stage
+ * first. The InPost list API doesn't return the event history, so past
+ * stages are derived from the current status (dates are only known for
+ * the stage the parcel is in right now); stages the parcel hasn't reached
+ * yet are rendered as upcoming.
+ */
+private val PIPELINE_STAGES = listOf(
+    "Shipment created",
+    "In transit",
+    "Out for delivery",
+    "Ready for pickup",
+    "Picked up",
+)
+
+/** Index into [PIPELINE_STAGES] for the parcel's current status. */
+private fun pipelineStage(parcel: Parcel): Int = when {
+    parcel.isDelivered -> 4
+    parcel.isReadyForPickup -> 3
+    else -> when (parcel.status.lowercase()) {
+        "out_for_delivery", "adopted_at_target_branch" -> 2
+        "created", "confirmed", "offers_prepared", "offer_selected", "dispatched_by_sender" -> 0
+        else -> 1
     }
 }
 
-@Composable
-private fun DetailRow(
-    label: String,
-    value: String?,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+private fun trackingEvents(parcel: Parcel): List<TimelineEvent> {
+    val currentStage = pipelineStage(parcel)
+    return PIPELINE_STAGES.mapIndexed { stage, stageLabel ->
+        val isCurrent = stage == currentStage
+        TimelineEvent(
+            // The current stage shows the real (humanized) status, which can
+            // be more specific than the canonical stage name.
+            label = when {
+                isCurrent && currentStage == 3 -> "Ready for pickup"
+                isCurrent -> humanizeStatus(parcel.status)
+                else -> stageLabel
+            },
+            time = when {
+                isCurrent && currentStage == 3 -> formatTimelineTime(parcel.storedDate)
+                else -> null
+            },
+            isCurrent = isCurrent,
+            isUpcoming = stage > currentStage,
         )
-        Text(
-            text = value?.takeIf { it.isNotBlank() } ?: "Not available",
-            style = MaterialTheme.typography.bodyLarge,
+    }.reversed()
+}
+
+// -----------------------------------------------------------------------------
+// Previews
+// -----------------------------------------------------------------------------
+
+internal class ParcelDetailPreviewProvider : PreviewParameterProvider<ParcelDetailUiState> {
+    override val values: Sequence<ParcelDetailUiState> = sequenceOf(
+        ParcelDetailUiState(isLoading = false, parcel = previewParcels.first()),
+    )
+}
+
+@PaczkofastPreviews
+@Composable
+private fun ParcelDetailContentPreview(
+    @PreviewParameter(ParcelDetailPreviewProvider::class) uiState: ParcelDetailUiState,
+) {
+    PaczkofastTheme {
+        ParcelDetailContent(
+            uiState = uiState,
+            onBack = {},
+            onCollect = {},
         )
     }
 }

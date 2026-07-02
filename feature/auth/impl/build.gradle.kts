@@ -26,12 +26,16 @@ android {
 
 dependencies {
     implementation(projects.feature.auth.api)
+    implementation(projects.core.designsystem)
     implementation(projects.core.domain)
     implementation(projects.core.model)
+
+    implementation(libs.androidx.activity.compose)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     implementation(libs.bundles.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.bundles.compose.debug)
 
     implementation(libs.bundles.lifecycle)

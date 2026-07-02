@@ -14,13 +14,12 @@ data class Parcel(
     val expiryDate: String?,
     val storedDate: String?,
     val operations: ParcelOperations,
-    val mobileCollectPossible: Boolean?,
     val multiCompartmentUuid: String? = null,
     val multiPackageShipmentNumbers: List<String> = emptyList(),
     val ownershipStatus: String? = null,
 ) {
     val canCollectRemotely: Boolean
-        get() = operations.collect && mobileCollectPossible == true && openCode.isNullOrBlank().not()
+        get() = operations.collect && openCode.isNullOrBlank().not()
 
     val isMultiPackage: Boolean
         get() = multiCompartmentUuid.isNullOrBlank().not() || multiPackageShipmentNumbers.isNotEmpty()

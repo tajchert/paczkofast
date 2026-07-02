@@ -30,18 +30,18 @@ import androidx.compose.ui.unit.dp
  * ```
  */
 val PaczkofastShapes = Shapes(
-    // Extra small - for very small components like chips
-    extraSmall = RoundedCornerShape(4.dp),
+    // Extra small - status chips, count badges
+    extraSmall = RoundedCornerShape(7.dp),
 
-    // Small - for buttons, small cards
+    // Small - size badges, small controls
     small = RoundedCornerShape(8.dp),
 
-    // Medium - for cards, dialogs
-    medium = RoundedCornerShape(12.dp),
+    // Medium - action buttons, QR panels
+    medium = RoundedCornerShape(13.dp),
 
-    // Large - for bottom sheets, navigation drawers
-    large = RoundedCornerShape(16.dp),
+    // Large - subtle (in-transit) cards
+    large = RoundedCornerShape(18.dp),
 
-    // Extra large - for large dialogs, full-screen modals
-    extraLarge = RoundedCornerShape(28.dp),
+    // Extra large - prominent (ready) cards
+    extraLarge = RoundedCornerShape(20.dp),
 )

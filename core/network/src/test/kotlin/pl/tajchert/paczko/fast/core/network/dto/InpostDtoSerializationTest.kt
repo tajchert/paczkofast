@@ -37,7 +37,6 @@ class InpostDtoSerializationTest {
                 "openCode": "123456",
                 "qrCode": "opaque-qr",
                 "operations": { "collect": true },
-                "mobileCollectPossible": true,
                 "events": [],
                 "eventLog": [],
                 "sharedTo": [],
@@ -51,6 +50,7 @@ class InpostDtoSerializationTest {
 
         assertEquals("123456", response.parcels.single().openCode)
         assertEquals("opaque-qr", response.parcels.single().qrCode)
+        assertEquals(true, response.parcels.single().operations.collect)
         assertEquals(listOf("222"), response.removedParcelList)
     }
 
@@ -67,8 +67,7 @@ class InpostDtoSerializationTest {
                   "shipmentNumbers": ["111", "222"]
                 },
                 "ownershipStatus": "SHARED_TO_ME",
-                "operations": { "collect": true },
-                "mobileCollectPossible": true
+                "operations": { "collect": true }
               }],
               "more": false
             }

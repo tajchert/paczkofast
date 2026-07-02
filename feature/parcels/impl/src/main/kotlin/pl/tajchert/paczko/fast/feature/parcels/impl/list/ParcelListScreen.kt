@@ -3,42 +3,65 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Inbox
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
+import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastBottomBar
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
-import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastTopAppBar
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
+import pl.tajchert.paczko.fast.core.designsystem.component.ReadyParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.component.SectionHeader
+import pl.tajchert.paczko.fast.core.designsystem.component.TransitParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
-import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
+import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
+import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.core.ui.QrPanel
+import pl.tajchert.paczko.fast.feature.parcels.impl.TRANSIT_SEGMENTS
+import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
+import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
+import pl.tajchert.paczko.fast.feature.parcels.impl.isDelivered
+import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
+import pl.tajchert.paczko.fast.feature.parcels.impl.lockerLine
+import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
+import pl.tajchert.paczko.fast.feature.parcels.impl.transitCompletedSegments
 
+/**
+ * Home screen ("2a Home — Black Amber"): ready-for-pickup parcels on top —
+ * the first one expanded with its QR code — followed by parcels on the way.
+ */
 @Composable
 fun ParcelListScreen(
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onCollectClick: (shipmentNumber: String) -> Unit,
     viewModel: ParcelListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,163 +73,292 @@ fun ParcelListScreen(
     ParcelListContent(
         uiState = uiState,
         onParcelClick = onParcelClick,
+        onCollectClick = onCollectClick,
         onRefreshClick = viewModel::refresh,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ParcelListContent(
     uiState: ParcelListUiState,
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onCollectClick: (shipmentNumber: String) -> Unit,
     onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = {
-            PaczkofastTopAppBar(
-                title = "Paczkofast",
-                actions = {
-                    IconButton(
-                        onClick = onRefreshClick,
-                        enabled = !uiState.isRefreshing,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh parcels",
-                        )
-                    }
-                },
+        containerColor = PaczkofastTheme.colors.background,
+        topBar = { HomeHeader() },
+        bottomBar = {
+            PaczkofastBottomBar(
+                selected = BottomNavDestination.Parcels,
+                onSelect = { /* History and Settings are not built yet */ },
             )
         },
     ) { paddingValues ->
-        Column(
+        val refreshState = rememberPullToRefreshState()
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefreshClick,
+            state = refreshState,
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    state = refreshState,
+                    isRefreshing = uiState.isRefreshing,
+                    containerColor = PaczkofastTheme.colors.cardSurface,
+                    color = PaczkofastTheme.colors.accent,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            if (uiState.isRefreshing) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
+            Column(modifier = Modifier.fillMaxSize()) {
+                if (uiState.parcels.isNotEmpty() && uiState.errorMessage != null) {
+                    Text(
+                        text = uiState.errorMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
 
-            if (uiState.parcels.isNotEmpty() && uiState.errorMessage != null) {
-                Text(
-                    text = uiState.errorMessage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                )
-            }
+                when {
+                    uiState.parcels.isNotEmpty() -> ParcelSections(
+                        parcels = uiState.parcels,
+                        onParcelClick = onParcelClick,
+                        onCollectClick = onCollectClick,
+                    )
 
-            when {
-                uiState.parcels.isNotEmpty() -> ParcelList(
-                    parcels = uiState.parcels,
-                    onParcelClick = onParcelClick,
-                )
+                    uiState.errorMessage != null -> PaczkofastErrorState(
+                        message = uiState.errorMessage,
+                        onRetry = onRefreshClick,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                    )
 
-                uiState.errorMessage != null -> PaczkofastErrorState(
-                    message = uiState.errorMessage,
-                    onRetry = onRefreshClick,
-                    modifier = Modifier.fillMaxSize(),
-                )
-
-                else -> PaczkofastEmptyState(
-                    icon = Icons.Outlined.Inbox,
-                    title = "No parcels",
-                    description = "Your tracked parcels will appear here.",
-                    modifier = Modifier.fillMaxSize(),
-                )
+                    else -> PaczkofastEmptyState(
+                        icon = Icons.Outlined.Inbox,
+                        title = "No parcels",
+                        description = "Your tracked parcels will appear here.",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ParcelList(
+private fun ParcelSections(
     parcels: List<Parcel>,
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onCollectClick: (shipmentNumber: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val sections = remember(parcels) {
+        val (ready, rest) = parcels.partition { it.isReadyForPickup }
+        val (delivered, onTheWay) = rest.partition { it.isDelivered }
+        Triple(ready, onTheWay, delivered)
+    }
+    val (ready, onTheWay, delivered) = sections
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        items(
-            items = parcels,
-            key = { parcel -> parcel.shipmentNumber },
-        ) { parcel ->
-            ParcelCard(
-                parcel = parcel,
-                onClick = { onParcelClick(parcel.shipmentNumber) },
-            )
+        if (ready.isNotEmpty()) {
+            item(key = "ready-header") {
+                SectionHeader(
+                    label = "Ready for pickup",
+                    count = ready.size,
+                    highlighted = true,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+            items(items = ready, key = Parcel::shipmentNumber) { parcel ->
+                if (parcel === ready.first()) {
+                    ExpandedReadyCard(
+                        parcel = parcel,
+                        onClick = { onParcelClick(parcel.shipmentNumber) },
+                        onCollectClick = { onCollectClick(parcel.shipmentNumber) },
+                    )
+                } else {
+                    CollapsedReadyCard(
+                        parcel = parcel,
+                        onClick = { onParcelClick(parcel.shipmentNumber) },
+                    )
+                }
+            }
+        }
+
+        if (onTheWay.isNotEmpty()) {
+            item(key = "transit-header") {
+                SectionHeader(
+                    label = "On the way",
+                    count = onTheWay.size,
+                    modifier = Modifier.padding(top = 10.dp),
+                )
+            }
+            items(items = onTheWay, key = Parcel::shipmentNumber) { parcel ->
+                TransitParcelCard(
+                    title = formatShipmentNumber(parcel.shipmentNumber),
+                    statusText = humanizeStatus(parcel.status),
+                    completedSegments = transitCompletedSegments(parcel.status),
+                    totalSegments = TRANSIT_SEGMENTS,
+                    onClick = { onParcelClick(parcel.shipmentNumber) },
+                )
+            }
+        }
+
+        if (delivered.isNotEmpty()) {
+            item(key = "delivered-header") {
+                SectionHeader(
+                    label = "Delivered",
+                    count = delivered.size,
+                    modifier = Modifier.padding(top = 10.dp),
+                )
+            }
+            items(items = delivered, key = Parcel::shipmentNumber) { parcel ->
+                TransitParcelCard(
+                    title = formatShipmentNumber(parcel.shipmentNumber),
+                    statusText = humanizeStatus(parcel.status),
+                    completedSegments = TRANSIT_SEGMENTS,
+                    totalSegments = TRANSIT_SEGMENTS,
+                    onClick = { onParcelClick(parcel.shipmentNumber) },
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ParcelCard(
+private fun ExpandedReadyCard(
+    parcel: Parcel,
+    onClick: () -> Unit,
+    onCollectClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val countdown = pickupCountdown(parcel)
+    ReadyParcelCard(
+        title = formatShipmentNumber(parcel.shipmentNumber),
+        subtitle = lockerLine(parcel),
+        deadlineText = countdown?.deadlineText,
+        timeLeftText = countdown?.timeLeftText,
+        progress = countdown?.progress,
+        urgent = countdown?.urgent == true,
+        qrContent = parcel.qrCode?.takeIf(String::isNotBlank)?.let { qrCode ->
+            { QrPanel(payload = qrCode, code = parcel.openCode) }
+        },
+        actionText = "Open box remotely".takeIf { parcel.canCollectRemotely },
+        onActionClick = onCollectClick,
+        onClick = onClick,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun CollapsedReadyCard(
     parcel: Parcel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedCard(
+    val countdown = pickupCountdown(parcel)
+    CollapsedReadyParcelCard(
+        title = formatShipmentNumber(parcel.shipmentNumber),
+        subtitle = lockerLine(parcel),
+        timeLeftText = countdown?.timeLeftText,
+        progress = countdown?.progress,
+        urgent = countdown?.urgent == true,
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = parcel.shipmentNumber,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(
-                    text = parcel.status,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+        modifier = modifier,
+    )
+}
 
-            Spacer(modifier = Modifier.height(8.dp))
+// -----------------------------------------------------------------------------
+// Previews
+// -----------------------------------------------------------------------------
 
-            Text(
-                text = parcel.pickupPoint?.name ?: "Pickup point pending",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+internal class ParcelListPreviewProvider : PreviewParameterProvider<ParcelListUiState> {
+    override val values: Sequence<ParcelListUiState> = sequenceOf(
+        ParcelListUiState(parcels = previewParcels),
+    )
+}
 
-            parcel.expiryDate?.let { expiryDate ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Expires: $expiryDate",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+internal val previewParcels: List<Parcel> = listOf(
+    previewParcel(
+        shipmentNumber = "000000000000",
+        status = "ready_to_pickup",
+        statusGroup = "ready",
+        openCode = "000000",
+        qrCode = "P|000000|000000000000",
+        collectable = true,
+    ),
+    previewParcel(
+        shipmentNumber = "000000000000",
+        status = "ready_to_pickup",
+        statusGroup = "ready",
+        openCode = "111222",
+        qrCode = null,
+        collectable = false,
+    ),
+    previewParcel(
+        shipmentNumber = "000000000000",
+        status = "adopted_at_sorting_center",
+        statusGroup = "in_transit",
+    ),
+    previewParcel(
+        shipmentNumber = "000000000000",
+        status = "confirmed",
+        statusGroup = "in_transit",
+    ),
+)
 
-            parcelMetadataLines(parcel).forEach { metadataLine ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = metadataLine,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
+private fun previewParcel(
+    shipmentNumber: String,
+    status: String,
+    statusGroup: String?,
+    openCode: String? = null,
+    qrCode: String? = null,
+    collectable: Boolean = false,
+) = Parcel(
+    shipmentNumber = shipmentNumber,
+    status = status,
+    statusGroup = statusGroup,
+    openCode = openCode,
+    qrCode = qrCode,
+    pickupPoint = PickupPoint(
+        name = "WAW04B",
+        locationDescription = "By the Żabka store",
+        addressLine = "Górczewska 12, 01-138 Warszawa",
+        latitude = 52.2402,
+        longitude = 20.9319,
+    ),
+    expiryDate = java.time.OffsetDateTime.now().plusHours(46).toString(),
+    storedDate = java.time.OffsetDateTime.now().minusHours(26).toString(),
+    operations = ParcelOperations(collect = collectable),
+)
+
+@PaczkofastPreviews
+@Composable
+private fun ParcelListContentPreview(
+    @PreviewParameter(ParcelListPreviewProvider::class) uiState: ParcelListUiState,
+) {
+    PaczkofastTheme {
+        ParcelListContent(
+            uiState = uiState,
+            onParcelClick = {},
+            onCollectClick = {},
+            onRefreshClick = {},
+        )
     }
 }

@@ -204,5 +204,4 @@ private fun parcel(
     expiryDate = "2026-07-02T12:00:00Z",
     storedDate = "2026-07-01T12:00:00Z",
     operations = ParcelOperations(collect = true),
-    mobileCollectPossible = true,
 )
