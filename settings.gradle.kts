@@ -85,6 +85,9 @@ include(":feature:auth:impl")
 // Settings feature - public navigation routes
 include(":feature:settings:api")
 
+// Settings feature - screens, ViewModels, implementation
+include(":feature:settings:impl")
+
 // =============================================================================
 // Type-safe project accessors (e.g., projects.core.model)
 // =============================================================================
