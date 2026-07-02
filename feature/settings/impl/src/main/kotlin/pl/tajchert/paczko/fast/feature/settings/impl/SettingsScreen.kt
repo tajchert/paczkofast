@@ -84,26 +84,29 @@ private fun SettingsContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp),
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             SectionHeader(text = "APPEARANCE")
-            ThemeMode.entries.forEach { mode ->
-                ThemeOptionRow(
-                    label = themeModeLabel(mode),
-                    selected = mode == themeMode,
-                    onClick = { onThemeSelected(mode) },
-                )
+            Column {
+                ThemeMode.entries.forEach { mode ->
+                    ThemeOptionRow(
+                        label = themeModeLabel(mode),
+                        selected = mode == themeMode,
+                        onClick = { onThemeSelected(mode) },
+                    )
+                }
             }
 
             SectionHeader(text = "ACCOUNT")
             Button(
                 onClick = { showLogoutDialog = true },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError,
+                    containerColor = PaczkofastTheme.colors.accent,
+                    contentColor = PaczkofastTheme.colors.onAccent,
                 ),
             ) {
                 Text(text = "Log out")
@@ -114,11 +117,13 @@ private fun SettingsContent(
                 text = "Paczkofast $appVersion",
                 style = MaterialTheme.typography.bodyMedium,
                 color = PaczkofastTheme.colors.textPrimary,
+                modifier = Modifier.padding(horizontal = 20.dp),
             )
             Text(
                 text = "Unofficial InPost companion. Not affiliated with InPost.",
                 style = MaterialTheme.typography.bodySmall,
                 color = PaczkofastTheme.colors.textMuted,
+                modifier = Modifier.padding(horizontal = 20.dp),
             )
         }
     }
@@ -153,7 +158,7 @@ private fun SectionHeader(text: String) {
         text = text,
         style = MaterialTheme.typography.labelSmall,
         color = PaczkofastTheme.colors.textMuted,
-        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 4.dp),
     )
 }
 
@@ -167,7 +172,7 @@ private fun ThemeOptionRow(
         modifier = Modifier
             .fillMaxWidth()
             .selectable(selected = selected, onClick = onClick)
-            .padding(vertical = 8.dp),
+            .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
