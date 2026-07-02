@@ -18,34 +18,35 @@ data class MultiPackageGroup(
         get() = members.firstOrNull { it.multiPackageShipmentNumbers.isNotEmpty() } ?: members.first()
 }
 
-/** A row on the ready list: a standalone parcel or a multi-package group. */
-sealed interface ReadyItem {
-    data class Single(val parcel: Parcel) : ReadyItem
-    data class Multi(val group: MultiPackageGroup) : ReadyItem
+/** A display row: a standalone parcel or a multi-package group. */
+sealed interface CompartmentItem {
+    data class Single(val parcel: Parcel) : CompartmentItem
+    data class Multi(val group: MultiPackageGroup) : CompartmentItem
 }
 
 /**
- * Collapses ready parcels into display rows, grouping those that share a
- * non-null [Parcel.multiCompartmentUuid] into a single [ReadyItem.Multi] (only
- * when 2+ share it; a lone member stays a [ReadyItem.Single]). A group takes the
- * list position of its first member; order is otherwise preserved.
+ * Collapses parcels into display rows, grouping those that share a non-null
+ * [Parcel.multiCompartmentUuid] into a single [CompartmentItem.Multi] (only when
+ * 2+ share it; a lone member stays a [CompartmentItem.Single]). A group takes the
+ * list position of its first member; order is otherwise preserved. Used for both
+ * the ready list and the History tab.
  */
-fun groupReadyParcels(parcels: List<Parcel>): List<ReadyItem> {
+fun groupByCompartment(parcels: List<Parcel>): List<CompartmentItem> {
     val byUuid = parcels
         .filter { !it.multiCompartmentUuid.isNullOrBlank() }
         .groupBy { it.multiCompartmentUuid }
 
     val emitted = mutableSetOf<String>()
-    val items = mutableListOf<ReadyItem>()
+    val items = mutableListOf<CompartmentItem>()
     for (parcel in parcels) {
         val uuid = parcel.multiCompartmentUuid
         val members = uuid?.let { byUuid[it] }
         if (uuid != null && members != null && members.size >= 2) {
             if (emitted.add(uuid)) {
-                items += ReadyItem.Multi(MultiPackageGroup(uuid, members))
+                items += CompartmentItem.Multi(MultiPackageGroup(uuid, members))
             }
         } else {
-            items += ReadyItem.Single(parcel)
+            items += CompartmentItem.Single(parcel)
         }
     }
     return items

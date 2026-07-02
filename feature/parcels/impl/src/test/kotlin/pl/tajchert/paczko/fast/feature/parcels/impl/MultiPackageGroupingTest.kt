@@ -32,25 +32,25 @@ class MultiPackageGroupingTest {
         val b = parcel("222", multiCompartmentUuid = "mc-1")
         val solo = parcel("333")
 
-        val items = groupReadyParcels(listOf(a, b, solo))
+        val items = groupByCompartment(listOf(a, b, solo))
 
         assertEquals(2, items.size)
-        val multi = items[0] as ReadyItem.Multi
+        val multi = items[0] as CompartmentItem.Multi
         assertEquals("mc-1", multi.group.uuid)
         assertEquals(listOf("111", "222"), multi.group.members.map { it.shipmentNumber })
         // Representative is the member carrying the full shipment-number list.
         assertEquals("111", multi.group.representative.shipmentNumber)
-        assertEquals("333", (items[1] as ReadyItem.Single).parcel.shipmentNumber)
+        assertEquals("333", (items[1] as CompartmentItem.Single).parcel.shipmentNumber)
     }
 
     @Test
     fun loneCompartmentMemberStaysSingle() {
         val lone = parcel("111", multiCompartmentUuid = "mc-1")
 
-        val items = groupReadyParcels(listOf(lone))
+        val items = groupByCompartment(listOf(lone))
 
         assertEquals(1, items.size)
-        assertTrue(items[0] is ReadyItem.Single)
+        assertTrue(items[0] is CompartmentItem.Single)
     }
 
     @Test
@@ -59,10 +59,10 @@ class MultiPackageGroupingTest {
         val a = parcel("111", multiCompartmentUuid = "mc-1")
         val b = parcel("222", multiCompartmentUuid = "mc-1")
 
-        val items = groupReadyParcels(listOf(solo, a, b))
+        val items = groupByCompartment(listOf(solo, a, b))
 
-        assertEquals("000", (items[0] as ReadyItem.Single).parcel.shipmentNumber)
-        assertTrue(items[1] is ReadyItem.Multi)
+        assertEquals("000", (items[0] as CompartmentItem.Single).parcel.shipmentNumber)
+        assertTrue(items[1] is CompartmentItem.Multi)
         assertEquals(2, items.size)
     }
 }

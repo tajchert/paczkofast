@@ -62,9 +62,9 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.historySortKey
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
 import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
+import pl.tajchert.paczko.fast.feature.parcels.impl.CompartmentItem
 import pl.tajchert.paczko.fast.feature.parcels.impl.MultiPackageGroup
-import pl.tajchert.paczko.fast.feature.parcels.impl.ReadyItem
-import pl.tajchert.paczko.fast.feature.parcels.impl.groupReadyParcels
+import pl.tajchert.paczko.fast.feature.parcels.impl.groupByCompartment
 import pl.tajchert.paczko.fast.feature.parcels.impl.lockerLine
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelTitle
@@ -231,7 +231,7 @@ private fun ParcelSections(
     val (ready, onTheWay) = remember(parcels) {
         parcels.partition { it.isReadyForPickup }
     }
-    val readyItems = remember(ready) { groupReadyParcels(ready) }
+    val readyItems = remember(ready) { groupByCompartment(ready) }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -251,7 +251,7 @@ private fun ParcelSections(
             var expandedSingleUsed = false
             readyItems.forEach { readyItem ->
                 when (readyItem) {
-                    is ReadyItem.Multi -> {
+                    is CompartmentItem.Multi -> {
                         val group = readyItem.group
                         item(key = "multi-${group.uuid}") {
                             MultiPackageGroupCard(
@@ -262,7 +262,7 @@ private fun ParcelSections(
                         }
                     }
 
-                    is ReadyItem.Single -> {
+                    is CompartmentItem.Single -> {
                         val parcel = readyItem.parcel
                         val expand = !expandedSingleUsed
                         expandedSingleUsed = true
@@ -314,9 +314,10 @@ private fun HistoryList(
     modifier: Modifier = Modifier,
 ) {
     val currentMonth = remember { YearMonth.now() }
-    // Parcels arrive newest-first, so months fall out in descending order.
+    // Parcels arrive newest-first; collapse multi-package siblings into one row,
+    // then months fall out in descending order.
     val months = remember(parcels) {
-        parcels.groupBy { historyMonthKey(it) }.toList()
+        groupByCompartment(parcels).groupBy { historyMonthKey(it.anchor) }.toList()
     }
 
     LazyColumn(
@@ -324,7 +325,7 @@ private fun HistoryList(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        months.forEach { (month, monthParcels) ->
+        months.forEach { (month, monthItems) ->
             val muted = month != null && month != currentMonth
             if (month != null) {
                 item(key = "month-$month") {
@@ -334,19 +335,39 @@ private fun HistoryList(
                     )
                 }
             }
-            items(items = monthParcels, key = Parcel::shipmentNumber) { parcel ->
+            items(items = monthItems, key = { it.anchor.shipmentNumber }) { historyItem ->
+                val anchor = historyItem.anchor
+                val title = when (historyItem) {
+                    is CompartmentItem.Multi ->
+                        historyItem.group.members.joinToString(" + ") { parcelTitle(it) }
+
+                    is CompartmentItem.Single -> parcelTitle(anchor)
+                }
+                val outcomeLine = when (historyItem) {
+                    is CompartmentItem.Multi ->
+                        "${historyItem.group.members.size} parcels · ${historyOutcomeLine(anchor)}"
+
+                    is CompartmentItem.Single -> historyOutcomeLine(anchor)
+                }
                 HistoryParcelCard(
-                    title = parcelTitle(parcel),
-                    outcomeLine = historyOutcomeLine(parcel),
-                    dateText = historyDateLabel(parcel),
-                    outcome = historyOutcome(parcel),
+                    title = title,
+                    outcomeLine = outcomeLine,
+                    dateText = historyDateLabel(anchor),
+                    outcome = historyOutcome(anchor),
                     muted = muted,
-                    onClick = { onParcelClick(parcel.shipmentNumber) },
+                    onClick = { onParcelClick(anchor.shipmentNumber) },
                 )
             }
         }
     }
 }
+
+/** The parcel a history row is keyed/dated by — the group's representative. */
+private val CompartmentItem.anchor: Parcel
+    get() = when (this) {
+        is CompartmentItem.Single -> parcel
+        is CompartmentItem.Multi -> group.representative
+    }
 
 @Composable
 private fun MonthHeader(
