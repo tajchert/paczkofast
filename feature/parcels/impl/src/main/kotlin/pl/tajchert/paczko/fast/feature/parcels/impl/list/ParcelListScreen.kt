@@ -48,7 +48,6 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
-import pl.tajchert.paczko.fast.core.ui.QrPanel
 import pl.tajchert.paczko.fast.feature.parcels.impl.TRANSIT_SEGMENTS
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
@@ -301,9 +300,7 @@ private fun ExpandedReadyCard(
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
         urgent = countdown?.urgent == true,
-        qrContent = parcel.qrCode?.takeIf(String::isNotBlank)?.let { qrCode ->
-            { QrPanel(payload = qrCode, code = parcel.openCode) }
-        },
+        qrContent = null,
         actionText = "Open box remotely".takeIf { parcel.canCollectRemotely },
         onActionClick = onCollectClick,
         onClick = onClick,

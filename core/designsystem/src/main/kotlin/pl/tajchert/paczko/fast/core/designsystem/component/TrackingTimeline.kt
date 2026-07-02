@@ -81,23 +81,32 @@ private fun TimelineRow(
                     .clip(RoundedCornerShape(5.dp))
                     .let { dot ->
                         when {
-                            event.isCurrent -> dot.background(PaczkofastTheme.colors.accent)
+                            // Current stage and every already-passed stage are
+                            // filled amber; only not-yet-reached stages stay hollow.
                             event.isUpcoming -> dot.border(
                                 width = 1.5.dp,
                                 color = PaczkofastTheme.colors.timelineRail,
                                 shape = RoundedCornerShape(5.dp),
                             )
-                            else -> dot.background(PaczkofastTheme.colors.timelineDotInactive)
+                            else -> dot.background(PaczkofastTheme.colors.accent)
                         }
                     },
             )
             if (!isLast) {
+                // The rail below a reached stage represents a passed transition,
+                // so it is amber; the rail hanging off an upcoming stage (down to
+                // the current one) is a transition not yet made, so it stays muted.
+                val railColor = if (event.isUpcoming) {
+                    PaczkofastTheme.colors.timelineRail
+                } else {
+                    PaczkofastTheme.colors.accent
+                }
                 Box(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .width(2.dp)
                         .weight(1f)
-                        .background(PaczkofastTheme.colors.timelineRail),
+                        .background(railColor),
                 )
             }
         }
