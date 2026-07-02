@@ -10,18 +10,18 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface InpostCollectApi {
-    @POST("v2/collect/validate")
+    @POST("/v2/collect/validate")
     suspend fun validate(@Body body: CollectValidateRequestDto): CollectValidateResponseDto
 
-    @POST("v1/collect/compartment/open")
+    @POST("/v1/collect/compartment/open")
     suspend fun open(@Body body: CollectSessionRequestDto): CompartmentResponseDto
 
-    @POST("v1/collect/compartment/status")
+    @POST("/v1/collect/compartment/status")
     suspend fun status(@Body body: CollectStatusRequestDto): CompartmentResponseDto
 
-    @POST("v1/collect/compartment/closed")
+    @POST("/v1/collect/compartment/closed")
     suspend fun closed(@Body body: CollectSessionRequestDto): CompartmentResponseDto
 
-    @POST("v1/collect/compartment/claim")
+    @POST("/v1/collect/compartment/claim")
     suspend fun claim(@Body body: CollectClaimRequestDto): CompartmentResponseDto
 }
