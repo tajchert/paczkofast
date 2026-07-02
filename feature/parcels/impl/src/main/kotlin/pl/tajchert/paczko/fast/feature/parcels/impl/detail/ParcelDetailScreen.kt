@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -45,6 +46,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.isPickedUp
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.list.previewParcels
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
 import pl.tajchert.paczko.fast.feature.parcels.impl.trackingTimelineEvents
 
@@ -112,6 +114,9 @@ private fun ParcelDetailContent(
             else -> ParcelDetailBody(
                 parcel = uiState.parcel,
                 events = uiState.events,
+                sizeCode = uiState.sizeCode,
+                senderName = uiState.senderName,
+                shipmentType = uiState.shipmentType,
                 onCollect = onCollect,
                 modifier = Modifier
                     .fillMaxSize()
@@ -125,6 +130,9 @@ private fun ParcelDetailContent(
 private fun ParcelDetailBody(
     parcel: Parcel,
     events: List<TrackingEvent>,
+    sizeCode: String?,
+    senderName: String?,
+    shipmentType: String?,
     onCollect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -142,7 +150,12 @@ private fun ParcelDetailBody(
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            StatusChip(text = humanizeStatus(parcel.status))
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                StatusChip(text = humanizeStatus(parcel.status))
+                parcelSizeLabel(sizeCode)?.let { sizeLabel ->
+                    StatusChip(text = sizeLabel)
+                }
+            }
             Text(
                 text = "Parcel",
                 style = MaterialTheme.typography.headlineSmall,
@@ -156,7 +169,12 @@ private fun ParcelDetailBody(
                 ),
                 color = PaczkofastTheme.colors.textMuted,
             )
-            parcelMetadataLines(parcel).forEach { line ->
+            val metadataLines = buildList {
+                addAll(parcelMetadataLines(parcel))
+                senderName?.takeIf { it.isNotBlank() }?.let { add("From $it") }
+                shipmentType?.takeIf { it.isNotBlank() }?.let { add(humanizeStatus(it)) }
+            }
+            metadataLines.forEach { line ->
                 Text(
                     text = line,
                     style = MaterialTheme.typography.bodySmall,

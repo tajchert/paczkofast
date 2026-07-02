@@ -25,6 +25,18 @@ internal fun humanizeStatus(status: String): String =
     status.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
 
 /**
+ * Visible size badge label for a raw parcelSize wire code (A–J), or null when
+ * the size is unknown/absent (no badge shown). D→XS; A,E,H→S; B,F,I→M; C,G,J→L.
+ */
+internal fun parcelSizeLabel(code: String?): String? = when (code?.uppercase()) {
+    "D" -> "XS"
+    "A", "E", "H" -> "S"
+    "B", "F", "I" -> "M"
+    "C", "G", "J" -> "L"
+    else -> null
+}
+
+/**
  * Curated English label for a canonical eventLog status code, falling back to
  * a humanized form of the raw code for anything unmapped.
  */
