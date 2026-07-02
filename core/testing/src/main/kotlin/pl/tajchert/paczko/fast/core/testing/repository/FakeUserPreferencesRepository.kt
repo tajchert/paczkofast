@@ -1,6 +1,7 @@
 package pl.tajchert.paczko.fast.core.testing.repository
 
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
+import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -44,8 +45,8 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
 
     override val userPreferences: Flow<UserPreferences> = preferencesFlow
 
-    override suspend fun setDarkTheme(darkTheme: Boolean) {
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
         val current = currentPreferences
-        preferencesFlow.tryEmit(current.copy(darkTheme = darkTheme))
+        preferencesFlow.tryEmit(current.copy(themeMode = themeMode))
     }
 }

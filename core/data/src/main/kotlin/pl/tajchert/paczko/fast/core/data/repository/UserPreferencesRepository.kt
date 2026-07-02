@@ -1,6 +1,7 @@
 package pl.tajchert.paczko.fast.core.data.repository
 
 import pl.tajchert.paczko.fast.core.datastore.UserPreferencesDataSource
+import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -30,7 +31,7 @@ interface UserPreferencesRepository {
      */
     val userPreferences: Flow<UserPreferences>
 
-    suspend fun setDarkTheme(darkTheme: Boolean)
+    suspend fun setThemeMode(themeMode: ThemeMode)
 }
 
 /**
@@ -42,7 +43,7 @@ class DefaultUserPreferencesRepository @Inject constructor(
 
     override val userPreferences: Flow<UserPreferences> = dataSource.userPreferences
 
-    override suspend fun setDarkTheme(darkTheme: Boolean) {
-        dataSource.setDarkTheme(darkTheme)
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        dataSource.setThemeMode(themeMode)
     }
 }

@@ -9,6 +9,7 @@ import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.domain.ObserveAuthSessionUseCase
+import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import pl.tajchert.paczko.fast.core.model.auth.AuthSession
 import pl.tajchert.paczko.fast.core.model.auth.PhoneNumber
@@ -60,7 +61,7 @@ class MainActivityViewModelTest {
 private class FakeUserPreferencesRepository : UserPreferencesRepository {
     override val userPreferences: Flow<UserPreferences> = MutableStateFlow(UserPreferences())
 
-    override suspend fun setDarkTheme(darkTheme: Boolean) = Unit
+    override suspend fun setThemeMode(themeMode: ThemeMode) = Unit
 }
 
 private class FakeAuthRepository(

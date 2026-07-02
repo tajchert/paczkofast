@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.domain.ObserveAuthSessionUseCase
+import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
@@ -88,6 +89,10 @@ class MainActivityViewModel @Inject constructor(
 fun MainActivityUiState.shouldUseDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
     return when (this) {
         is MainActivityUiState.Loading -> isSystemInDarkTheme
-        is MainActivityUiState.Success -> preferences.darkTheme
+        is MainActivityUiState.Success -> when (preferences.themeMode) {
+            ThemeMode.SYSTEM -> isSystemInDarkTheme
+            ThemeMode.LIGHT -> false
+            ThemeMode.DARK -> true
+        }
     }
 }

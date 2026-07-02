@@ -2,11 +2,12 @@ package pl.tajchert.paczko.fast.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pl.tajchert.paczko.fast.core.datastore.di.UserPreferencesDataStore
+import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import javax.inject.Inject
 
@@ -57,9 +58,11 @@ class UserPreferencesDataSource @Inject constructor(
      * - Never completes (it's a hot flow)
      */
     val userPreferences: Flow<UserPreferences> = dataStore.data.map { preferences ->
-        UserPreferences(
-            darkTheme = preferences[DARK_THEME] ?: true,
-        )
+        val stored = preferences[THEME_MODE]
+        val themeMode = stored
+            ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
+            ?: ThemeMode.SYSTEM
+        UserPreferences(themeMode = themeMode)
     }
 
     /**
@@ -72,9 +75,9 @@ class UserPreferencesDataSource @Inject constructor(
      * - If an exception occurs, no changes are applied
      * - Concurrent edits are serialized
      */
-    suspend fun setDarkTheme(darkTheme: Boolean) {
+    suspend fun setThemeMode(themeMode: ThemeMode) {
         dataStore.edit { preferences ->
-            preferences[DARK_THEME] = darkTheme
+            preferences[THEME_MODE] = themeMode.name
         }
     }
 
@@ -87,6 +90,6 @@ class UserPreferencesDataSource @Inject constructor(
          * We use descriptive string keys that match the property names.
          * This makes debugging easier when inspecting DataStore files.
          */
-        private val DARK_THEME = booleanPreferencesKey("dark_theme")
+        private val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 }
