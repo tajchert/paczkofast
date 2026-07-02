@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pl.tajchert.paczko.fast.core.common.location.LocationProvider
+import pl.tajchert.paczko.fast.core.common.location.metersToLocker
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
 import pl.tajchert.paczko.fast.core.domain.CollectParcelUseCase
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
@@ -19,12 +21,37 @@ import pl.tajchert.paczko.fast.core.model.collect.CollectState
 class CollectViewModel @Inject constructor(
     private val collectParcel: CollectParcelUseCase,
     private val parcelRepository: ParcelRepository,
+    private val locationProvider: LocationProvider,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CollectUiState())
     val uiState: StateFlow<CollectUiState> = _uiState.asStateFlow()
 
     private var collectJob: Job? = null
     private var startedShipmentNumber: String? = null
+    private var armedShipmentNumber: String? = null
+
+    fun arm(shipmentNumber: String) {
+        if (armedShipmentNumber == shipmentNumber) return
+        if (startedShipmentNumber == shipmentNumber) return
+        armedShipmentNumber = shipmentNumber
+        viewModelScope.launch {
+            val pickup = parcelRepository.observeParcel(shipmentNumber).first()?.pickupPoint
+            val distance = runCatching {
+                metersToLocker(
+                    from = locationProvider.currentLocation(),
+                    lockerLatitude = pickup?.latitude,
+                    lockerLongitude = pickup?.longitude,
+                )
+            }.getOrNull()
+            _uiState.update {
+                it.copy(
+                    state = CollectState.Idle,
+                    lockerName = pickup?.name,
+                    distanceMeters = distance,
+                )
+            }
+        }
+    }
 
     fun start(shipmentNumber: String) {
         if (startedShipmentNumber == shipmentNumber) return
@@ -67,4 +94,6 @@ class CollectViewModel @Inject constructor(
 
 data class CollectUiState(
     val state: CollectState = CollectState.Idle,
+    val lockerName: String? = null,
+    val distanceMeters: Int? = null,
 )

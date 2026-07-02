@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.common.location.LocationProvider
@@ -34,7 +36,7 @@ class CollectViewModelTest {
             repository = collectRepository,
             locationProvider = FakeLocationProvider(),
         )
-        val viewModel = CollectViewModel(useCase, parcelRepository)
+        val viewModel = CollectViewModel(useCase, parcelRepository, FakeLocationProvider())
 
         viewModel.start("123")
 
@@ -54,6 +56,7 @@ class CollectViewModelTest {
                 locationProvider = FakeLocationProvider(),
             ),
             parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
         )
 
         viewModel.start("123")
@@ -80,6 +83,7 @@ class CollectViewModelTest {
                 locationProvider = FakeLocationProvider(),
             ),
             parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
         )
 
         viewModel.start("123")
@@ -106,6 +110,7 @@ class CollectViewModelTest {
                 locationProvider = FakeLocationProvider(),
             ),
             parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
         )
 
         viewModel.start("123")
@@ -127,6 +132,7 @@ class CollectViewModelTest {
                 locationProvider = FakeLocationProvider(),
             ),
             parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
         )
 
         viewModel.onLocationPermissionDenied("123")
@@ -140,6 +146,52 @@ class CollectViewModelTest {
             viewModel.uiState.value.state,
         )
         assertEquals(0, collectRepository.validateCount)
+    }
+
+    @Test
+    fun armExposesLockerNameAndDistanceWhenCoordinatesPresent() = runTest {
+        val parcelRepository = FakeParcelRepository(
+            parcel = parcel(shipmentNumber = "123", openCode = "456"),
+        )
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(
+                repository = FakeCollectRepository(),
+                locationProvider = FakeLocationProvider(),
+            ),
+            parcelRepository = parcelRepository,
+            // ~111 m north of the locker at 50.061 / 19.938
+            locationProvider = FakeLocationProvider(
+                GeoPoint(latitude = 50.062, longitude = 19.938, accuracy = 5.0),
+            ),
+        )
+
+        viewModel.arm("123")
+
+        assertEquals(CollectState.Idle, viewModel.uiState.value.state)
+        assertEquals("KRA01A", viewModel.uiState.value.lockerName)
+        val distance = viewModel.uiState.value.distanceMeters
+        assertTrue("expected ~111 m, was $distance", distance != null && distance in 105..117)
+    }
+
+    @Test
+    fun armLeavesDistanceNullWhenLockerHasNoCoordinates() = runTest {
+        val parcelRepository = FakeParcelRepository(
+            parcel = parcel(shipmentNumber = "123", openCode = "456", latitude = null, longitude = null),
+        )
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(
+                repository = FakeCollectRepository(),
+                locationProvider = FakeLocationProvider(),
+            ),
+            parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
+        )
+
+        viewModel.arm("123")
+
+        assertEquals(CollectState.Idle, viewModel.uiState.value.state)
+        assertEquals("KRA01A", viewModel.uiState.value.lockerName)
+        assertNull(viewModel.uiState.value.distanceMeters)
     }
 }
 
@@ -177,17 +229,17 @@ private class FakeCollectRepository : CollectRepository {
     override suspend fun claim(sessionUuid: String, shipmentNumber: String) = Unit
 }
 
-private class FakeLocationProvider : LocationProvider {
-    override suspend fun currentLocation(): GeoPoint = GeoPoint(
-        latitude = 52.1,
-        longitude = 21.0,
-        accuracy = 12.0,
-    )
+private class FakeLocationProvider(
+    private val location: GeoPoint = GeoPoint(latitude = 52.1, longitude = 21.0, accuracy = 12.0),
+) : LocationProvider {
+    override suspend fun currentLocation(): GeoPoint = location
 }
 
 private fun parcel(
     shipmentNumber: String,
     openCode: String?,
+    latitude: Double? = 50.061,
+    longitude: Double? = 19.938,
 ) = Parcel(
     shipmentNumber = shipmentNumber,
     status = "ready_to_pickup",
@@ -198,8 +250,8 @@ private fun parcel(
         name = "KRA01A",
         locationDescription = "Near the main entrance",
         addressLine = "Main Street 1",
-        latitude = 50.061,
-        longitude = 19.938,
+        latitude = latitude,
+        longitude = longitude,
     ),
     expiryDate = "2026-07-02T12:00:00Z",
     storedDate = "2026-07-01T12:00:00Z",
