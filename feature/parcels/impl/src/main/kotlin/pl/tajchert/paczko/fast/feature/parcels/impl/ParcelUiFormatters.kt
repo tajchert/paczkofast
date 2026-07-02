@@ -27,6 +27,32 @@ internal val Parcel.isDelivered: Boolean
         status.equals("delivered", ignoreCase = true) ||
         status.equals("returned_to_sender", ignoreCase = true)
 
+/** Terminal statuses beyond [isDelivered] that belong in the History tab. */
+private val FINISHED_STATUSES = setOf(
+    "collected_by_customer",
+    "collected_from_sender",
+    "pickup_time_expired",
+    "avizo",
+    "undelivered",
+    "undelivered_cod_cash_receiver",
+    "undelivered_incomplete_address",
+    "undelivered_lack_of_access_letterbox",
+    "undelivered_no_mailbox",
+    "undelivered_not_live_address",
+    "undelivered_unknown_receiver",
+    "undelivered_wrong_address",
+    "canceled",
+)
+
+/**
+ * A parcel is "finished" — belongs in the History tab — once it is delivered,
+ * collected, returned, expired, undelivered or canceled. Anything else
+ * (ready-for-pickup, in transit, created, or an unrecognized status) stays on
+ * the main Parcels tab so an active parcel is never hidden.
+ */
+internal val Parcel.isFinished: Boolean
+    get() = isDelivered || status.lowercase() in FINISHED_STATUSES
+
 /**
  * Rough delivery stage (0..[TRANSIT_SEGMENTS]) for the segmented progress
  * bar on in-transit cards.
