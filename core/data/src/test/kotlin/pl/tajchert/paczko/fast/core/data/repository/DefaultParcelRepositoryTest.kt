@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.runTest
 import pl.tajchert.paczko.fast.core.database.dao.ParcelDao
 import pl.tajchert.paczko.fast.core.database.entity.ParcelEntity
 import pl.tajchert.paczko.fast.core.network.InpostParcelApi
+import pl.tajchert.paczko.fast.core.network.dto.EventLogEntryDto
 import pl.tajchert.paczko.fast.core.network.dto.MultiCompartmentDto
 import pl.tajchert.paczko.fast.core.network.dto.ParcelDto
 import pl.tajchert.paczko.fast.core.network.dto.ParcelOperationsDto
@@ -74,6 +75,25 @@ class DefaultParcelRepositoryTest {
         assertEquals("multi-shared,sibling", dao.saved.single().multiPackageShipmentNumbers)
         assertEquals("SHARED_TO_ME", dao.saved.single().ownershipStatus)
     }
+
+    @Test
+    fun getTrackingEventsMapsStatusEventLogEntries() = runTest {
+        val network = FakeParcelApi(
+            detail = parcelDto("123").copy(
+                eventLog = listOf(
+                    EventLogEntryDto(type = "PARCEL_STATUS", name = "DELIVERED", date = "2026-05-26T13:00:13.328Z"),
+                    EventLogEntryDto(type = "INVOICE", name = "INVOICE_REQUESTED", date = "2026-05-26T13:00:13.328Z"),
+                    EventLogEntryDto(type = "PARCEL_STATUS", name = "CONFIRMED", date = "2026-05-25T14:41:46.362Z"),
+                ),
+            ),
+        )
+        val repository = DefaultParcelRepository(network, FakeParcelDao())
+
+        val events = repository.getTrackingEvents("123")
+
+        assertEquals(listOf("DELIVERED", "CONFIRMED"), events.map { it.status })
+        assertEquals("2026-05-26T13:00:13.328Z", events.first().date)
+    }
 }
 
 private fun parcelDto(number: String) = ParcelDto(
@@ -103,6 +123,7 @@ private fun parcelEntity(number: String) = ParcelEntity(
 
 private class FakeParcelApi(
     private vararg val responses: TrackedParcelsResponseDto,
+    private val detail: ParcelDto? = null,
 ) : InpostParcelApi {
     var calls = 0
         private set
@@ -111,7 +132,7 @@ private class FakeParcelApi(
         responses[calls++]
 
     override suspend fun getTrackedParcel(shipmentNumber: String): ParcelDto =
-        error("Unexpected getTrackedParcel call")
+        detail ?: error("Unexpected getTrackedParcel call")
 }
 
 private class FakeParcelDao(
