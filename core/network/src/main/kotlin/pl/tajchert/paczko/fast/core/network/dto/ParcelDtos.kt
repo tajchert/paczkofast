@@ -24,11 +24,18 @@ data class ParcelDto(
     val operations: ParcelOperationsDto = ParcelOperationsDto(),
     val ownershipStatus: String? = null,
     val eventLog: List<EventLogEntryDto> = emptyList(),
+    val parcelSize: String? = null,
+    val sender: SenderDto? = null,
 )
 
 @Serializable
 data class ParcelOperationsDto(
     val collect: Boolean = false,
+)
+
+@Serializable
+data class SenderDto(
+    val name: String? = null,
 )
 
 @Serializable
