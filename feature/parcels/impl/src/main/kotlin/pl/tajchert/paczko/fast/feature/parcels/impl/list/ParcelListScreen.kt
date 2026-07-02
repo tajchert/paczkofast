@@ -50,6 +50,7 @@ import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
 import pl.tajchert.paczko.fast.feature.parcels.impl.TRANSIT_SEGMENTS
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
+import pl.tajchert.paczko.fast.feature.parcels.impl.historySortKey
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
 import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
@@ -145,7 +146,9 @@ private fun ParcelListContent(
                     uiState.parcels.filter { !it.isFinished }
                 }
                 val historyParcels = remember(uiState.parcels) {
-                    uiState.parcels.filter { it.isFinished }
+                    uiState.parcels
+                        .filter { it.isFinished }
+                        .sortedByDescending { it.historySortKey() }
                 }
 
                 when {

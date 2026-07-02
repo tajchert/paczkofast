@@ -40,7 +40,7 @@ import pl.tajchert.paczko.fast.feature.parcels.api.ParcelDetailRoute
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatTimelineTime
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
-import pl.tajchert.paczko.fast.feature.parcels.impl.isDelivered
+import pl.tajchert.paczko.fast.feature.parcels.impl.isPickedUp
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.list.previewParcels
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
@@ -248,7 +248,7 @@ private val PIPELINE_STAGES = listOf(
 
 /** Index into [PIPELINE_STAGES] for the parcel's current status. */
 private fun pipelineStage(parcel: Parcel): Int = when {
-    parcel.isDelivered -> 4
+    parcel.isPickedUp -> 4
     parcel.isReadyForPickup -> 3
     else -> when (parcel.status.lowercase()) {
         "out_for_delivery", "adopted_at_target_branch" -> 2

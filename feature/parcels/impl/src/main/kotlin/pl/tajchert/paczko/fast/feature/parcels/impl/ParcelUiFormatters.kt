@@ -27,10 +27,26 @@ internal val Parcel.isDelivered: Boolean
         status.equals("delivered", ignoreCase = true) ||
         status.equals("returned_to_sender", ignoreCase = true)
 
-/** Terminal statuses beyond [isDelivered] that belong in the History tab. */
-private val FINISHED_STATUSES = setOf(
+/**
+ * Statuses meaning the parcel was successfully collected / picked up — the
+ * final happy-path stage. "claimed" is what a Paczkomat parcel becomes after a
+ * remote or in-person pickup.
+ */
+private val PICKED_UP_STATUSES = setOf(
+    "claimed",
     "collected_by_customer",
     "collected_from_sender",
+)
+
+/**
+ * True once the parcel has been picked up (locker collection) or delivered —
+ * the "Picked up" end of the tracking pipeline.
+ */
+internal val Parcel.isPickedUp: Boolean
+    get() = isDelivered || status.lowercase() in PICKED_UP_STATUSES
+
+/** Terminal statuses beyond [isPickedUp] that belong in the History tab. */
+private val FINISHED_STATUSES = setOf(
     "pickup_time_expired",
     "avizo",
     "undelivered",
@@ -51,7 +67,18 @@ private val FINISHED_STATUSES = setOf(
  * the main Parcels tab so an active parcel is never hidden.
  */
 internal val Parcel.isFinished: Boolean
-    get() = isDelivered || status.lowercase() in FINISHED_STATUSES
+    get() = isPickedUp || status.lowercase() in FINISHED_STATUSES
+
+/**
+ * Recency key for ordering History-tab parcels newest-first. The list API
+ * carries no explicit "completed" timestamp, so we use the latest of the
+ * parcel's stored/expiry dates; parcels with neither sort to the bottom.
+ */
+internal fun Parcel.historySortKey(): Long {
+    val stored = parseInstant(storedDate)?.toEpochMilli() ?: Long.MIN_VALUE
+    val expiry = parseInstant(expiryDate)?.toEpochMilli() ?: Long.MIN_VALUE
+    return maxOf(stored, expiry)
+}
 
 /**
  * Rough delivery stage (0..[TRANSIT_SEGMENTS]) for the segmented progress
