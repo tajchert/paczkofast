@@ -18,6 +18,7 @@ class HistoryFormattersTest {
     private fun parcel(
         status: String,
         storedDate: String? = null,
+        pickUpDate: String? = null,
         lockerName: String? = null,
     ) = Parcel(
         shipmentNumber = "123",
@@ -31,6 +32,7 @@ class HistoryFormattersTest {
         expiryDate = null,
         storedDate = storedDate,
         operations = ParcelOperations(collect = false),
+        pickUpDate = pickUpDate,
     )
 
     @Test
@@ -61,6 +63,17 @@ class HistoryFormattersTest {
         assertEquals("2 Jul, 14:32", historyDateLabel(thisMonth, now = now, zone = zone))
         assertEquals("28 Jun", historyDateLabel(lastMonth, now = now, zone = zone))
         assertEquals("", historyDateLabel(parcel("claimed"), now = now, zone = zone))
+    }
+
+    @Test
+    fun dateLabelPrefersPickUpDateOverStoredDate() {
+        // pickUpDate is the real collection time and must win over storedDate.
+        val p = parcel(
+            "claimed",
+            storedDate = "2026-06-20T08:00:00Z",
+            pickUpDate = "2026-07-02T12:32:00Z",
+        )
+        assertEquals("2 Jul, 14:32", historyDateLabel(p, now = now, zone = zone))
     }
 
     @Test

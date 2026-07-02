@@ -116,15 +116,23 @@ internal val Parcel.isFinished: Boolean
     get() = isPickedUp || status.lowercase() in FINISHED_STATUSES
 
 /**
- * Recency key for ordering History-tab parcels newest-first. The list API
- * carries no explicit "completed" timestamp, so we use the latest of the
- * parcel's stored/expiry dates; parcels with neither sort to the bottom.
+ * The moment a finished parcel reached its terminal state — the collection
+ * time ([Parcel.pickUpDate]) or, for a return, [Parcel.returnedToSenderDate].
+ * Falls back to the stored/expiry dates for parcels the carrier didn't stamp
+ * with either. Null when nothing dateable is known.
  */
-internal fun Parcel.historySortKey(): Long {
-    val stored = parseInstant(storedDate)?.toEpochMilli() ?: Long.MIN_VALUE
-    val expiry = parseInstant(expiryDate)?.toEpochMilli() ?: Long.MIN_VALUE
-    return maxOf(stored, expiry)
-}
+internal fun Parcel.historyCompletionInstant(): Instant? =
+    parseInstant(pickUpDate)
+        ?: parseInstant(returnedToSenderDate)
+        ?: parseInstant(storedDate)
+        ?: parseInstant(expiryDate)
+
+/**
+ * Recency key for ordering History-tab parcels newest-first; parcels with no
+ * dateable completion timestamp sort to the bottom.
+ */
+internal fun Parcel.historySortKey(): Long =
+    historyCompletionInstant()?.toEpochMilli() ?: Long.MIN_VALUE
 
 /**
  * Rough delivery stage (0..[TRANSIT_SEGMENTS]) for the segmented progress
@@ -321,7 +329,4 @@ internal fun historyMonthLabel(
     return format.format(yearMonth)
 }
 
-private fun historyInstant(parcel: Parcel): Instant? {
-    val key = parcel.historySortKey()
-    return if (key == Long.MIN_VALUE) null else Instant.ofEpochMilli(key)
-}
+private fun historyInstant(parcel: Parcel): Instant? = parcel.historyCompletionInstant()

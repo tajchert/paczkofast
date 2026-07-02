@@ -23,4 +23,6 @@ data class ParcelEntity(
     val ownershipStatus: String? = null,
     val senderName: String? = null,
     val parcelSize: String? = null,
+    val pickUpDate: String? = null,
+    val returnedToSenderDate: String? = null,
 )

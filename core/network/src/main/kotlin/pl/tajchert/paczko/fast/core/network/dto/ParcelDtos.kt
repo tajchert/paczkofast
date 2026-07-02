@@ -19,6 +19,8 @@ data class ParcelDto(
     val qrCode: String? = null,
     val expiryDate: String? = null,
     val storedDate: String? = null,
+    val pickUpDate: String? = null,
+    val returnedToSenderDate: String? = null,
     val pickUpPoint: PickupPointDto? = null,
     val multiCompartment: MultiCompartmentDto? = null,
     val operations: ParcelOperationsDto = ParcelOperationsDto(),

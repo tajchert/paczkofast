@@ -19,6 +19,8 @@ data class Parcel(
     val ownershipStatus: String? = null,
     val senderName: String? = null,
     val parcelSize: String? = null,
+    val pickUpDate: String? = null,
+    val returnedToSenderDate: String? = null,
 ) {
     val canCollectRemotely: Boolean
         get() = operations.collect && openCode.isNullOrBlank().not()
@@ -33,6 +35,9 @@ data class Parcel(
         }
 
     private companion object {
-        val OWNER_STATUSES = setOf("OWNER", "OWNED")
+        // Observed live values are `OWN` (you own it) and `FRIEND` (shared with
+        // you). "OWNER"/"OWNED" are kept as defensive legacy aliases so only a
+        // genuinely-shared parcel (e.g. FRIEND) is flagged as shared-from-someone.
+        val OWNER_STATUSES = setOf("OWN", "OWNER", "OWNED")
     }
 }

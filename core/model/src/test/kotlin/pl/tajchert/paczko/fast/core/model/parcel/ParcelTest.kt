@@ -47,5 +47,9 @@ class ParcelTest {
         assertFalse(parcel.copy(multiCompartmentUuid = null, multiPackageShipmentNumbers = emptyList()).isMultiPackage)
         assertFalse(parcel.copy(ownershipStatus = "OWNER").isSharedFromSomeone)
         assertFalse(parcel.copy(ownershipStatus = null).isSharedFromSomeone)
+        // Live wire values: OWN = you own it (not shared), FRIEND = shared with you.
+        assertFalse(parcel.copy(ownershipStatus = "OWN").isSharedFromSomeone)
+        assertFalse(parcel.copy(ownershipStatus = "own").isSharedFromSomeone)
+        assertTrue(parcel.copy(ownershipStatus = "FRIEND").isSharedFromSomeone)
     }
 }
