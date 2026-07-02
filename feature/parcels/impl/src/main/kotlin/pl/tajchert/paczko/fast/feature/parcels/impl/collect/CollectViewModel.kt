@@ -44,11 +44,14 @@ class CollectViewModel @Inject constructor(
                 )
             }.getOrNull()
             _uiState.update {
-                it.copy(
-                    state = CollectState.Idle,
-                    lockerName = pickup?.name,
-                    distanceMeters = distance,
-                )
+                if (it.state !is CollectState.Idle) {
+                    it
+                } else {
+                    it.copy(
+                        lockerName = pickup?.name,
+                        distanceMeters = distance,
+                    )
+                }
             }
         }
     }

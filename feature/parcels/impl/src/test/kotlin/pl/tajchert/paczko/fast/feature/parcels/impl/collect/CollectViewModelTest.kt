@@ -193,6 +193,38 @@ class CollectViewModelTest {
         assertEquals("KRA01A", viewModel.uiState.value.lockerName)
         assertNull(viewModel.uiState.value.distanceMeters)
     }
+
+    @Test
+    fun armDoesNotClobberFlowStartedWhileLocationPending() = runTest {
+        val parcelRepository = FakeParcelRepository(
+            parcel = parcel(shipmentNumber = "123", openCode = "456"),
+        )
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val gatedLocation = object : LocationProvider {
+            override suspend fun currentLocation(): GeoPoint {
+                gate.await()
+                return GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0)
+            }
+        }
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(
+                repository = FakeCollectRepository(),
+                locationProvider = FakeLocationProvider(),
+            ),
+            parcelRepository = parcelRepository,
+            locationProvider = gatedLocation,
+        )
+
+        viewModel.arm("123")        // suspends inside currentLocation() on gate.await()
+        viewModel.start("123")      // runs the collect flow to Completed (instant fakes)
+        assertEquals(CollectState.Completed, viewModel.uiState.value.state)
+
+        gate.complete(Unit)         // arm() resumes and updates _uiState
+        testScheduler.advanceUntilIdle()
+
+        // arm() must NOT have reset the completed flow back to Idle
+        assertEquals(CollectState.Completed, viewModel.uiState.value.state)
+    }
 }
 
 private class FakeParcelRepository(
