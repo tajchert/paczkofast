@@ -8,4 +8,7 @@ data class ParcelDetailUiState(
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val events: List<TrackingEvent> = emptyList(),
+    val sizeCode: String? = null,
+    val senderName: String? = null,
+    val shipmentType: String? = null,
 )

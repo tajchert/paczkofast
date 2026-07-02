@@ -14,15 +14,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pl.tajchert.paczko.fast.core.common.result.Result
 import pl.tajchert.paczko.fast.core.common.result.asResult
-import pl.tajchert.paczko.fast.core.domain.GetTrackingEventsUseCase
+import pl.tajchert.paczko.fast.core.domain.GetParcelDetailsUseCase
 import pl.tajchert.paczko.fast.core.domain.ObserveParcelUseCase
-import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
+import pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails
 
 @HiltViewModel(assistedFactory = ParcelDetailViewModel.Factory::class)
 class ParcelDetailViewModel @AssistedInject constructor(
     @Assisted private val shipmentNumber: String,
     observeParcel: ObserveParcelUseCase,
-    getTrackingEvents: GetTrackingEventsUseCase,
+    getParcelDetails: GetParcelDetailsUseCase,
 ) : ViewModel() {
 
     @AssistedFactory
@@ -30,29 +30,30 @@ class ParcelDetailViewModel @AssistedInject constructor(
         fun create(shipmentNumber: String): ParcelDetailViewModel
     }
 
-    private val events = MutableStateFlow<List<TrackingEvent>>(emptyList())
+    private val details = MutableStateFlow(ParcelDetails())
 
     init {
         viewModelScope.launch {
-            events.value = runCatching { getTrackingEvents(shipmentNumber) }.getOrDefault(emptyList())
+            details.value = runCatching { getParcelDetails(shipmentNumber) }.getOrDefault(ParcelDetails())
         }
     }
 
     val uiState: StateFlow<ParcelDetailUiState> = combine(
         observeParcel(shipmentNumber).asResult(),
-        events,
-    ) { result, trackingEvents ->
+        details,
+    ) { result, detail ->
+        val base = ParcelDetailUiState(
+            events = detail.events,
+            sizeCode = detail.sizeCode,
+            senderName = detail.senderName,
+            shipmentType = detail.shipmentType,
+        )
         when (result) {
-            is Result.Loading -> ParcelDetailUiState(isLoading = true, events = trackingEvents)
-            is Result.Success -> ParcelDetailUiState(
-                parcel = result.data,
-                isLoading = false,
-                events = trackingEvents,
-            )
-            is Result.Error -> ParcelDetailUiState(
+            is Result.Loading -> base.copy(isLoading = true)
+            is Result.Success -> base.copy(parcel = result.data, isLoading = false)
+            is Result.Error -> base.copy(
                 isLoading = false,
                 errorMessage = result.exception.message ?: "Unable to load parcel",
-                events = trackingEvents,
             )
         }
     }

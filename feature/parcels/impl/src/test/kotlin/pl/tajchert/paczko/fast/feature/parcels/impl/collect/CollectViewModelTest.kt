@@ -19,7 +19,6 @@ import pl.tajchert.paczko.fast.core.model.collect.GeoPoint
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
-import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
 import pl.tajchert.paczko.fast.core.testing.util.MainDispatcherRule
 
 class CollectViewModelTest {
@@ -242,7 +241,8 @@ private class FakeParcelRepository(
 
     override suspend fun refreshTrackedParcels() = Unit
 
-    override suspend fun getTrackingEvents(shipmentNumber: String): List<TrackingEvent> = emptyList()
+    override suspend fun getParcelDetails(shipmentNumber: String): pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails =
+        pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails()
 }
 
 private class FakeCollectRepository : CollectRepository {

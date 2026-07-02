@@ -15,7 +15,6 @@ import pl.tajchert.paczko.fast.core.domain.RefreshParcelsUseCase
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
-import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
 import pl.tajchert.paczko.fast.core.testing.util.MainDispatcherRule
 
 class ParcelListViewModelTest {
@@ -117,7 +116,8 @@ private class FakeParcelRepository(
         refreshFinished.complete(Unit)
     }
 
-    override suspend fun getTrackingEvents(shipmentNumber: String): List<TrackingEvent> = emptyList()
+    override suspend fun getParcelDetails(shipmentNumber: String): pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails =
+        pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails()
 }
 
 private fun parcel(number: String) = Parcel(

@@ -77,22 +77,26 @@ class DefaultParcelRepositoryTest {
     }
 
     @Test
-    fun getTrackingEventsMapsStatusEventLogEntries() = runTest {
+    fun getParcelDetailsMapsEventsAndDisplayFields() = runTest {
         val network = FakeParcelApi(
             detail = parcelDto("123").copy(
+                parcelSize = "C",
+                sender = pl.tajchert.paczko.fast.core.network.dto.SenderDto(name = "Amazon Polska"),
+                shipmentType = "courier",
                 eventLog = listOf(
                     EventLogEntryDto(type = "PARCEL_STATUS", name = "DELIVERED", date = "2026-05-26T13:00:13.328Z"),
                     EventLogEntryDto(type = "INVOICE", name = "INVOICE_REQUESTED", date = "2026-05-26T13:00:13.328Z"),
-                    EventLogEntryDto(type = "PARCEL_STATUS", name = "CONFIRMED", date = "2026-05-25T14:41:46.362Z"),
                 ),
             ),
         )
         val repository = DefaultParcelRepository(network, FakeParcelDao())
 
-        val events = repository.getTrackingEvents("123")
+        val details = repository.getParcelDetails("123")
 
-        assertEquals(listOf("DELIVERED", "CONFIRMED"), events.map { it.status })
-        assertEquals("2026-05-26T13:00:13.328Z", events.first().date)
+        assertEquals(listOf("DELIVERED"), details.events.map { it.status })
+        assertEquals("C", details.sizeCode)
+        assertEquals("Amazon Polska", details.senderName)
+        assertEquals("courier", details.shipmentType)
     }
 }
 

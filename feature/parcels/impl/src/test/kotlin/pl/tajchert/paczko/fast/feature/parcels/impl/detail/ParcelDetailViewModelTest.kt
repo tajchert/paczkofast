@@ -13,9 +13,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
-import pl.tajchert.paczko.fast.core.domain.GetTrackingEventsUseCase
+import pl.tajchert.paczko.fast.core.domain.GetParcelDetailsUseCase
 import pl.tajchert.paczko.fast.core.domain.ObserveParcelUseCase
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
+import pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
 import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
@@ -34,7 +35,7 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "456",
             observeParcel = ObserveParcelUseCase(repository),
-            getTrackingEvents = GetTrackingEventsUseCase(repository),
+            getParcelDetails = GetParcelDetailsUseCase(repository),
         )
 
         assertFalse(viewModel.uiState.value.isLoading)
@@ -50,7 +51,7 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "missing",
             observeParcel = ObserveParcelUseCase(repository),
-            getTrackingEvents = GetTrackingEventsUseCase(repository),
+            getParcelDetails = GetParcelDetailsUseCase(repository),
         )
 
         assertFalse(viewModel.uiState.value.isLoading)
@@ -67,7 +68,7 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
-            getTrackingEvents = GetTrackingEventsUseCase(repository),
+            getParcelDetails = GetParcelDetailsUseCase(repository),
         )
 
         assertTrue(viewModel.uiState.value.isLoading)
@@ -76,47 +77,55 @@ class ParcelDetailViewModelTest {
     }
 
     @Test
-    fun exposesFetchedTrackingEvents() = runTest {
+    fun exposesFetchedDetailFields() = runTest {
         val repository = FakeParcelRepository(
             parcels = listOf(parcel("123")),
-            trackingEvents = listOf(
-                TrackingEvent("DELIVERED", "2026-05-26T13:00:13.328Z"),
-                TrackingEvent("CONFIRMED", "2026-05-25T14:41:46.362Z"),
+            details = ParcelDetails(
+                events = listOf(TrackingEvent("DELIVERED", "2026-05-26T13:00:13.328Z")),
+                sizeCode = "C",
+                senderName = "Amazon Polska",
+                shipmentType = "courier",
             ),
         )
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
-            getTrackingEvents = GetTrackingEventsUseCase(repository),
+            getParcelDetails = GetParcelDetailsUseCase(repository),
         )
         advanceUntilIdle()
 
-        assertEquals(listOf("DELIVERED", "CONFIRMED"), viewModel.uiState.value.events.map { it.status })
+        val state = viewModel.uiState.value
+        assertEquals(listOf("DELIVERED"), state.events.map { it.status })
+        assertEquals("C", state.sizeCode)
+        assertEquals("Amazon Polska", state.senderName)
+        assertEquals("courier", state.shipmentType)
     }
 
     @Test
-    fun trackingEventsFetchFailureLeavesEventsEmptyAndParcelLoaded() = runTest {
+    fun detailsFetchFailureLeavesFieldsEmptyAndParcelLoaded() = runTest {
         val repository = FakeParcelRepository(
             parcels = listOf(parcel("123")),
-            failEvents = true,
+            failDetails = true,
         )
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
-            getTrackingEvents = GetTrackingEventsUseCase(repository),
+            getParcelDetails = GetParcelDetailsUseCase(repository),
         )
         advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.events.isEmpty())
-        assertEquals("123", viewModel.uiState.value.parcel?.shipmentNumber)
+        val state = viewModel.uiState.value
+        assertTrue(state.events.isEmpty())
+        assertNull(state.sizeCode)
+        assertEquals("123", state.parcel?.shipmentNumber)
     }
 }
 
 private class FakeParcelRepository(
     parcels: List<Parcel>,
     private val emitParcel: Boolean = true,
-    private val trackingEvents: List<TrackingEvent> = emptyList(),
-    private val failEvents: Boolean = false,
+    private val details: ParcelDetails = ParcelDetails(),
+    private val failDetails: Boolean = false,
 ) : ParcelRepository {
     private val parcelState = MutableStateFlow(parcels)
 
@@ -133,9 +142,9 @@ private class FakeParcelRepository(
 
     override suspend fun refreshTrackedParcels() = Unit
 
-    override suspend fun getTrackingEvents(shipmentNumber: String): List<TrackingEvent> {
-        if (failEvents) error("boom")
-        return trackingEvents
+    override suspend fun getParcelDetails(shipmentNumber: String): ParcelDetails {
+        if (failDetails) error("boom")
+        return details
     }
 }
 

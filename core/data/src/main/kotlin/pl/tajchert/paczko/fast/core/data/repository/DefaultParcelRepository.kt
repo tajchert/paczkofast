@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pl.tajchert.paczko.fast.core.data.mapper.toDomain
 import pl.tajchert.paczko.fast.core.data.mapper.toEntity
-import pl.tajchert.paczko.fast.core.data.mapper.toTrackingEvents
+import pl.tajchert.paczko.fast.core.data.mapper.toParcelDetails
 import pl.tajchert.paczko.fast.core.database.dao.ParcelDao
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
-import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
+import pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails
 import pl.tajchert.paczko.fast.core.network.InpostParcelApi
 import javax.inject.Inject
 
@@ -31,6 +31,6 @@ class DefaultParcelRepository @Inject constructor(
         } while (response.more)
     }
 
-    override suspend fun getTrackingEvents(shipmentNumber: String): List<TrackingEvent> =
-        api.getTrackedParcel(shipmentNumber).toTrackingEvents()
+    override suspend fun getParcelDetails(shipmentNumber: String): ParcelDetails =
+        api.getTrackedParcel(shipmentNumber).toParcelDetails()
 }
