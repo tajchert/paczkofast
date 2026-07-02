@@ -35,6 +35,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.TrackingTimeline
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
 import pl.tajchert.paczko.fast.core.ui.QrPanel
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelDetailRoute
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
@@ -45,6 +46,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.list.previewParcels
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
+import pl.tajchert.paczko.fast.feature.parcels.impl.trackingTimelineEvents
 
 /**
  * Parcel detail screen ("2c Parcel detail — Black Amber"): status chip,
@@ -109,6 +111,7 @@ private fun ParcelDetailContent(
 
             else -> ParcelDetailBody(
                 parcel = uiState.parcel,
+                events = uiState.events,
                 onCollect = onCollect,
                 modifier = Modifier
                     .fillMaxSize()
@@ -121,6 +124,7 @@ private fun ParcelDetailContent(
 @Composable
 private fun ParcelDetailBody(
     parcel: Parcel,
+    events: List<TrackingEvent>,
     onCollect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -196,7 +200,11 @@ private fun ParcelDetailBody(
             )
         }
 
-        val timeline = trackingEvents(parcel)
+        val timeline = if (events.isNotEmpty()) {
+            trackingTimelineEvents(events)
+        } else {
+            trackingEvents(parcel)
+        }
         if (timeline.isNotEmpty()) {
             Column(modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)) {
                 Text(

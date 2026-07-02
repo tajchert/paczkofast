@@ -1,6 +1,8 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl
 
+import pl.tajchert.paczko.fast.core.designsystem.component.TimelineEvent
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
+import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
@@ -21,6 +23,36 @@ internal val Parcel.isReadyForPickup: Boolean
 /** "out_for_delivery" / "DELIVERED" → "Out for delivery" / "Delivered" */
 internal fun humanizeStatus(status: String): String =
     status.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
+
+/**
+ * Curated English label for a canonical eventLog status code, falling back to
+ * a humanized form of the raw code for anything unmapped.
+ */
+internal fun trackingEventLabel(status: String): String = when (status.uppercase()) {
+    "CREATED", "CONFIRMED" -> "Label created"
+    "DISPATCHED_BY_SENDER", "COLLECTED_FROM_SENDER", "TAKEN_BY_COURIER" -> "Picked up from sender"
+    "ADOPTED_AT_SOURCE_BRANCH", "ADOPTED_AT_SORTING_CENTER", "ADOPTED_AT_TARGET_BRANCH" -> "At logistics center"
+    "SENT_FROM_SOURCE_BRANCH", "SENT_FROM_SORTING_CENTER" -> "In transit"
+    "OUT_FOR_DELIVERY" -> "Out for delivery"
+    "READY_TO_PICKUP" -> "Ready for pickup"
+    "DELIVERED" -> "Delivered"
+    "CLAIMED", "COLLECTED_BY_CUSTOMER" -> "Picked up"
+    else -> humanizeStatus(status)
+}
+
+/**
+ * Maps the real, newest-first [TrackingEvent] history to timeline rows: the
+ * newest event is current, all are already-happened (none upcoming).
+ */
+internal fun trackingTimelineEvents(events: List<TrackingEvent>): List<TimelineEvent> =
+    events.mapIndexed { index, event ->
+        TimelineEvent(
+            label = trackingEventLabel(event.status),
+            time = formatTimelineTime(event.date),
+            isCurrent = index == 0,
+            isUpcoming = false,
+        )
+    }
 
 internal val Parcel.isDelivered: Boolean
     get() = statusGroup?.equals("delivered", ignoreCase = true) == true ||
