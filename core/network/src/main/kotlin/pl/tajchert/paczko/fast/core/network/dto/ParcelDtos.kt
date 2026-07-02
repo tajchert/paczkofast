@@ -23,11 +23,19 @@ data class ParcelDto(
     val multiCompartment: MultiCompartmentDto? = null,
     val operations: ParcelOperationsDto = ParcelOperationsDto(),
     val ownershipStatus: String? = null,
+    val eventLog: List<EventLogEntryDto> = emptyList(),
 )
 
 @Serializable
 data class ParcelOperationsDto(
     val collect: Boolean = false,
+)
+
+@Serializable
+data class EventLogEntryDto(
+    val type: String? = null,
+    val name: String? = null,
+    val date: String? = null,
 )
 
 @Serializable
