@@ -35,6 +35,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.saveable.rememberSaveable
+import pl.tajchert.paczko.fast.core.designsystem.component.HoldToConfirmButton
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 
 @Composable
@@ -55,7 +56,7 @@ fun CollectScreen(
         val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
             permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         if (granted) {
-            viewModel.start(currentShipmentNumber)
+            viewModel.arm(currentShipmentNumber)
         } else {
             viewModel.onLocationPermissionDenied(currentShipmentNumber)
         }
@@ -63,7 +64,7 @@ fun CollectScreen(
 
     LaunchedEffect(shipmentNumber) {
         if (hasLocationPermission(context)) {
-            viewModel.start(shipmentNumber)
+            viewModel.arm(shipmentNumber)
         } else if (!permissionRequested) {
             permissionRequested = true
             locationPermissionLauncher.launch(
@@ -78,6 +79,7 @@ fun CollectScreen(
     CollectContent(
         shipmentNumber = shipmentNumber,
         uiState = uiState,
+        onConfirmed = { viewModel.start(currentShipmentNumber) },
         onBack = onBack,
     )
 }
@@ -87,6 +89,7 @@ fun CollectScreen(
 private fun CollectContent(
     shipmentNumber: String,
     uiState: CollectUiState,
+    onConfirmed: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -119,20 +122,46 @@ private fun CollectContent(
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
             )
-            Text(
-                text = collectMessage(uiState.state),
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 12.dp),
-            )
-            if (uiState.state is CollectState.Failed || uiState.state is CollectState.Completed) {
-                Button(
-                    onClick = onBack,
+            if (uiState.state is CollectState.Idle) {
+                uiState.lockerName?.let { name ->
+                    Text(
+                        text = "Locker $name",
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+                }
+                uiState.distanceMeters?.let { meters ->
+                    Text(
+                        text = "You're $meters m away",
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+                HoldToConfirmButton(
+                    text = "Hold to open",
+                    onConfirmed = onConfirmed,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.dp),
-                ) {
-                    Text(text = "Close")
+                )
+            } else {
+                Text(
+                    text = collectMessage(uiState.state),
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+                if (uiState.state is CollectState.Failed || uiState.state is CollectState.Completed) {
+                    Button(
+                        onClick = onBack,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp),
+                    ) {
+                        Text(text = "Close")
+                    }
                 }
             }
         }
