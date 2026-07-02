@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +23,10 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -48,7 +52,7 @@ import pl.tajchert.paczko.fast.core.ui.QrPanel
 import pl.tajchert.paczko.fast.feature.parcels.impl.TRANSIT_SEGMENTS
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
-import pl.tajchert.paczko.fast.feature.parcels.impl.isDelivered
+import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.lockerLine
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
@@ -87,14 +91,19 @@ private fun ParcelListContent(
     onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var selectedTab by rememberSaveable { mutableStateOf(BottomNavDestination.Parcels) }
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
         topBar = { HomeHeader() },
         bottomBar = {
             PaczkofastBottomBar(
-                selected = BottomNavDestination.Parcels,
-                onSelect = { /* History and Settings are not built yet */ },
+                selected = selectedTab,
+                onSelect = { destination ->
+                    if (destination != BottomNavDestination.Settings) {
+                        selectedTab = destination
+                    }
+                },
             )
         },
     ) { paddingValues ->
@@ -128,29 +137,57 @@ private fun ParcelListContent(
                     )
                 }
 
+                val activeParcels = remember(uiState.parcels) {
+                    uiState.parcels.filter { !it.isFinished }
+                }
+                val historyParcels = remember(uiState.parcels) {
+                    uiState.parcels.filter { it.isFinished }
+                }
+
                 when {
-                    uiState.parcels.isNotEmpty() -> ParcelSections(
-                        parcels = uiState.parcels,
-                        onParcelClick = onParcelClick,
-                        onCollectClick = onCollectClick,
-                    )
+                    uiState.parcels.isEmpty() && uiState.errorMessage != null ->
+                        PaczkofastErrorState(
+                            message = uiState.errorMessage,
+                            onRetry = onRefreshClick,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                        )
 
-                    uiState.errorMessage != null -> PaczkofastErrorState(
-                        message = uiState.errorMessage,
-                        onRetry = onRefreshClick,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                    )
+                    selectedTab == BottomNavDestination.History ->
+                        if (historyParcels.isNotEmpty()) {
+                            HistoryList(
+                                parcels = historyParcels,
+                                onParcelClick = onParcelClick,
+                            )
+                        } else {
+                            PaczkofastEmptyState(
+                                icon = Icons.Outlined.History,
+                                title = "No history yet",
+                                description = "Delivered and collected parcels will appear here.",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState()),
+                            )
+                        }
 
-                    else -> PaczkofastEmptyState(
-                        icon = Icons.Outlined.Inbox,
-                        title = "No parcels",
-                        description = "Your tracked parcels will appear here.",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                    )
+                    else ->
+                        if (activeParcels.isNotEmpty()) {
+                            ParcelSections(
+                                parcels = activeParcels,
+                                onParcelClick = onParcelClick,
+                                onCollectClick = onCollectClick,
+                            )
+                        } else {
+                            PaczkofastEmptyState(
+                                icon = Icons.Outlined.Inbox,
+                                title = "Nothing incoming",
+                                description = "Parcels on the way or ready for pickup will appear here.",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState()),
+                            )
+                        }
                 }
             }
         }
@@ -164,12 +201,9 @@ private fun ParcelSections(
     onCollectClick: (shipmentNumber: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val sections = remember(parcels) {
-        val (ready, rest) = parcels.partition { it.isReadyForPickup }
-        val (delivered, onTheWay) = rest.partition { it.isDelivered }
-        Triple(ready, onTheWay, delivered)
+    val (ready, onTheWay) = remember(parcels) {
+        parcels.partition { it.isReadyForPickup }
     }
-    val (ready, onTheWay, delivered) = sections
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -219,24 +253,35 @@ private fun ParcelSections(
                 )
             }
         }
+    }
+}
 
-        if (delivered.isNotEmpty()) {
-            item(key = "delivered-header") {
-                SectionHeader(
-                    label = "Delivered",
-                    count = delivered.size,
-                    modifier = Modifier.padding(top = 10.dp),
-                )
-            }
-            items(items = delivered, key = Parcel::shipmentNumber) { parcel ->
-                TransitParcelCard(
-                    title = formatShipmentNumber(parcel.shipmentNumber),
-                    statusText = humanizeStatus(parcel.status),
-                    completedSegments = TRANSIT_SEGMENTS,
-                    totalSegments = TRANSIT_SEGMENTS,
-                    onClick = { onParcelClick(parcel.shipmentNumber) },
-                )
-            }
+@Composable
+private fun HistoryList(
+    parcels: List<Parcel>,
+    onParcelClick: (shipmentNumber: String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        item(key = "history-header") {
+            SectionHeader(
+                label = "History",
+                count = parcels.size,
+                modifier = Modifier.padding(top = 6.dp),
+            )
+        }
+        items(items = parcels, key = Parcel::shipmentNumber) { parcel ->
+            TransitParcelCard(
+                title = formatShipmentNumber(parcel.shipmentNumber),
+                statusText = humanizeStatus(parcel.status),
+                completedSegments = TRANSIT_SEGMENTS,
+                totalSegments = TRANSIT_SEGMENTS,
+                onClick = { onParcelClick(parcel.shipmentNumber) },
+            )
         }
     }
 }
