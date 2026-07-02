@@ -39,8 +39,8 @@ import javax.inject.Inject
  * ) {
  *     val userPreferences: Flow<UserPreferences> = dataSource.userPreferences
  *
- *     suspend fun setDarkTheme(config: DarkThemeConfig) {
- *         dataSource.setDarkThemeConfig(config)
+ *     suspend fun setThemeMode(themeMode: ThemeMode) {
+ *         dataSource.setThemeMode(themeMode)
  *     }
  * }
  * ```
@@ -66,7 +66,7 @@ class UserPreferencesDataSource @Inject constructor(
     }
 
     /**
-     * Set the dark theme preference.
+     * Set the theme mode preference.
      *
      * ## Transaction Safety
      *
