@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -12,10 +13,12 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
+import pl.tajchert.paczko.fast.core.domain.GetTrackingEventsUseCase
 import pl.tajchert.paczko.fast.core.domain.ObserveParcelUseCase
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
 import pl.tajchert.paczko.fast.core.testing.util.MainDispatcherRule
 
 class ParcelDetailViewModelTest {
@@ -31,6 +34,7 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "456",
             observeParcel = ObserveParcelUseCase(repository),
+            getTrackingEvents = GetTrackingEventsUseCase(repository),
         )
 
         assertFalse(viewModel.uiState.value.isLoading)
@@ -46,6 +50,7 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "missing",
             observeParcel = ObserveParcelUseCase(repository),
+            getTrackingEvents = GetTrackingEventsUseCase(repository),
         )
 
         assertFalse(viewModel.uiState.value.isLoading)
@@ -62,17 +67,56 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
+            getTrackingEvents = GetTrackingEventsUseCase(repository),
         )
 
         assertTrue(viewModel.uiState.value.isLoading)
         assertNull(viewModel.uiState.value.parcel)
         assertNull(viewModel.uiState.value.errorMessage)
     }
+
+    @Test
+    fun exposesFetchedTrackingEvents() = runTest {
+        val repository = FakeParcelRepository(
+            parcels = listOf(parcel("123")),
+            trackingEvents = listOf(
+                TrackingEvent("DELIVERED", "2026-05-26T13:00:13.328Z"),
+                TrackingEvent("CONFIRMED", "2026-05-25T14:41:46.362Z"),
+            ),
+        )
+        val viewModel = ParcelDetailViewModel(
+            shipmentNumber = "123",
+            observeParcel = ObserveParcelUseCase(repository),
+            getTrackingEvents = GetTrackingEventsUseCase(repository),
+        )
+        advanceUntilIdle()
+
+        assertEquals(listOf("DELIVERED", "CONFIRMED"), viewModel.uiState.value.events.map { it.status })
+    }
+
+    @Test
+    fun trackingEventsFetchFailureLeavesEventsEmptyAndParcelLoaded() = runTest {
+        val repository = FakeParcelRepository(
+            parcels = listOf(parcel("123")),
+            failEvents = true,
+        )
+        val viewModel = ParcelDetailViewModel(
+            shipmentNumber = "123",
+            observeParcel = ObserveParcelUseCase(repository),
+            getTrackingEvents = GetTrackingEventsUseCase(repository),
+        )
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.events.isEmpty())
+        assertEquals("123", viewModel.uiState.value.parcel?.shipmentNumber)
+    }
 }
 
 private class FakeParcelRepository(
     parcels: List<Parcel>,
     private val emitParcel: Boolean = true,
+    private val trackingEvents: List<TrackingEvent> = emptyList(),
+    private val failEvents: Boolean = false,
 ) : ParcelRepository {
     private val parcelState = MutableStateFlow(parcels)
 
@@ -88,6 +132,11 @@ private class FakeParcelRepository(
     }
 
     override suspend fun refreshTrackedParcels() = Unit
+
+    override suspend fun getTrackingEvents(shipmentNumber: String): List<TrackingEvent> {
+        if (failEvents) error("boom")
+        return trackingEvents
+    }
 }
 
 private fun parcel(number: String) = Parcel(
