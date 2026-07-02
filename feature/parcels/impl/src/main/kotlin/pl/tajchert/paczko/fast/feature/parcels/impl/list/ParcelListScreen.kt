@@ -65,6 +65,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.transitCompletedSegments
 fun ParcelListScreen(
     onParcelClick: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: ParcelListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -78,6 +79,7 @@ fun ParcelListScreen(
         onParcelClick = onParcelClick,
         onCollectClick = onCollectClick,
         onRefreshClick = viewModel::refresh,
+        onOpenSettings = onOpenSettings,
     )
 }
 
@@ -88,6 +90,7 @@ private fun ParcelListContent(
     onParcelClick: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
     onRefreshClick: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(BottomNavDestination.Parcels) }
@@ -99,7 +102,9 @@ private fun ParcelListContent(
             PaczkofastBottomBar(
                 selected = selectedTab,
                 onSelect = { destination ->
-                    if (destination != BottomNavDestination.Settings) {
+                    if (destination == BottomNavDestination.Settings) {
+                        onOpenSettings()
+                    } else {
                         selectedTab = destination
                     }
                 },
@@ -401,6 +406,7 @@ private fun ParcelListContentPreview(
             onParcelClick = {},
             onCollectClick = {},
             onRefreshClick = {},
+            onOpenSettings = {},
         )
     }
 }

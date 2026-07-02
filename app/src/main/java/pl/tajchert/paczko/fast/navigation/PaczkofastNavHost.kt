@@ -9,10 +9,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import pl.tajchert.paczko.fast.BuildConfig
 import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
 import pl.tajchert.paczko.fast.feature.auth.impl.navigation.authEntries
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
 import pl.tajchert.paczko.fast.feature.parcels.impl.navigation.parcelEntries
+import pl.tajchert.paczko.fast.feature.settings.api.SettingsRoute
+import pl.tajchert.paczko.fast.feature.settings.impl.navigation.settingsEntries
 
 // =============================================================================
 // APP NAVIGATION DISPLAY (Navigation 3)
@@ -88,10 +91,19 @@ fun PaczkofastNavHost(
             parcelEntries(
                 onNavigate = { key -> backStack.add(key) },
                 onBack = { backStack.removeLastOrNull() },
+                onOpenSettings = { backStack.add(SettingsRoute) },
+            )
+
+            settingsEntries(
+                onBack = { backStack.removeLastOrNull() },
+                onLoggedOut = {
+                    backStack.clear()
+                    backStack.add(AuthRoute)
+                },
+                appVersion = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
             )
 
             // Add more features here:
-            // settingsEntries(...)
             // profileEntries(...)
         },
     )

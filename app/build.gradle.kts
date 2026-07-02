@@ -83,6 +83,8 @@ dependencies {
     implementation(projects.feature.auth.impl)
     implementation(projects.feature.parcels.api)
     implementation(projects.feature.parcels.impl)
+    implementation(projects.feature.settings.api)
+    implementation(projects.feature.settings.impl)
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
     implementation(projects.core.model)

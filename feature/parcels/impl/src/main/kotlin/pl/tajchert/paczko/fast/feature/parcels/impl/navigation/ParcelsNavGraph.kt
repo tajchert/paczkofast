@@ -12,6 +12,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.list.ParcelListScreen
 fun EntryProviderScope<NavKey>.parcelEntries(
     onNavigate: (NavKey) -> Unit,
     onBack: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     entry<ParcelListRoute> {
         ParcelListScreen(
@@ -21,6 +22,7 @@ fun EntryProviderScope<NavKey>.parcelEntries(
             onCollectClick = { shipmentNumber ->
                 onNavigate(ParcelCollectRoute(shipmentNumber = shipmentNumber))
             },
+            onOpenSettings = onOpenSettings,
         )
     }
 
