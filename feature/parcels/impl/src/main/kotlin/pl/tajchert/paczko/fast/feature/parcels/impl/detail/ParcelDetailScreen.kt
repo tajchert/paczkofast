@@ -144,6 +144,10 @@ private fun ParcelDetailBody(
 ) {
     val context = LocalContext.current
     val countdown = pickupCountdown(parcel)
+    // Prefer the cached list values (shown instantly); the detail fetch only
+    // fills gaps when the cache predates sender/size support.
+    val effectiveSender = senderName?.takeIf { it.isNotBlank() } ?: parcel.senderName
+    val effectiveSizeCode = sizeCode ?: parcel.parcelSize
 
     Column(
         modifier = modifier
@@ -158,12 +162,12 @@ private fun ParcelDetailBody(
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 StatusChip(text = humanizeStatus(parcel.status))
-                parcelSizeLabel(sizeCode)?.let { sizeLabel ->
+                parcelSizeLabel(effectiveSizeCode)?.let { sizeLabel ->
                     OutlinedStatusChip(text = "Size $sizeLabel")
                 }
             }
             Text(
-                text = senderName?.takeIf { it.isNotBlank() } ?: "Parcel",
+                text = effectiveSender ?: "Parcel",
                 style = MaterialTheme.typography.headlineSmall,
                 color = PaczkofastTheme.colors.textPrimary,
             )
@@ -185,7 +189,7 @@ private fun ParcelDetailBody(
         }
 
         SenderTypeCard(
-            senderName = senderName,
+            senderName = effectiveSender,
             shipmentType = shipmentType?.let(::humanizeStatus),
         )
 

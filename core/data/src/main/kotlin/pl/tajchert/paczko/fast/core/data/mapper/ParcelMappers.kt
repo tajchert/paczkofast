@@ -25,6 +25,8 @@ fun ParcelDto.toEntity() = ParcelEntity(
     multiCompartmentUuid = multiCompartment?.uuid,
     multiPackageShipmentNumbers = multiCompartment?.shipmentNumbers.toStoredShipmentNumbers(),
     ownershipStatus = ownershipStatus,
+    senderName = sender?.name,
+    parcelSize = parcelSize,
 )
 
 fun ParcelEntity.toDomain() = Parcel(
@@ -48,6 +50,8 @@ fun ParcelEntity.toDomain() = Parcel(
     multiCompartmentUuid = multiCompartmentUuid,
     multiPackageShipmentNumbers = multiPackageShipmentNumbers.toShipmentNumberList(),
     ownershipStatus = ownershipStatus,
+    senderName = senderName,
+    parcelSize = parcelSize,
 )
 
 private fun List<String>?.toStoredShipmentNumbers(): String? =

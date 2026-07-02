@@ -1,0 +1,118 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "4dacbd5607aae438c72bbbff788d6d47",
+    "entities": [
+      {
+        "tableName": "parcels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shipmentNumber` TEXT NOT NULL, `status` TEXT NOT NULL, `statusGroup` TEXT, `openCode` TEXT, `qrCode` TEXT, `pickupPointName` TEXT, `pickupPointDescription` TEXT, `pickupPointAddress` TEXT, `pickupPointLatitude` REAL, `pickupPointLongitude` REAL, `expiryDate` TEXT, `storedDate` TEXT, `collectOperation` INTEGER NOT NULL, `multiCompartmentUuid` TEXT, `multiPackageShipmentNumbers` TEXT, `ownershipStatus` TEXT, `senderName` TEXT, `parcelSize` TEXT, PRIMARY KEY(`shipmentNumber`))",
+        "fields": [
+          {
+            "fieldPath": "shipmentNumber",
+            "columnName": "shipmentNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "statusGroup",
+            "columnName": "statusGroup",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openCode",
+            "columnName": "openCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "qrCode",
+            "columnName": "qrCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "pickupPointName",
+            "columnName": "pickupPointName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "pickupPointDescription",
+            "columnName": "pickupPointDescription",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "pickupPointAddress",
+            "columnName": "pickupPointAddress",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "pickupPointLatitude",
+            "columnName": "pickupPointLatitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "pickupPointLongitude",
+            "columnName": "pickupPointLongitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "expiryDate",
+            "columnName": "expiryDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "storedDate",
+            "columnName": "storedDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "collectOperation",
+            "columnName": "collectOperation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "multiCompartmentUuid",
+            "columnName": "multiCompartmentUuid",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "multiPackageShipmentNumbers",
+            "columnName": "multiPackageShipmentNumbers",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "ownershipStatus",
+            "columnName": "ownershipStatus",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "senderName",
+            "columnName": "senderName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parcelSize",
+            "columnName": "parcelSize",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "shipmentNumber"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4dacbd5607aae438c72bbbff788d6d47')"
+    ]
+  }
+}

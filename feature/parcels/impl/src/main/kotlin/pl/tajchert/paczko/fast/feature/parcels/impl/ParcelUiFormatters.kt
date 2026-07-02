@@ -216,6 +216,14 @@ internal fun lockerLine(parcel: Parcel): String {
 internal fun formatShipmentNumber(shipmentNumber: String): String =
     shipmentNumber.chunked(4).joinToString(" ")
 
+/**
+ * Human-facing parcel title: the sender/merchant name when the carrier
+ * provides one (e.g. "Amazon Polska"), otherwise the formatted shipment
+ * number.
+ */
+internal fun parcelTitle(parcel: Parcel): String =
+    parcel.senderName?.takeIf { it.isNotBlank() } ?: formatShipmentNumber(parcel.shipmentNumber)
+
 // -----------------------------------------------------------------------------
 // History tab
 // -----------------------------------------------------------------------------

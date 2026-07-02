@@ -21,4 +21,6 @@ data class ParcelEntity(
     val multiCompartmentUuid: String? = null,
     val multiPackageShipmentNumbers: String? = null,
     val ownershipStatus: String? = null,
+    val senderName: String? = null,
+    val parcelSize: String? = null,
 )

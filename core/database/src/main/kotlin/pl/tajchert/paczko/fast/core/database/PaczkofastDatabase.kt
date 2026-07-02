@@ -7,7 +7,7 @@ import pl.tajchert.paczko.fast.core.database.entity.ParcelEntity
 
 @Database(
     entities = [ParcelEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class PaczkofastDatabase : RoomDatabase() {

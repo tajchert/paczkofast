@@ -61,6 +61,8 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
 import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.lockerLine
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelTitle
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
 import pl.tajchert.paczko.fast.feature.parcels.impl.transitCompletedSegments
 import java.time.YearMonth
@@ -265,8 +267,9 @@ private fun ParcelSections(
             }
             items(items = onTheWay, key = Parcel::shipmentNumber) { parcel ->
                 TransitParcelCard(
-                    title = formatShipmentNumber(parcel.shipmentNumber),
+                    title = parcelTitle(parcel),
                     statusText = humanizeStatus(parcel.status),
+                    sizeLabel = parcelSizeLabel(parcel.parcelSize),
                     completedSegments = transitCompletedSegments(parcel.status),
                     totalSegments = TRANSIT_SEGMENTS,
                     onClick = { onParcelClick(parcel.shipmentNumber) },
@@ -305,7 +308,7 @@ private fun HistoryList(
             }
             items(items = monthParcels, key = Parcel::shipmentNumber) { parcel ->
                 HistoryParcelCard(
-                    title = formatShipmentNumber(parcel.shipmentNumber),
+                    title = parcelTitle(parcel),
                     outcomeLine = historyOutcomeLine(parcel),
                     dateText = historyDateLabel(parcel),
                     outcome = historyOutcome(parcel),
@@ -339,12 +342,13 @@ private fun ExpandedReadyCard(
 ) {
     val countdown = pickupCountdown(parcel)
     ReadyParcelCard(
-        title = formatShipmentNumber(parcel.shipmentNumber),
+        title = parcelTitle(parcel),
         subtitle = lockerLine(parcel),
         deadlineText = countdown?.deadlineText,
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
         urgent = countdown?.urgent == true,
+        sizeLabel = parcelSizeLabel(parcel.parcelSize),
         qrContent = null,
         actionText = "Open box remotely".takeIf { parcel.canCollectRemotely },
         onActionClick = onCollectClick,
@@ -361,7 +365,7 @@ private fun CollapsedReadyCard(
 ) {
     val countdown = pickupCountdown(parcel)
     CollapsedReadyParcelCard(
-        title = formatShipmentNumber(parcel.shipmentNumber),
+        title = parcelTitle(parcel),
         subtitle = lockerLine(parcel),
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,

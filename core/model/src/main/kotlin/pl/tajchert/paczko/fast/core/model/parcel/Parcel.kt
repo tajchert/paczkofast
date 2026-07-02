@@ -17,6 +17,8 @@ data class Parcel(
     val multiCompartmentUuid: String? = null,
     val multiPackageShipmentNumbers: List<String> = emptyList(),
     val ownershipStatus: String? = null,
+    val senderName: String? = null,
+    val parcelSize: String? = null,
 ) {
     val canCollectRemotely: Boolean
         get() = operations.collect && openCode.isNullOrBlank().not()
