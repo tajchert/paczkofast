@@ -15,7 +15,11 @@ class CollectParcelUseCase @Inject constructor(
     private val repository: CollectRepository,
     private val locationProvider: LocationProvider,
 ) {
-    fun collect(shipmentNumber: String, openCode: String): Flow<CollectState> = flow {
+    fun collect(
+        shipmentNumber: String,
+        openCode: String,
+        claimShipmentNumbers: List<String> = listOf(shipmentNumber),
+    ): Flow<CollectState> = flow {
         try {
             emit(CollectState.Validating)
             val geoPoint = locationProvider.currentLocation()
@@ -35,7 +39,7 @@ class CollectParcelUseCase @Inject constructor(
             repository.closed(sessionUuid)
 
             emit(CollectState.Claiming(sessionUuid))
-            repository.claim(sessionUuid, shipmentNumber)
+            repository.claim(sessionUuid, claimShipmentNumbers)
 
             emit(CollectState.Completed)
         } catch (throwable: Throwable) {

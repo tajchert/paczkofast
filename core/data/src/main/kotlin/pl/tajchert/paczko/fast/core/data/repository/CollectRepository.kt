@@ -8,5 +8,5 @@ interface CollectRepository {
     suspend fun open(sessionUuid: String)
     suspend fun pollStatus(sessionUuid: String, expectedStatus: ExpectedCompartmentStatus)
     suspend fun closed(sessionUuid: String)
-    suspend fun claim(sessionUuid: String, shipmentNumber: String)
+    suspend fun claim(sessionUuid: String, shipmentNumbers: List<String>)
 }

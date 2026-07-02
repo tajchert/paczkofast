@@ -42,6 +42,41 @@ class CollectViewModelTest {
 
         assertEquals(CollectState.Completed, viewModel.uiState.value.state)
         assertEquals("456", collectRepository.lastOpenCode)
+        assertEquals(listOf("123"), collectRepository.claimedShipmentNumbers)
+        assertEquals(1, viewModel.uiState.value.members.size)
+    }
+
+    @Test
+    fun startMultiCompartmentValidatesTappedParcelAndClaimsAllMembers() = runTest {
+        val parcelRepository = FakeParcelRepository(
+            parcels = listOf(
+                parcel(
+                    shipmentNumber = "111",
+                    openCode = "aaa",
+                    multiCompartmentUuid = "mc-1",
+                    multiPackageShipmentNumbers = listOf("111", "222"),
+                ),
+                parcel(shipmentNumber = "222", openCode = "bbb", multiCompartmentUuid = "mc-1"),
+            ),
+        )
+        val collectRepository = FakeCollectRepository()
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(
+                repository = collectRepository,
+                locationProvider = FakeLocationProvider(),
+            ),
+            parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
+        )
+
+        viewModel.start("111")
+
+        assertEquals(CollectState.Completed, viewModel.uiState.value.state)
+        // Opens with the tapped parcel's own open code…
+        assertEquals("aaa", collectRepository.lastOpenCode)
+        // …and claims every parcel sharing the compartment.
+        assertEquals(listOf("111", "222"), collectRepository.claimedShipmentNumbers)
+        assertEquals(2, viewModel.uiState.value.members.size)
     }
 
     @Test
@@ -230,6 +265,10 @@ class CollectViewModelTest {
 private class FakeParcelRepository(
     parcel: Parcel?,
 ) : ParcelRepository {
+    constructor(parcels: List<Parcel>) : this(null) {
+        parcelState.value = parcels
+    }
+
     private val parcelState = MutableStateFlow(listOfNotNull(parcel))
 
     override fun observeParcels(): Flow<List<Parcel>> = parcelState
@@ -261,7 +300,11 @@ private class FakeCollectRepository : CollectRepository {
 
     override suspend fun closed(sessionUuid: String) = Unit
 
-    override suspend fun claim(sessionUuid: String, shipmentNumber: String) = Unit
+    var claimedShipmentNumbers: List<String>? = null
+
+    override suspend fun claim(sessionUuid: String, shipmentNumbers: List<String>) {
+        claimedShipmentNumbers = shipmentNumbers
+    }
 }
 
 private class FakeLocationProvider(
@@ -275,6 +318,8 @@ private fun parcel(
     openCode: String?,
     latitude: Double? = 50.061,
     longitude: Double? = 19.938,
+    multiCompartmentUuid: String? = null,
+    multiPackageShipmentNumbers: List<String> = emptyList(),
 ) = Parcel(
     shipmentNumber = shipmentNumber,
     status = "ready_to_pickup",
@@ -291,4 +336,6 @@ private fun parcel(
     expiryDate = "2026-07-02T12:00:00Z",
     storedDate = "2026-07-01T12:00:00Z",
     operations = ParcelOperations(collect = true),
+    multiCompartmentUuid = multiCompartmentUuid,
+    multiPackageShipmentNumbers = multiPackageShipmentNumbers,
 )

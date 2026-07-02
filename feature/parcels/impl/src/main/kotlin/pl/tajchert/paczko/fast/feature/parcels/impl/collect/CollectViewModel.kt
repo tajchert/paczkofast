@@ -16,6 +16,9 @@ import pl.tajchert.paczko.fast.core.common.location.metersToLocker
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
 import pl.tajchert.paczko.fast.core.domain.CollectParcelUseCase
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
+import pl.tajchert.paczko.fast.core.model.parcel.Parcel
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
+import pl.tajchert.paczko.fast.feature.parcels.impl.parcelTitle
 
 @HiltViewModel
 class CollectViewModel @Inject constructor(
@@ -35,7 +38,9 @@ class CollectViewModel @Inject constructor(
         if (startedShipmentNumber == shipmentNumber) return
         armedShipmentNumber = shipmentNumber
         viewModelScope.launch {
-            val pickup = parcelRepository.observeParcel(shipmentNumber).first()?.pickupPoint
+            val members = compartmentMembers(shipmentNumber)
+            val pickup = members.firstOrNull { it.shipmentNumber == shipmentNumber }?.pickupPoint
+                ?: members.firstOrNull()?.pickupPoint
             val distance = runCatching {
                 metersToLocker(
                     from = locationProvider.currentLocation(),
@@ -50,6 +55,7 @@ class CollectViewModel @Inject constructor(
                     it.copy(
                         lockerName = pickup?.name,
                         distanceMeters = distance,
+                        members = members.map(::toCollectMember),
                     )
                 }
             }
@@ -62,8 +68,10 @@ class CollectViewModel @Inject constructor(
 
         startedShipmentNumber = shipmentNumber
         collectJob = viewModelScope.launch {
-            val parcel = parcelRepository.observeParcel(shipmentNumber).first()
+            val members = compartmentMembers(shipmentNumber)
+            val parcel = members.firstOrNull { it.shipmentNumber == shipmentNumber }
             val openCode = parcel?.openCode
+            val memberUi = members.map(::toCollectMember)
             if (openCode.isNullOrBlank()) {
                 _uiState.update {
                     CollectUiState(
@@ -71,16 +79,38 @@ class CollectViewModel @Inject constructor(
                             message = "Parcel cannot be opened remotely",
                             canRetryFromValidation = false,
                         ),
+                        members = memberUi,
                     )
                 }
                 return@launch
             }
 
-            collectParcel.collect(shipmentNumber, openCode).collect { state ->
-                _uiState.update { CollectUiState(state = state) }
+            val claimNumbers = members.map { it.shipmentNumber }.ifEmpty { listOf(shipmentNumber) }
+            collectParcel.collect(shipmentNumber, openCode, claimNumbers).collect { state ->
+                _uiState.update { it.copy(state = state, members = memberUi) }
             }
         }
     }
+
+    /**
+     * All parcels sharing the tapped parcel's locker compartment (itself plus
+     * any siblings with the same [Parcel.multiCompartmentUuid]); just the tapped
+     * parcel for a standalone pickup.
+     */
+    private suspend fun compartmentMembers(shipmentNumber: String): List<Parcel> {
+        val all = parcelRepository.observeParcels().first()
+        val target = all.firstOrNull { it.shipmentNumber == shipmentNumber } ?: return emptyList()
+        val uuid = target.multiCompartmentUuid
+        if (uuid.isNullOrBlank()) return listOf(target)
+        val siblings = all.filter { it.multiCompartmentUuid == uuid }
+        return if (siblings.size >= 2) siblings else listOf(target)
+    }
+
+    private fun toCollectMember(parcel: Parcel) = CollectMember(
+        shipmentNumber = parcel.shipmentNumber,
+        title = parcelTitle(parcel),
+        sizeLabel = parcelSizeLabel(parcel.parcelSize),
+    )
 
     fun onLocationPermissionDenied(shipmentNumber: String) {
         startedShipmentNumber = shipmentNumber
@@ -99,4 +129,12 @@ data class CollectUiState(
     val state: CollectState = CollectState.Idle,
     val lockerName: String? = null,
     val distanceMeters: Int? = null,
+    val members: List<CollectMember> = emptyList(),
+)
+
+/** One parcel in the compartment being collected — drives the checklist/summary. */
+data class CollectMember(
+    val shipmentNumber: String,
+    val title: String,
+    val sizeLabel: String? = null,
 )

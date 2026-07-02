@@ -48,9 +48,9 @@ class DefaultCollectRepository @Inject constructor(
         }
     }
 
-    override suspend fun claim(sessionUuid: String, shipmentNumber: String) {
+    override suspend fun claim(sessionUuid: String, shipmentNumbers: List<String>) {
         collectApiCall {
-            api.claim(CollectClaimRequestDto(sessionUuid, listOf(shipmentNumber)))
+            api.claim(CollectClaimRequestDto(sessionUuid, shipmentNumbers))
         }
     }
 

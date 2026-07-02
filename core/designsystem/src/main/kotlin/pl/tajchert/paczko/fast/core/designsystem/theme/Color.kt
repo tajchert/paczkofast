@@ -40,6 +40,9 @@ internal val SandSoft = Color(0xFFC9BFA9)
 internal val SandMuted = Color(0xFF93897A)
 internal val SandFaint = Color(0xFF6B6353)
 internal val UrgentDark = Color(0xFFFF9E2E)
+// Multi-package (blue) accent — dark
+internal val InfoBlue = Color(0xFF5CA8FF)
+internal val NightBlue = Color(0xFF101319)
 
 // Light ("warm paper") palette
 internal val Paper0 = Color(0xFFF4F1EA)
@@ -59,6 +62,9 @@ internal val PaperChevron = Color(0xFFB8AE99)
 internal val TrackDoneLight = Color(0xFFC8BFA8)
 internal val TrackActiveLight = Color(0xFFE9A50E)
 internal val UrgentLight = Color(0xFFC75B1F)
+// Multi-package (blue) accent — light
+internal val InfoBlueDeep = Color(0xFF2F6FE0)
+internal val PaperBlue = Color(0xFFEDF2FB)
 
 // QR panel (same in both modes — scanners need contrast)
 internal val QrInk = Color(0xFF17140E)
@@ -151,6 +157,14 @@ data class PaczkofastColors(
     val timelineDotInactive: Color,
     /** Circular icon-button background in the header. */
     val headerIconBackground: Color,
+    /** Multi-package (blue) accent — text/icons/fills. */
+    val infoAccent: Color,
+    /** Content drawn on top of [infoAccent]. */
+    val onInfoAccent: Color,
+    /** Surface of the multi-package (blue) card. */
+    val infoSurface: Color,
+    /** Border of the multi-package (blue) card. */
+    val infoBorder: Color,
 )
 
 internal val DarkPaczkofastColors = PaczkofastColors(
@@ -188,6 +202,10 @@ internal val DarkPaczkofastColors = PaczkofastColors(
     timelineRail = NightRail,
     timelineDotInactive = SandFaint,
     headerIconBackground = Night1,
+    infoAccent = InfoBlue,
+    onInfoAccent = Night0,
+    infoSurface = NightBlue,
+    infoBorder = InfoBlue.copy(alpha = 0.32f),
 )
 
 internal val LightPaczkofastColors = PaczkofastColors(
@@ -225,6 +243,10 @@ internal val LightPaczkofastColors = PaczkofastColors(
     timelineRail = PaperTrack,
     timelineDotInactive = TrackDoneLight,
     headerIconBackground = Paper1,
+    infoAccent = InfoBlueDeep,
+    onInfoAccent = Color.White,
+    infoSurface = PaperBlue,
+    infoBorder = InfoBlueDeep.copy(alpha = 0.28f),
 )
 
 /**

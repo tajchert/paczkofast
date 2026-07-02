@@ -38,6 +38,8 @@ import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HistoryParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
+import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageCard
+import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageMember
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastBottomBar
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
@@ -60,6 +62,9 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.historySortKey
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
 import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
+import pl.tajchert.paczko.fast.feature.parcels.impl.MultiPackageGroup
+import pl.tajchert.paczko.fast.feature.parcels.impl.ReadyItem
+import pl.tajchert.paczko.fast.feature.parcels.impl.groupReadyParcels
 import pl.tajchert.paczko.fast.feature.parcels.impl.lockerLine
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelTitle
@@ -226,6 +231,7 @@ private fun ParcelSections(
     val (ready, onTheWay) = remember(parcels) {
         parcels.partition { it.isReadyForPickup }
     }
+    val readyItems = remember(ready) { groupReadyParcels(ready) }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -241,18 +247,40 @@ private fun ParcelSections(
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
-            items(items = ready, key = Parcel::shipmentNumber) { parcel ->
-                if (parcel === ready.first()) {
-                    ExpandedReadyCard(
-                        parcel = parcel,
-                        onClick = { onParcelClick(parcel.shipmentNumber) },
-                        onCollectClick = { onCollectClick(parcel.shipmentNumber) },
-                    )
-                } else {
-                    CollapsedReadyCard(
-                        parcel = parcel,
-                        onClick = { onParcelClick(parcel.shipmentNumber) },
-                    )
+            // Expand the first standalone parcel (deadline + action); collapse the rest.
+            var expandedSingleUsed = false
+            readyItems.forEach { readyItem ->
+                when (readyItem) {
+                    is ReadyItem.Multi -> {
+                        val group = readyItem.group
+                        item(key = "multi-${group.uuid}") {
+                            MultiPackageGroupCard(
+                                group = group,
+                                onClick = { onParcelClick(group.representative.shipmentNumber) },
+                                onCollectClick = { onCollectClick(group.representative.shipmentNumber) },
+                            )
+                        }
+                    }
+
+                    is ReadyItem.Single -> {
+                        val parcel = readyItem.parcel
+                        val expand = !expandedSingleUsed
+                        expandedSingleUsed = true
+                        item(key = parcel.shipmentNumber) {
+                            if (expand) {
+                                ExpandedReadyCard(
+                                    parcel = parcel,
+                                    onClick = { onParcelClick(parcel.shipmentNumber) },
+                                    onCollectClick = { onCollectClick(parcel.shipmentNumber) },
+                                )
+                            } else {
+                                CollapsedReadyCard(
+                                    parcel = parcel,
+                                    onClick = { onParcelClick(parcel.shipmentNumber) },
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -330,6 +358,34 @@ private fun MonthHeader(
         style = MaterialTheme.typography.labelSmall,
         color = PaczkofastTheme.colors.textMuted,
         modifier = modifier.padding(horizontal = 4.dp),
+    )
+}
+
+@Composable
+private fun MultiPackageGroupCard(
+    group: MultiPackageGroup,
+    onClick: () -> Unit,
+    onCollectClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val representative = group.representative
+    val countdown = pickupCountdown(representative)
+    MultiPackageCard(
+        title = group.members.joinToString(" + ") { parcelTitle(it) },
+        subtitle = lockerLine(representative),
+        members = group.members.map { member ->
+            MultiPackageMember(
+                title = parcelTitle(member),
+                sizeLabel = parcelSizeLabel(member.parcelSize),
+            )
+        },
+        deadlineText = countdown?.deadlineText,
+        timeLeftText = countdown?.timeLeftText,
+        progress = countdown?.progress,
+        urgent = countdown?.urgent == true,
+        onClick = onClick,
+        onActionClick = onCollectClick,
+        modifier = modifier,
     )
 }
 

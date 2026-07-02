@@ -109,10 +109,10 @@ private class FakeCollectRepository(
         assertEquals("session", sessionUuid)
     }
 
-    override suspend fun claim(sessionUuid: String, shipmentNumber: String) {
+    override suspend fun claim(sessionUuid: String, shipmentNumbers: List<String>) {
         calls += "claim"
         assertEquals("session", sessionUuid)
-        assertEquals("123", shipmentNumber)
+        assertEquals(listOf("123"), shipmentNumbers)
     }
 }
 
