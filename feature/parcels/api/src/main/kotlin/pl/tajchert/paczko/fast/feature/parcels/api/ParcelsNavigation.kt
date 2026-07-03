@@ -11,3 +11,10 @@ data class ParcelDetailRoute(val shipmentNumber: String) : NavKey
 
 @Serializable
 data class ParcelCollectRoute(val shipmentNumber: String) : NavKey
+
+/**
+ * Detail screen for a multi-package box (7a). [shipmentNumber] is any member of
+ * the compartment (the representative); the screen resolves its siblings.
+ */
+@Serializable
+data class MultiPackageDetailRoute(val shipmentNumber: String) : NavKey

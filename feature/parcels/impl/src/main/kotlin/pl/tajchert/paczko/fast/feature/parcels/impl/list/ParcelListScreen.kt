@@ -39,6 +39,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelC
 import pl.tajchert.paczko.fast.core.designsystem.component.HistoryParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
 import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageCard
+import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageHistoryCard
 import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageMember
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastBottomBar
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
@@ -79,6 +80,7 @@ import java.time.YearMonth
 @Composable
 fun ParcelListScreen(
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
     onOpenSettings: () -> Unit,
     viewModel: ParcelListViewModel = hiltViewModel(),
@@ -92,6 +94,7 @@ fun ParcelListScreen(
     ParcelListContent(
         uiState = uiState,
         onParcelClick = onParcelClick,
+        onOpenBox = onOpenBox,
         onCollectClick = onCollectClick,
         onRefreshClick = viewModel::refresh,
         onOpenSettings = onOpenSettings,
@@ -103,6 +106,7 @@ fun ParcelListScreen(
 private fun ParcelListContent(
     uiState: ParcelListUiState,
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
     onRefreshClick: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -186,6 +190,7 @@ private fun ParcelListContent(
                             HistoryList(
                                 parcels = historyParcels,
                                 onParcelClick = onParcelClick,
+                                onOpenBox = onOpenBox,
                             )
                         } else {
                             PaczkofastEmptyState(
@@ -203,6 +208,7 @@ private fun ParcelListContent(
                             ParcelSections(
                                 parcels = activeParcels,
                                 onParcelClick = onParcelClick,
+                                onOpenBox = onOpenBox,
                                 onCollectClick = onCollectClick,
                             )
                         } else {
@@ -225,6 +231,7 @@ private fun ParcelListContent(
 private fun ParcelSections(
     parcels: List<Parcel>,
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -256,7 +263,7 @@ private fun ParcelSections(
                         item(key = "multi-${group.uuid}") {
                             MultiPackageGroupCard(
                                 group = group,
-                                onClick = { onParcelClick(group.representative.shipmentNumber) },
+                                onClick = { onOpenBox(group.representative.shipmentNumber) },
                                 onCollectClick = { onCollectClick(group.representative.shipmentNumber) },
                             )
                         }
@@ -311,6 +318,7 @@ private fun ParcelSections(
 private fun HistoryList(
     parcels: List<Parcel>,
     onParcelClick: (shipmentNumber: String) -> Unit,
+    onOpenBox: (shipmentNumber: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val currentMonth = remember { YearMonth.now() }
@@ -336,27 +344,36 @@ private fun HistoryList(
                 }
             }
             items(items = monthItems, key = { it.anchor.shipmentNumber }) { historyItem ->
-                val anchor = historyItem.anchor
-                val title = when (historyItem) {
-                    is CompartmentItem.Multi ->
-                        historyItem.group.members.joinToString(" + ") { parcelTitle(it) }
+                when (historyItem) {
+                    is CompartmentItem.Multi -> {
+                        val group = historyItem.group
+                        val anchor = group.representative
+                        MultiPackageHistoryCard(
+                            count = group.members.size,
+                            outcomeLine = historyOutcomeLine(anchor),
+                            dateText = historyDateLabel(anchor),
+                            members = group.members.map { member ->
+                                MultiPackageMember(
+                                    title = parcelTitle(member),
+                                    sizeLabel = parcelSizeLabel(member.parcelSize),
+                                )
+                            },
+                            onClick = { onOpenBox(anchor.shipmentNumber) },
+                        )
+                    }
 
-                    is CompartmentItem.Single -> parcelTitle(anchor)
+                    is CompartmentItem.Single -> {
+                        val parcel = historyItem.parcel
+                        HistoryParcelCard(
+                            title = parcelTitle(parcel),
+                            outcomeLine = historyOutcomeLine(parcel),
+                            dateText = historyDateLabel(parcel),
+                            outcome = historyOutcome(parcel),
+                            muted = muted,
+                            onClick = { onParcelClick(parcel.shipmentNumber) },
+                        )
+                    }
                 }
-                val outcomeLine = when (historyItem) {
-                    is CompartmentItem.Multi ->
-                        "${historyItem.group.members.size} parcels · ${historyOutcomeLine(anchor)}"
-
-                    is CompartmentItem.Single -> historyOutcomeLine(anchor)
-                }
-                HistoryParcelCard(
-                    title = title,
-                    outcomeLine = outcomeLine,
-                    dateText = historyDateLabel(anchor),
-                    outcome = historyOutcome(anchor),
-                    muted = muted,
-                    onClick = { onParcelClick(anchor.shipmentNumber) },
-                )
             }
         }
     }
@@ -525,6 +542,7 @@ private fun ParcelListContentPreview(
         ParcelListContent(
             uiState = uiState,
             onParcelClick = {},
+            onOpenBox = {},
             onCollectClick = {},
             onRefreshClick = {},
             onOpenSettings = {},
