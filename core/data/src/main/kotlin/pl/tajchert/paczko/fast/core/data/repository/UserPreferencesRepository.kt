@@ -32,6 +32,8 @@ interface UserPreferencesRepository {
     val userPreferences: Flow<UserPreferences>
 
     suspend fun setThemeMode(themeMode: ThemeMode)
+
+    suspend fun setHasSeenOnboarding(seen: Boolean)
 }
 
 /**
@@ -45,5 +47,9 @@ class DefaultUserPreferencesRepository @Inject constructor(
 
     override suspend fun setThemeMode(themeMode: ThemeMode) {
         dataSource.setThemeMode(themeMode)
+    }
+
+    override suspend fun setHasSeenOnboarding(seen: Boolean) {
+        dataSource.setHasSeenOnboarding(seen)
     }
 }

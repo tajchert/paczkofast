@@ -62,6 +62,8 @@ private class FakeUserPreferencesRepository : UserPreferencesRepository {
     override val userPreferences: Flow<UserPreferences> = MutableStateFlow(UserPreferences())
 
     override suspend fun setThemeMode(themeMode: ThemeMode) = Unit
+
+    override suspend fun setHasSeenOnboarding(seen: Boolean) = Unit
 }
 
 private class FakeAuthRepository(

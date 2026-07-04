@@ -49,4 +49,9 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
         val current = currentPreferences
         preferencesFlow.tryEmit(current.copy(themeMode = themeMode))
     }
+
+    override suspend fun setHasSeenOnboarding(seen: Boolean) {
+        val current = currentPreferences
+        preferencesFlow.tryEmit(current.copy(hasSeenOnboarding = seen))
+    }
 }

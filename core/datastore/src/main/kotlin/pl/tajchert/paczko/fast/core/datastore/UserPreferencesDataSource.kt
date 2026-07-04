@@ -2,6 +2,7 @@ package pl.tajchert.paczko.fast.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
@@ -62,7 +63,8 @@ class UserPreferencesDataSource @Inject constructor(
         val themeMode = stored
             ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
             ?: ThemeMode.SYSTEM
-        UserPreferences(themeMode = themeMode)
+        val hasSeenOnboarding = preferences[HAS_SEEN_ONBOARDING] ?: false
+        UserPreferences(themeMode = themeMode, hasSeenOnboarding = hasSeenOnboarding)
     }
 
     /**
@@ -81,6 +83,15 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Set the has-seen-onboarding flag.
+     */
+    suspend fun setHasSeenOnboarding(seen: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[HAS_SEEN_ONBOARDING] = seen
+        }
+    }
+
     companion object {
         /**
          * Preference keys.
@@ -91,5 +102,6 @@ class UserPreferencesDataSource @Inject constructor(
          * This makes debugging easier when inspecting DataStore files.
          */
         private val THEME_MODE = stringPreferencesKey("theme_mode")
+        private val HAS_SEEN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding")
     }
 }
