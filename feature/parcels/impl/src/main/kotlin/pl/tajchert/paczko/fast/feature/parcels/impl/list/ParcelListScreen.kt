@@ -1,20 +1,26 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.list
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -32,13 +38,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.component.HeaderIconButton
 import pl.tajchert.paczko.fast.core.designsystem.component.HistoryParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
 import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageCard
@@ -50,9 +60,10 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastLoadingIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.component.ReadyParcelCard
-import pl.tajchert.paczko.fast.core.designsystem.component.SectionHeader
 import pl.tajchert.paczko.fast.core.designsystem.component.TransitParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
+import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
@@ -136,7 +147,15 @@ private fun ParcelListContent(
             if (selectedTab == BottomNavDestination.History) {
                 HomeHeader(title = "History", showLogo = false)
             } else {
-                HomeHeader()
+                HomeHeader(
+                    actions = {
+                        HeaderIconButton(
+                            onClick = onRefreshClick,
+                            icon = Icons.Default.Refresh,
+                            contentDescription = "Refresh parcels",
+                        )
+                    },
+                )
             }
         },
         bottomBar = {
@@ -255,10 +274,8 @@ private fun ParcelSections(
     ) {
         if (ready.isNotEmpty()) {
             item(key = "ready-header") {
-                SectionHeader(
-                    label = "Ready for pickup",
-                    count = ready.size,
-                    highlighted = true,
+                ListSectionHeader(
+                    text = "Ready for pickup",
                     modifier = Modifier.animateItem().padding(top = 6.dp),
                 )
             }
@@ -305,9 +322,8 @@ private fun ParcelSections(
 
         if (onTheWay.isNotEmpty()) {
             item(key = "transit-header") {
-                SectionHeader(
-                    label = "On the way",
-                    count = onTheWay.size,
+                ListSectionHeader(
+                    text = "On the way",
                     modifier = Modifier.animateItem().padding(top = 10.dp),
                 )
             }
@@ -407,10 +423,46 @@ private fun MonthHeader(
 ) {
     Text(
         text = label.uppercase(),
-        style = MaterialTheme.typography.labelSmall,
-        color = PaczkofastTheme.colors.textMuted,
+        style = MonoLabel,
+        color = PaczkofastTheme.colors.monoLabel,
         modifier = modifier.padding(horizontal = 4.dp),
     )
+}
+
+/** Bold Space-Grotesk headline used for the Packages tab's "Ready for
+ * pickup" / "On the way" group headers, with a small ink-bordered yellow
+ * square bullet (mock "1c") — distinct from the mono [SectionHeader] used
+ * elsewhere.
+ */
+private val ListSectionHeaderTextStyle = TextStyle(
+    fontFamily = SpaceGroteskFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp,
+    lineHeight = 20.sp,
+)
+
+@Composable
+private fun ListSectionHeader(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(14.dp)
+                .background(PaczkofastTheme.colors.accent, RoundedCornerShape(3.dp))
+                .border(2.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(3.dp)),
+        )
+        Text(
+            text = text,
+            style = ListSectionHeaderTextStyle,
+            color = PaczkofastTheme.colors.textPrimary,
+        )
+    }
 }
 
 @Composable
@@ -493,30 +545,36 @@ internal class ParcelListPreviewProvider : PreviewParameterProvider<ParcelListUi
     )
 }
 
+// All sample shipment numbers below are obviously-fake all-zero placeholders
+// (never a real InPost tracking number), per the neo-brutalist redesign's
+// PII policy for previews/mocks.
 internal val previewParcels: List<Parcel> = listOf(
     previewParcel(
-        shipmentNumber = "000000000000",
+        shipmentNumber = "000000000000000000000001",
         status = "ready_to_pickup",
         statusGroup = "ready",
-        openCode = "000000",
-        qrCode = "P|000000|000000000000",
+        openCode = "482913",
+        qrCode = "P|482913|000000000000000000000001",
         collectable = true,
+        senderName = "Example Shop",
     ),
     previewParcel(
-        shipmentNumber = "000000000000",
+        shipmentNumber = "000000000000000000000002",
         status = "ready_to_pickup",
         statusGroup = "ready",
         openCode = "111222",
         qrCode = null,
         collectable = false,
+        senderName = "Example Sender sp. z o.o.",
     ),
     previewParcel(
-        shipmentNumber = "000000000000",
+        shipmentNumber = "000000000000000000000003",
         status = "adopted_at_sorting_center",
         statusGroup = "in_transit",
+        senderName = "Example Merchant",
     ),
     previewParcel(
-        shipmentNumber = "000000000000",
+        shipmentNumber = "000000000000000000000004",
         status = "confirmed",
         statusGroup = "in_transit",
     ),
@@ -529,16 +587,20 @@ private fun previewParcel(
     openCode: String? = null,
     qrCode: String? = null,
     collectable: Boolean = false,
+    senderName: String? = null,
+    parcelSize: String? = "A",
 ) = Parcel(
     shipmentNumber = shipmentNumber,
     status = status,
     statusGroup = statusGroup,
     openCode = openCode,
     qrCode = qrCode,
+    senderName = senderName,
+    parcelSize = parcelSize,
     pickupPoint = PickupPoint(
-        name = "WAW04B",
-        locationDescription = "By the Żabka store",
-        addressLine = "Górczewska 12, 01-138 Warszawa",
+        name = "WAW01A",
+        locationDescription = "Near Example Store",
+        addressLine = "Example street 12, 00-000 Example City",
         latitude = 52.2402,
         longitude = 20.9319,
     ),
@@ -562,5 +624,102 @@ private fun ParcelListContentPreview(
             onOpenSettings = {},
             onErrorShown = {},
         )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// History tab preview — fake single history rows plus a multibox entry.
+// -----------------------------------------------------------------------------
+
+private fun previewHistoryParcel(
+    shipmentNumber: String,
+    status: String,
+    senderName: String?,
+    pickUpDate: java.time.OffsetDateTime? = null,
+    returnedToSenderDate: java.time.OffsetDateTime? = null,
+    parcelSize: String? = "A",
+    multiCompartmentUuid: String? = null,
+    multiPackageShipmentNumbers: List<String> = emptyList(),
+) = Parcel(
+    shipmentNumber = shipmentNumber,
+    status = status,
+    statusGroup = null,
+    openCode = null,
+    qrCode = null,
+    senderName = senderName,
+    parcelSize = parcelSize,
+    multiCompartmentUuid = multiCompartmentUuid,
+    multiPackageShipmentNumbers = multiPackageShipmentNumbers,
+    pickupPoint = PickupPoint(
+        name = "WAW01A",
+        locationDescription = "Near Example Store",
+        addressLine = "Example street 12, 00-000 Example City",
+        latitude = 52.2402,
+        longitude = 20.9319,
+    ),
+    expiryDate = null,
+    storedDate = pickUpDate?.minusHours(30)?.toString(),
+    pickUpDate = pickUpDate?.toString(),
+    returnedToSenderDate = returnedToSenderDate?.toString(),
+    operations = ParcelOperations(collect = false),
+)
+
+internal val previewHistoryParcels: List<Parcel> = run {
+    val now = java.time.OffsetDateTime.now()
+    listOf(
+        previewHistoryParcel(
+            shipmentNumber = "000000000000000000000011",
+            status = "claimed",
+            senderName = "Example Shop",
+            pickUpDate = now.minusDays(2),
+        ),
+        previewHistoryParcel(
+            shipmentNumber = "000000000000000000000012",
+            status = "claimed",
+            senderName = "Example Sender sp. z o.o.",
+            pickUpDate = now.minusDays(6),
+        ),
+        // Multi-package group: two parcels sharing one locker compartment.
+        previewHistoryParcel(
+            shipmentNumber = "000000000000000000000021",
+            status = "claimed",
+            senderName = "Example Shop",
+            pickUpDate = now.minusDays(33),
+            parcelSize = "A",
+            multiCompartmentUuid = "example-compartment-1",
+            multiPackageShipmentNumbers = listOf(
+                "000000000000000000000021",
+                "000000000000000000000022",
+            ),
+        ),
+        previewHistoryParcel(
+            shipmentNumber = "000000000000000000000022",
+            status = "claimed",
+            senderName = "Example Sender sp. z o.o.",
+            pickUpDate = now.minusDays(33),
+            parcelSize = "C",
+            multiCompartmentUuid = "example-compartment-1",
+        ),
+        previewHistoryParcel(
+            shipmentNumber = "000000000000000000000023",
+            status = "pickup_time_expired",
+            senderName = "Example Merchant",
+            returnedToSenderDate = now.minusDays(40),
+        ),
+    )
+}
+
+@PaczkofastPreviews
+@Composable
+private fun HistoryListPreview() {
+    PaczkofastTheme {
+        Column(modifier = Modifier.fillMaxSize().background(PaczkofastTheme.colors.background)) {
+            HomeHeader(title = "History", showLogo = false)
+            HistoryList(
+                parcels = previewHistoryParcels.sortedByDescending { it.historySortKey() },
+                onParcelClick = {},
+                onOpenBox = {},
+            )
+        }
     }
 }
