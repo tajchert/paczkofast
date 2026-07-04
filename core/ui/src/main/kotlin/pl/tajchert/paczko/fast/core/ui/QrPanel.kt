@@ -86,7 +86,7 @@ fun QrPanel(
                             fontSize = 22.sp,
                             letterSpacing = 3.sp,
                         ),
-                        color = PaczkofastTheme.colors.textPrimary,
+                        color = PaczkofastTheme.colors.qrInk,
                     )
                 }
             }
