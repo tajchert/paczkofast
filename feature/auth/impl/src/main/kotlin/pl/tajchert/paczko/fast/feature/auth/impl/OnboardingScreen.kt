@@ -27,10 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
+import kotlin.math.abs
+import kotlin.math.min
 import kotlinx.coroutines.launch
 import pl.tajchert.paczko.fast.core.designsystem.component.NeoSurface
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastButton
@@ -265,7 +269,9 @@ private fun OnboardingFooter(
     ) {
         PageDotIndicator(
             pageCount = PAGE_COUNT,
-            currentPage = pagerState.currentPage,
+            // Fractional page position so the active pill grows/shrinks smoothly
+            // as the pager is swiped or animated between pages.
+            position = pagerState.currentPage + pagerState.currentPageOffsetFraction,
             modifier = Modifier.fillMaxWidth(),
         )
         PaczkofastButton(
@@ -278,19 +284,22 @@ private fun OnboardingFooter(
 @Composable
 private fun PageDotIndicator(
     pageCount: Int,
-    currentPage: Int,
+    position: Float,
     modifier: Modifier = Modifier,
 ) {
+    val accent = PaczkofastTheme.colors.accent
+    val inactive = PaczkofastTheme.colors.cardSurface
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(7.dp, Alignment.CenterHorizontally),
     ) {
         repeat(pageCount) { index ->
-            val active = index == currentPage
+            // 1f when this dot is the current page, easing to 0f for the next.
+            val fraction = (1f - min(1f, abs(index - position))).coerceIn(0f, 1f)
             NeoSurface(
-                modifier = Modifier.size(width = if (active) 24.dp else 8.dp, height = 8.dp),
+                modifier = Modifier.size(width = lerp(8.dp, 24.dp, fraction), height = 8.dp),
                 shape = RoundedCornerShape(5.dp),
-                fill = if (active) PaczkofastTheme.colors.accent else PaczkofastTheme.colors.cardSurface,
+                fill = lerp(inactive, accent, fraction),
                 borderColor = PaczkofastTheme.colors.borderStrong,
                 borderWidth = 2.dp,
                 shadow = false,
