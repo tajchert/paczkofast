@@ -22,12 +22,12 @@ import androidx.compose.ui.tooling.preview.Preview
     name = "Dark",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
-    backgroundColor = 0xFF0B0A08,
+    backgroundColor = 0xFF161511,
 )
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     showBackground = true,
-    backgroundColor = 0xFFF4F1EA,
+    backgroundColor = 0xFFFDFAEF,
 )
 annotation class PaczkofastPreviews

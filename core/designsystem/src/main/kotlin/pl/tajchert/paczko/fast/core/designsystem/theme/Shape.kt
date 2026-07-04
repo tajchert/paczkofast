@@ -37,11 +37,11 @@ val PaczkofastShapes = Shapes(
     small = RoundedCornerShape(8.dp),
 
     // Medium - action buttons, QR panels
-    medium = RoundedCornerShape(13.dp),
+    medium = RoundedCornerShape(14.dp),
 
     // Large - subtle (in-transit) cards
     large = RoundedCornerShape(18.dp),
 
     // Extra large - prominent (ready) cards
-    extraLarge = RoundedCornerShape(20.dp),
+    extraLarge = RoundedCornerShape(18.dp),
 )
