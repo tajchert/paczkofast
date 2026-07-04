@@ -23,9 +23,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
-/** When pressed, a surface collapses toward its shadow by [offset]. */
+/**
+ * When pressed, the content slides toward the shadow (which always stays fully drawn at
+ * [offset]), leaving a 1dp visible sliver. Idle content stays at the origin (no translation).
+ */
 internal fun pressTranslation(pressed: Boolean, offset: Dp): Dp =
-    if (pressed) offset else 0.dp
+    if (pressed) (offset - 1.dp).coerceAtLeast(0.dp) else 0.dp
 
 /** Draws a solid (un-blurred) copy of [shape] offset behind the content. */
 fun Modifier.hardShadow(
@@ -59,11 +62,10 @@ fun NeoSurface(
     pressed: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val effectiveOffset = if (pressed) 1.dp else shadowOffset
     val shift = pressTranslation(pressed, shadowOffset)
     Box(
         modifier = modifier
-            .then(if (shadow) Modifier.hardShadow(effectiveOffset, effectiveOffset, PaczkofastTheme.colors.hardShadow, shape) else Modifier)
+            .then(if (shadow) Modifier.hardShadow(shadowOffset, shadowOffset, PaczkofastTheme.colors.hardShadow, shape) else Modifier)
             .offset(x = shift, y = shift)
             .clip(shape)
             .background(fill)
