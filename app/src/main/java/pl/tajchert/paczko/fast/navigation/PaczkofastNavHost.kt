@@ -86,6 +86,10 @@ fun PaczkofastNavHost(
                     backStack.clear()
                     backStack.add(ParcelListRoute)
                 },
+                onOnboardingFinished = {
+                    backStack.clear()
+                    backStack.add(AuthRoute)
+                },
             )
 
             parcelEntries(

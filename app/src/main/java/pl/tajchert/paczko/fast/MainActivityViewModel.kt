@@ -8,6 +8,7 @@ import pl.tajchert.paczko.fast.core.domain.ObserveAuthSessionUseCase
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
+import pl.tajchert.paczko.fast.feature.auth.api.OnboardingRoute
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -68,7 +69,11 @@ class MainActivityViewModel @Inject constructor(
     ) { preferences, authSession ->
         MainActivityUiState.Success(
             preferences = preferences,
-            initialRoute = if (authSession.isAuthenticated) ParcelListRoute else AuthRoute,
+            initialRoute = when {
+                !preferences.hasSeenOnboarding -> OnboardingRoute
+                authSession.isAuthenticated -> ParcelListRoute
+                else -> AuthRoute
+            },
         )
     }
         .stateIn(

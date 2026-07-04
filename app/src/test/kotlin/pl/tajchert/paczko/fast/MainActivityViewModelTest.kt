@@ -15,6 +15,7 @@ import pl.tajchert.paczko.fast.core.model.auth.AuthSession
 import pl.tajchert.paczko.fast.core.model.auth.PhoneNumber
 import pl.tajchert.paczko.fast.core.testing.util.MainDispatcherRule
 import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
+import pl.tajchert.paczko.fast.feature.auth.api.OnboardingRoute
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
 
 class MainActivityViewModelTest {
@@ -22,9 +23,9 @@ class MainActivityViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun storedAuthSessionStartsAtParcelList() = runTest {
+    fun storedAuthSessionStartsAtParcelListWhenOnboardingSeen() = runTest {
         val viewModel = MainActivityViewModel(
-            userPreferencesRepository = FakeUserPreferencesRepository(),
+            userPreferencesRepository = FakeUserPreferencesRepository(hasSeenOnboarding = true),
             observeAuthSession = ObserveAuthSessionUseCase(
                 FakeAuthRepository(AuthSession(authToken = "access", refreshToken = "refresh")),
             ),
@@ -32,7 +33,7 @@ class MainActivityViewModelTest {
 
         assertEquals(
             MainActivityUiState.Success(
-                preferences = UserPreferences(),
+                preferences = UserPreferences(hasSeenOnboarding = true),
                 initialRoute = ParcelListRoute,
             ),
             viewModel.uiState.value,
@@ -40,9 +41,9 @@ class MainActivityViewModelTest {
     }
 
     @Test
-    fun missingAuthSessionStartsAtAuth() = runTest {
+    fun missingAuthSessionStartsAtAuthWhenOnboardingSeen() = runTest {
         val viewModel = MainActivityViewModel(
-            userPreferencesRepository = FakeUserPreferencesRepository(),
+            userPreferencesRepository = FakeUserPreferencesRepository(hasSeenOnboarding = true),
             observeAuthSession = ObserveAuthSessionUseCase(
                 FakeAuthRepository(AuthSession(authToken = "", refreshToken = "")),
             ),
@@ -50,16 +51,55 @@ class MainActivityViewModelTest {
 
         assertEquals(
             MainActivityUiState.Success(
-                preferences = UserPreferences(),
+                preferences = UserPreferences(hasSeenOnboarding = true),
                 initialRoute = AuthRoute,
+            ),
+            viewModel.uiState.value,
+        )
+    }
+
+    @Test
+    fun unseenOnboardingStartsAtOnboardingEvenWhenAuthenticated() = runTest {
+        val viewModel = MainActivityViewModel(
+            userPreferencesRepository = FakeUserPreferencesRepository(hasSeenOnboarding = false),
+            observeAuthSession = ObserveAuthSessionUseCase(
+                FakeAuthRepository(AuthSession(authToken = "access", refreshToken = "refresh")),
+            ),
+        )
+
+        assertEquals(
+            MainActivityUiState.Success(
+                preferences = UserPreferences(hasSeenOnboarding = false),
+                initialRoute = OnboardingRoute,
+            ),
+            viewModel.uiState.value,
+        )
+    }
+
+    @Test
+    fun unseenOnboardingStartsAtOnboardingWhenNotAuthenticated() = runTest {
+        val viewModel = MainActivityViewModel(
+            userPreferencesRepository = FakeUserPreferencesRepository(hasSeenOnboarding = false),
+            observeAuthSession = ObserveAuthSessionUseCase(
+                FakeAuthRepository(AuthSession(authToken = "", refreshToken = "")),
+            ),
+        )
+
+        assertEquals(
+            MainActivityUiState.Success(
+                preferences = UserPreferences(hasSeenOnboarding = false),
+                initialRoute = OnboardingRoute,
             ),
             viewModel.uiState.value,
         )
     }
 }
 
-private class FakeUserPreferencesRepository : UserPreferencesRepository {
-    override val userPreferences: Flow<UserPreferences> = MutableStateFlow(UserPreferences())
+private class FakeUserPreferencesRepository(
+    hasSeenOnboarding: Boolean = false,
+) : UserPreferencesRepository {
+    override val userPreferences: Flow<UserPreferences> =
+        MutableStateFlow(UserPreferences(hasSeenOnboarding = hasSeenOnboarding))
 
     override suspend fun setThemeMode(themeMode: ThemeMode) = Unit
 
