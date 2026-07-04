@@ -91,10 +91,6 @@ fun ParcelListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.refresh()
-    }
-
     ParcelListContent(
         uiState = uiState,
         onParcelClick = onParcelClick,

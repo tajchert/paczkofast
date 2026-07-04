@@ -23,6 +23,13 @@ class ParcelListViewModel @Inject constructor(
 
     private val refreshState = MutableStateFlow(RefreshState())
 
+    init {
+        // Refresh once when the screen is first created. The ViewModel outlives
+        // navigation to the detail screen, so returning to the list does NOT
+        // re-fetch — only an explicit pull-to-refresh does.
+        refresh()
+    }
+
     val uiState: StateFlow<ParcelListUiState> = combine(
         observeParcels().asResult(),
         refreshState,

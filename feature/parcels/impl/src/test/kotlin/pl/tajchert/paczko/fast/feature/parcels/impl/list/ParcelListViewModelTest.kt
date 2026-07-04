@@ -23,7 +23,23 @@ class ParcelListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun refreshKeepsCachedParcelsVisibleAndClearsRefreshingWhenDone() = runTest {
+    fun initialRefreshLoadsCachedParcelsAndClearsRefreshingWhenDone() = runTest {
+        val repository = FakeParcelRepository(
+            parcels = listOf(parcel("123")),
+        )
+        // The initial refresh is triggered once in init, not on every screen entry.
+        val viewModel = ParcelListViewModel(
+            observeParcels = ObserveParcelsUseCase(repository),
+            refreshParcels = RefreshParcelsUseCase(repository),
+        )
+
+        assertEquals(false, viewModel.uiState.value.isRefreshing)
+        assertEquals(listOf("123"), viewModel.uiState.value.parcels.map { it.shipmentNumber })
+        assertEquals(1, repository.refreshCount)
+    }
+
+    @Test
+    fun manualRefreshTriggersAnotherFetch() = runTest {
         val repository = FakeParcelRepository(
             parcels = listOf(parcel("123")),
         )
@@ -31,12 +47,10 @@ class ParcelListViewModelTest {
             observeParcels = ObserveParcelsUseCase(repository),
             refreshParcels = RefreshParcelsUseCase(repository),
         )
-
+        // init did one refresh; an explicit pull-to-refresh does another.
         viewModel.refresh()
 
-        assertEquals(false, viewModel.uiState.value.isRefreshing)
-        assertEquals(listOf("123"), viewModel.uiState.value.parcels.map { it.shipmentNumber })
-        assertEquals(1, repository.refreshCount)
+        assertEquals(2, repository.refreshCount)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,7 +65,6 @@ class ParcelListViewModelTest {
             refreshParcels = RefreshParcelsUseCase(repository),
         )
 
-        viewModel.refresh()
         repository.awaitRefreshStarted()
 
         assertEquals(true, viewModel.uiState.value.isRefreshing)
@@ -73,8 +86,6 @@ class ParcelListViewModelTest {
             observeParcels = ObserveParcelsUseCase(repository),
             refreshParcels = RefreshParcelsUseCase(repository),
         )
-
-        viewModel.refresh()
 
         assertEquals(false, viewModel.uiState.value.isRefreshing)
         assertEquals(listOf("123"), viewModel.uiState.value.parcels.map { it.shipmentNumber })
