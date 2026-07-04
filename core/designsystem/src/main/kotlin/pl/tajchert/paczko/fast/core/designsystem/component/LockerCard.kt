@@ -64,7 +64,7 @@ private fun LockerCardPreview() {
     PaczkofastTheme {
         LockerCard(
             lockerName = "Locker WAW01A",
-            address = "Example street 12, 01-138 Warszawa",
+            address = "Example street 12, 00-000 Example City",
             note = "Open 24/7 · 350 m away",
             onNavigate = {},
             modifier = Modifier.padding(16.dp),

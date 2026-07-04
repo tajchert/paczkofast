@@ -47,8 +47,8 @@ class HistoryFormattersTest {
     @Test
     fun outcomeLineIncludesLockerForPickedUp() {
         assertEquals(
-            "Picked up · Locker WAW04B",
-            historyOutcomeLine(parcel("claimed", lockerName = "WAW04B")),
+            "Picked up · Locker WAW01A",
+            historyOutcomeLine(parcel("claimed", lockerName = "WAW01A")),
         )
         assertEquals("Picked up", historyOutcomeLine(parcel("claimed")))
         assertEquals("Expired · returned to sender", historyOutcomeLine(parcel("pickup_time_expired")))

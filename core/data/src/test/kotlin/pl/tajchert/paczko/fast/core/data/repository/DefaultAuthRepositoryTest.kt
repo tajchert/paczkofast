@@ -70,10 +70,10 @@ class DefaultAuthRepositoryTest {
 
     @Test
     fun observePhoneNumberFormatsStoredNumber() = runTest {
-        tokensDataSource.savePhoneNumber("+48601480312")
+        tokensDataSource.savePhoneNumber("+48500100200")
 
         repository.observePhoneNumber().test {
-            assertEquals("+48 601 480 312", awaitItem())
+            assertEquals("+48 500 100 200", awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

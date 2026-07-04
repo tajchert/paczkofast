@@ -138,7 +138,7 @@ val PaczkofastTypography = Typography(
         lineHeight = 19.sp,
         letterSpacing = 0.sp,
     ),
-    // Card metadata lines ("Locker WAW04B · Górczewska 12 · 350 m") — Space Mono
+    // Card metadata lines ("Locker WAW01A · Example street 12 · 350 m") — Space Mono
     bodySmall = TextStyle(
         fontFamily = SpaceMonoFamily,
         fontWeight = FontWeight.Normal,

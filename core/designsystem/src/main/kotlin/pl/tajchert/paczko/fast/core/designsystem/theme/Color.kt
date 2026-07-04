@@ -21,12 +21,6 @@ internal val Amber = Color(0xFFF2AF1D)
 internal val OnAmber = Color(0xFF201500)
 internal val AmberDeep = Color(0xFFB97F00)
 
-// Disabled primary button ("Log in" before the code is complete)
-internal val AmberDisabledDark = Color(0xFF2A2415)
-internal val OnAmberDisabledDark = Color(0xFF8A7A50)
-internal val AmberDisabledLight = Color(0xFFEDE2C3)
-internal val OnAmberDisabledLight = Color(0xFFA79465)
-
 // Neo-brutalist disabled primary button ("faded yellow")
 internal val YellowDisabledLight = Color(0xFFF3EAB6)
 internal val OnYellowDisabledLight = Color(0xFF9E9678)

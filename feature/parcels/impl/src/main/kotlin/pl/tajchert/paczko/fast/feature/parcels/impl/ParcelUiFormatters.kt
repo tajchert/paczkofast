@@ -237,7 +237,7 @@ internal fun parseInstant(value: String?): Instant? {
         .getOrNull()
 }
 
-/** "WAW04B · Górczewska 12" style locker line for parcel cards. */
+/** "WAW01A · Example street 12" style locker line for parcel cards. */
 internal fun lockerLine(parcel: Parcel): String {
     val point = parcel.pickupPoint ?: return "Pickup point pending"
     return listOfNotNull(
@@ -289,7 +289,7 @@ internal fun historyOutcome(parcel: Parcel): HistoryOutcome = when (parcel.statu
 
 /**
  * The muted outcome line under a history row's title, e.g.
- * "Picked up · Locker WAW04B", "Expired · returned to sender" or
+ * "Picked up · Locker WAW01A", "Expired · returned to sender" or
  * "Returned to sender".
  */
 internal fun historyOutcomeLine(parcel: Parcel): String = when (historyOutcome(parcel)) {

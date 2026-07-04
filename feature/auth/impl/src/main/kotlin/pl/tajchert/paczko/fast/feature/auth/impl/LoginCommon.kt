@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
-/** "601480312" → "601 480 312"; partial input keeps completed groups. */
+/** "500100200" → "500 100 200"; partial input keeps completed groups. */
 internal fun formatPhoneDigits(digits: String): String =
     digits.chunked(3).joinToString(" ")
 

@@ -54,7 +54,7 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
  * after a completed hold; releasing early animates everything back to zero.
  *
  * @param distanceText Center readout, e.g. "8 m" (shows "—" when null).
- * @param lockerCaption Small caption under the distance, e.g. "to locker WAW04B".
+ * @param lockerCaption Small caption under the distance, e.g. "to locker WAW01A".
  * @param subline Secondary line under the prompt, e.g. "Parcel · box pops open".
  */
 @Composable
@@ -322,7 +322,7 @@ private fun HoldToOpenPanelPreview() {
     PaczkofastTheme {
         HoldToOpenPanel(
             distanceText = "8 m",
-            lockerCaption = "to locker WAW04B",
+            lockerCaption = "to locker WAW01A",
             subline = "Box pops open below eye level",
             onConfirmed = {},
             modifier = Modifier.padding(20.dp),

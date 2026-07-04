@@ -92,8 +92,8 @@ class DefaultAuthRepository @Inject constructor(
         const val PHONE_PREFIX_SIGN = "+"
 
         /**
-         * Formats a stored "+48601480312" number for display as
-         * "+48 601 480 312": a country prefix followed by the national number
+         * Formats a stored "+48500100200" number for display as
+         * "+48 500 100 200": a country prefix followed by the national number
          * grouped in threes.
          */
         fun formatPhoneNumber(raw: String): String {
