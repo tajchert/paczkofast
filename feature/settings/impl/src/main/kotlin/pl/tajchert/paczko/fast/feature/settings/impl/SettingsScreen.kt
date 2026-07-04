@@ -1,18 +1,18 @@
 package pl.tajchert.paczko.fast.feature.settings.impl
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,18 +24,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
 import pl.tajchert.paczko.fast.core.designsystem.component.LogoMark
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastBottomBar
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastCard
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.component.SegmentedControl
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 
@@ -98,33 +97,26 @@ private fun SettingsContent(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             SectionLabel(text = "Appearance")
-            SurfaceCard {
+            PaczkofastCard {
                 Text(
                     text = "Theme",
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     color = PaczkofastTheme.colors.textPrimary,
+                    modifier = Modifier.padding(bottom = 12.dp),
                 )
                 SegmentedControl(
                     options = ThemeMode.entries.map { it to themeModeLabel(it) },
                     selected = themeMode,
                     onSelect = onThemeSelected,
                 )
-                Text(
-                    text = themeModeCaption(themeMode),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = PaczkofastTheme.colors.textFaint,
-                )
             }
 
             SectionLabel(text = "Account")
-            SurfaceCard(spacing = 0.dp) {
-                Column(
-                    modifier = Modifier.padding(bottom = 14.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
+            PaczkofastCard {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
                         text = "Logged in",
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         color = PaczkofastTheme.colors.textPrimary,
                     )
                     if (phoneNumber != null) {
@@ -135,30 +127,35 @@ private fun SettingsContent(
                         )
                     }
                 }
-                HorizontalDivider(color = PaczkofastTheme.colors.cardBorder)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 14.dp)
+                        .height(2.5.dp)
+                        .background(PaczkofastTheme.colors.borderStrong),
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showLogoutDialog = true }
-                        .padding(top = 14.dp),
+                        .clickable { showLogoutDialog = true },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "Log out",
                         style = MaterialTheme.typography.titleSmall,
-                        color = PaczkofastTheme.colors.urgent,
+                        color = PaczkofastTheme.colors.alertText,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = "›",
                         style = MaterialTheme.typography.titleLarge,
-                        color = PaczkofastTheme.colors.textFaint,
+                        color = PaczkofastTheme.colors.alertText,
                     )
                 }
             }
 
             SectionLabel(text = "About")
-            SurfaceCard(muted = true) {
+            PaczkofastCard {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -167,13 +164,13 @@ private fun SettingsContent(
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
                             text = "Paczkofast",
-                            style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.5.sp),
+                            style = MaterialTheme.typography.titleMedium,
                             color = PaczkofastTheme.colors.textPrimary,
                         )
                         Text(
-                            text = "Version $appVersion",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = PaczkofastTheme.colors.textMuted,
+                            text = "VERSION $appVersion".uppercase(),
+                            style = MonoLabel,
+                            color = PaczkofastTheme.colors.monoLabel,
                         )
                     }
                 }
@@ -181,6 +178,7 @@ private fun SettingsContent(
                     text = "Unofficial companion app. Not affiliated with or endorsed by the locker operator.",
                     style = MaterialTheme.typography.bodySmall,
                     color = PaczkofastTheme.colors.textFaint,
+                    modifier = Modifier.padding(top = 10.dp),
                 )
             }
         }
@@ -211,48 +209,16 @@ private fun SettingsContent(
 }
 
 /**
- * The rounded Black-Amber surface used for each settings group.
- *
- * @param muted Uses the subtle surface (About card).
- * @param spacing Vertical gap between children; 0 when the card lays out its
- *   own dividers.
+ * Uppercase mono section caption ("APPEARANCE", "ACCOUNT", "ABOUT") above
+ * each settings card group.
  */
-@Composable
-private fun SurfaceCard(
-    modifier: Modifier = Modifier,
-    muted: Boolean = false,
-    spacing: androidx.compose.ui.unit.Dp = 12.dp,
-    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
-) {
-    val surface = if (muted) {
-        PaczkofastTheme.colors.cardSurfaceSubtle
-    } else {
-        PaczkofastTheme.colors.cardSurface
-    }
-    val borderColor = if (muted) {
-        PaczkofastTheme.colors.cardBorderSubtle
-    } else {
-        PaczkofastTheme.colors.cardBorder
-    }
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.extraLarge)
-            .background(surface)
-            .border(1.dp, borderColor, MaterialTheme.shapes.extraLarge)
-            .padding(18.dp),
-        verticalArrangement = Arrangement.spacedBy(spacing),
-        content = content,
-    )
-}
-
 @Composable
 private fun SectionLabel(text: String) {
     Text(
         text = text.uppercase(),
-        style = MaterialTheme.typography.labelSmall,
-        color = PaczkofastTheme.colors.textMuted,
-        modifier = Modifier.padding(start = 4.dp, top = 10.dp),
+        style = MonoLabel,
+        color = PaczkofastTheme.colors.monoLabel,
+        modifier = Modifier.padding(start = 4.dp, top = 6.dp),
     )
 }
 
@@ -262,20 +228,14 @@ private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
     ThemeMode.DARK -> "Dark"
 }
 
-private fun themeModeCaption(mode: ThemeMode): String = when (mode) {
-    ThemeMode.SYSTEM -> "Follows your phone's dark mode schedule"
-    ThemeMode.LIGHT -> "Always light, regardless of the system setting"
-    ThemeMode.DARK -> "Always dark, regardless of the system setting"
-}
-
 @PaczkofastPreviews
 @Composable
 private fun SettingsContentPreview() {
     PaczkofastTheme {
         SettingsContent(
-            themeMode = ThemeMode.SYSTEM,
-            phoneNumber = "+48 601 480 312",
-            appVersion = "0.4.0 (213)",
+            themeMode = ThemeMode.LIGHT,
+            phoneNumber = "+48 500 100 200",
+            appVersion = "1.0.0 (1)",
             onThemeSelected = {},
             onLogout = {},
             onOpenParcels = {},
