@@ -6,14 +6,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -156,12 +154,12 @@ fun LockerInfoCard(
 @Composable
 private fun FlagPillRow(flags: List<String>, modifier: Modifier = Modifier) {
     val colors = PaczkofastTheme.colors
-    LazyRow(
+    FlowRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = PaddingValues(end = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        items(flags) { flag ->
+        flags.forEach { flag ->
             Box(
                 modifier = Modifier
                     .clip(FlagPillShape)
