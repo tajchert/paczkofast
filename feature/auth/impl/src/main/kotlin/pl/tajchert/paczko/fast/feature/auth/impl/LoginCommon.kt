@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
@@ -28,11 +29,15 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 internal fun formatPhoneDigits(digits: String): String =
     digits.chunked(3).joinToString(" ")
 
-/** Amber blinking caret used by the phone field and the active code box. */
+/**
+ * Blinking caret used by the phone field (amber, on a white surface) and the
+ * active OTP code box (ink, on a yellow surface) — [color] picks the tint.
+ */
 @Composable
 internal fun BlinkingCursor(
     height: Dp,
     modifier: Modifier = Modifier,
+    color: Color = PaczkofastTheme.colors.accent,
 ) {
     val transition = rememberInfiniteTransition(label = "cursor")
     val alpha by transition.animateFloat(
@@ -54,7 +59,7 @@ internal fun BlinkingCursor(
         modifier = modifier
             .size(width = 2.dp, height = height)
             .alpha(alpha)
-            .background(PaczkofastTheme.colors.accent),
+            .background(color),
     )
 }
 

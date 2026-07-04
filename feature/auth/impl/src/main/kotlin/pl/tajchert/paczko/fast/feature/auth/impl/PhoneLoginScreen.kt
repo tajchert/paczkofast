@@ -1,12 +1,10 @@
 package pl.tajchert.paczko.fast.feature.auth.impl
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,18 +19,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.component.NeoSurface
 import pl.tajchert.paczko.fast.core.designsystem.component.NumericKeypad
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastButton
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
- * Login step 1 — phone number entry with the in-app keypad (design 4a).
+ * Login step 1 — phone number entry with the in-app keypad (design 2e).
  */
 @Composable
 fun PhoneLoginScreen(
@@ -57,10 +60,10 @@ fun PhoneLoginScreen(
             verticalArrangement = Arrangement.spacedBy(28.dp, Alignment.CenterVertically),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                LogoBadge()
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                LogoTile()
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Log in to Paczkofast",
+                        text = "Paczkofast",
                         style = MaterialTheme.typography.displaySmall.copy(
                             fontSize = 30.sp,
                             lineHeight = 36.sp,
@@ -69,7 +72,8 @@ fun PhoneLoginScreen(
                         color = PaczkofastTheme.colors.textPrimary,
                     )
                     Text(
-                        text = "We'll text you a 6-digit code.\nNo passwords, ever.",
+                        text = "Log in with the phone number your parcels are sent to. " +
+                            "We'll text you a code.",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontSize = 14.5.sp,
                             lineHeight = 22.sp,
@@ -82,15 +86,15 @@ fun PhoneLoginScreen(
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
                     text = "PHONE NUMBER",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MonoLabel,
                     color = PaczkofastTheme.colors.textMuted,
                 )
-                PhoneField(phoneDigits = state.phoneDigits)
+                PhoneInputRow(phoneDigits = state.phoneDigits)
                 TermsLine()
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                LoginPrimaryButton(
+                PaczkofastButton(
                     text = "Send code",
                     onClick = onSendCode,
                     enabled = state.canSendCode,
@@ -114,61 +118,80 @@ fun PhoneLoginScreen(
     }
 }
 
-/** Amber app-logo badge: rounded square with the parcel "tape band". */
+/** 72dp yellow neo-brutalist logo tile with a rotated ink diamond. */
 @Composable
-private fun LogoBadge(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .size(52.dp)
-            .background(PaczkofastTheme.colors.accent, RoundedCornerShape(15.dp)),
-        contentAlignment = Alignment.Center,
+private fun LogoTile(modifier: Modifier = Modifier) {
+    NeoSurface(
+        modifier = modifier.size(72.dp),
+        shape = RoundedCornerShape(22.dp),
+        fill = PaczkofastTheme.colors.accent,
+        borderColor = PaczkofastTheme.colors.borderStrong,
+        shadowOffset = 4.dp,
     ) {
         Box(
             modifier = Modifier
-                .size(width = 24.dp, height = 4.dp)
-                .background(PaczkofastTheme.colors.onAccent, RoundedCornerShape(2.dp)),
+                .align(Alignment.Center)
+                .size(26.dp)
+                .rotate(45f)
+                .clip(RoundedCornerShape(7.dp))
+                .background(PaczkofastTheme.colors.borderStrong),
         )
     }
 }
 
+/** "+48" prefix chip + the national-number field, both neo-brutalist surfaces. */
 @Composable
-private fun PhoneField(
+private fun PhoneInputRow(
     phoneDigits: String,
     modifier: Modifier = Modifier,
 ) {
-    val numberStyle = MaterialTheme.typography.titleMedium.copy(
-        fontSize = 20.sp,
-        lineHeight = 26.sp,
-    )
+    val numberStyle = MaterialTheme.typography.labelMedium
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(PaczkofastTheme.colors.cardSurface, RoundedCornerShape(16.dp))
-            .border(1.5.dp, PaczkofastTheme.colors.accent, RoundedCornerShape(16.dp))
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            text = "+48",
-            style = numberStyle,
-            color = PaczkofastTheme.colors.textSecondary,
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Box(
+        NeoSurface(
             modifier = Modifier
-                .size(width = 1.dp, height = 24.dp)
-                .background(PaczkofastTheme.colors.sizeBadgeBorder),
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = formatPhoneDigits(phoneDigits),
-            style = numberStyle.copy(letterSpacing = 1.sp),
-            color = PaczkofastTheme.colors.textPrimary,
-        )
-        BlinkingCursor(
-            height = 22.dp,
-            modifier = Modifier.padding(start = 1.dp),
-        )
+                .width(78.dp)
+                .height(56.dp),
+            shape = RoundedCornerShape(14.dp),
+            fill = PaczkofastTheme.colors.cardSurface,
+            borderColor = PaczkofastTheme.colors.borderStrong,
+            shadowOffset = 3.dp,
+        ) {
+            Text(
+                text = "+48",
+                style = numberStyle.copy(fontSize = 16.sp),
+                color = PaczkofastTheme.colors.textPrimary,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        NeoSurface(
+            modifier = Modifier
+                .weight(1f)
+                .height(56.dp),
+            shape = RoundedCornerShape(14.dp),
+            fill = PaczkofastTheme.colors.cardSurface,
+            borderColor = PaczkofastTheme.colors.borderStrong,
+            shadowOffset = 3.dp,
+        ) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = formatPhoneDigits(phoneDigits),
+                    style = numberStyle.copy(fontSize = 18.sp, letterSpacing = 1.sp),
+                    color = PaczkofastTheme.colors.textPrimary,
+                )
+                BlinkingCursor(
+                    height = 22.dp,
+                    modifier = Modifier.padding(start = 1.dp),
+                )
+            }
+        }
     }
 }
 
@@ -196,7 +219,7 @@ private fun TermsLine(modifier: Modifier = Modifier) {
 private fun PhoneLoginScreenPreview() {
     PaczkofastTheme {
         PhoneLoginScreen(
-            state = AuthUiState(phoneDigits = "6014803"),
+            state = AuthUiState(phoneDigits = "500100"),
             onDigit = {},
             onBackspace = {},
             onSendCode = {},
