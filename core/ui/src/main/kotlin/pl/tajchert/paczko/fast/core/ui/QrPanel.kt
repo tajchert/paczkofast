@@ -3,26 +3,35 @@ package pl.tajchert.paczko.fast.core.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.component.NeoSurface
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
+import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceMonoFamily
+
+private val QrPanelShape = RoundedCornerShape(18.dp)
+private val QrFrameShape = RoundedCornerShape(10.dp)
+private val QrFrameBorderWidth = 2.5.dp
 
 /**
- * White panel with the pickup QR code and the numeric open code beneath it
- * ("CODE 828 316"). Stays high-contrast in both themes so locker scanners
- * can read it.
+ * White neo-brutalist panel with the pickup QR code and the numeric open code beneath it
+ * ("CODE 828 316"). The QR sits in its own ink-framed white inset so the modules stay
+ * high-contrast dark-on-white in both themes — locker scanners depend on it.
  *
  * @param payload Content encoded into the QR code.
  * @param code Human-readable open code; shown grouped in threes when it's
@@ -35,38 +44,51 @@ fun QrPanel(
     code: String? = null,
     qrSize: Int = 168,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(PaczkofastTheme.colors.qrPanelBackground)
-            .border(1.dp, PaczkofastTheme.colors.qrPanelBorder, MaterialTheme.shapes.medium)
-            .padding(14.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+    NeoSurface(
+        modifier = modifier.fillMaxWidth(),
+        shape = QrPanelShape,
+        fill = PaczkofastTheme.colors.qrPanelBackground,
+        borderColor = PaczkofastTheme.colors.borderStrong,
     ) {
-        QrCodeImage(
-            payload = payload,
-            modifier = Modifier.size(qrSize.dp),
-        )
-        code?.let {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .border(QrFrameBorderWidth, PaczkofastTheme.colors.qrPanelBorder, QrFrameShape)
+                    .background(PaczkofastTheme.colors.qrPanelBackground, QrFrameShape)
+                    .padding(10.dp),
             ) {
-                Text(
-                    text = "CODE",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = PaczkofastTheme.colors.qrLabel,
+                QrCodeImage(
+                    payload = payload,
+                    modifier = Modifier.size(qrSize.dp),
                 )
-                Text(
-                    text = formatOpenCode(it),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontSize = 19.sp,
-                        letterSpacing = 3.sp,
-                    ),
-                    color = PaczkofastTheme.colors.qrInk,
-                )
+            }
+            code?.let {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Text(
+                        text = "CODE",
+                        style = MonoLabel,
+                        color = PaczkofastTheme.colors.qrLabel,
+                    )
+                    Text(
+                        text = formatOpenCode(it),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontFamily = SpaceMonoFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
+                            letterSpacing = 3.sp,
+                        ),
+                        color = PaczkofastTheme.colors.textPrimary,
+                    )
+                }
             }
         }
     }
