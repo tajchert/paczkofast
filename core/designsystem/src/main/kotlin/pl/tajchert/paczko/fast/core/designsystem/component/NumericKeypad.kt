@@ -1,7 +1,8 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +15,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
@@ -79,18 +80,27 @@ private fun DigitKey(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    NeoSurface(
         modifier = modifier
             .height(KeyHeight)
-            .clip(KeyShape)
-            .background(PaczkofastTheme.colors.cardSurface)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            ),
+        shape = KeyShape,
+        fill = PaczkofastTheme.colors.cardSurface,
+        borderColor = PaczkofastTheme.colors.borderStrong,
+        shadowOffset = 2.dp,
+        pressed = pressed,
     ) {
         Text(
             text = digit.toString(),
             style = MaterialTheme.typography.titleMedium.copy(fontSize = 21.sp, lineHeight = 26.sp),
             color = PaczkofastTheme.colors.textPrimary,
+            modifier = Modifier.align(Alignment.Center),
         )
     }
 }
@@ -100,18 +110,29 @@ private fun BackspaceKey(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    NeoSurface(
         modifier = modifier
             .height(KeyHeight)
-            .clip(KeyShape)
-            .clickable(onClick = onClick)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
             .semantics { contentDescription = "Backspace" },
-        contentAlignment = Alignment.Center,
+        shape = KeyShape,
+        fill = PaczkofastTheme.colors.cardSurface,
+        borderColor = PaczkofastTheme.colors.borderStrong,
+        shadowOffset = 2.dp,
+        pressed = pressed,
     ) {
         Image(
             painter = backspacePainter(PaczkofastTheme.colors.textMuted),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(24.dp),
         )
     }
 }

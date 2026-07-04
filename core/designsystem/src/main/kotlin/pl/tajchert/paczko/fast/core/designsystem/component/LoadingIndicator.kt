@@ -1,10 +1,14 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,6 +16,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -39,16 +44,36 @@ fun PaczkofastLoadingIndicator(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PaczkofastTheme.colors.background),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier
-                .size(48.dp)
-                .semantics { contentDescription = "Loading" },
-            color = MaterialTheme.colorScheme.primary,
-            strokeWidth = 4.dp,
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            NeoSurface(
+                modifier = Modifier.size(52.dp),
+                shape = RoundedCornerShape(16.dp),
+                fill = PaczkofastTheme.colors.accent,
+                borderColor = PaczkofastTheme.colors.borderStrong,
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(22.dp)
+                        .semantics { contentDescription = "Loading" },
+                    color = PaczkofastTheme.colors.onAccent,
+                    strokeWidth = 2.5.dp,
+                )
+            }
+            Text(
+                text = "LOADING",
+                style = MonoLabel,
+                color = PaczkofastTheme.colors.monoLabel,
+            )
+        }
     }
 }
 
@@ -65,7 +90,7 @@ fun PaczkofastSmallLoadingIndicator(
         modifier = modifier
             .size(24.dp)
             .semantics { contentDescription = "Loading" },
-        color = MaterialTheme.colorScheme.primary,
+        color = PaczkofastTheme.colors.textPrimary,
         strokeWidth = 2.dp,
     )
 }

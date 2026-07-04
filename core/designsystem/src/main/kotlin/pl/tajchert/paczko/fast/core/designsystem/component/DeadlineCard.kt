@@ -1,25 +1,15 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
  * Card on the parcel detail screen showing the pickup deadline with a
- * large countdown ("46 h") and a remaining-time bar.
+ * mono label, a large countdown value and a bordered progress bar — on a
+ * white [NeoSurface] with an ink border and hard shadow.
  */
 @Composable
 fun DeadlineCard(
@@ -29,39 +19,12 @@ fun DeadlineCard(
     modifier: Modifier = Modifier,
     urgent: Boolean = false,
 ) {
-    val countdownColor = if (urgent) {
-        PaczkofastTheme.colors.urgent
-    } else {
-        PaczkofastTheme.colors.accentText
-    }
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(PaczkofastTheme.colors.cardSurface)
-            .border(1.dp, PaczkofastTheme.colors.cardBorder, MaterialTheme.shapes.large)
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = deadlineText,
-                style = MaterialTheme.typography.titleSmall,
-                color = PaczkofastTheme.colors.textPrimary,
-            )
-            Text(
-                text = countdownText,
-                style = MaterialTheme.typography.titleMedium.copy(fontSize = 19.sp),
-                color = countdownColor,
-            )
-        }
+    PaczkofastCard(modifier = modifier) {
         DeadlineProgressBar(
             progress = progress,
             urgent = urgent,
+            label = deadlineText,
+            value = countdownText,
         )
     }
 }

@@ -1,8 +1,5 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,18 +11,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
- * Prominent card for a parcel that is ready for pickup — expanded variant
- * with deadline countdown, optional QR panel and primary action.
+ * Prominent neo-brutalist card for a parcel that is ready for pickup —
+ * sender name, mono locker line, deadline countdown, optional QR panel and
+ * a primary "open" action, all on a white [NeoSurface] with an ink border
+ * and hard shadow.
  *
- * @param title Sender / shop name, e.g. "Zalando".
- * @param subtitle Locker + address line.
+ * @param title Sender / shop name, e.g. "Example Shop".
+ * @param subtitle Locker + address line, e.g. "WAW01A · Example street 12".
  * @param deadlineText "Pick up by Fri 3 Jul, 12:56" (hidden when null).
  * @param timeLeftText "46 h left" (hidden when null).
  * @param progress Fraction of pickup time remaining, 0f..1f.
@@ -50,23 +49,14 @@ fun ReadyParcelCard(
     onActionClick: () -> Unit = {},
     actionInProgress: Boolean = false,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.extraLarge)
-            .background(PaczkofastTheme.colors.cardSurface)
-            .border(1.dp, PaczkofastTheme.colors.cardBorder, MaterialTheme.shapes.extraLarge)
-            .clickable(onClick = onClick)
-            .padding(18.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
+    PaczkofastCard(
+        modifier = modifier,
+        onClick = onClick,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = title,
@@ -74,42 +64,43 @@ fun ReadyParcelCard(
                     color = PaczkofastTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
                 )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = PaczkofastTheme.colors.textMuted,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                sizeLabel?.let { SizeBadge(size = it, highlighted = true) }
+            }
+            Text(
+                text = subtitle.uppercase(),
+                style = MonoLabel,
+                color = PaczkofastTheme.colors.monoLabel,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            if (deadlineText != null || timeLeftText != null || progress != null) {
+                DeadlineRow(
+                    deadlineText = deadlineText,
+                    timeLeftText = timeLeftText,
+                    progress = progress,
+                    urgent = urgent,
                 )
             }
-            sizeLabel?.let { SizeBadge(size = it) }
-        }
 
-        if (deadlineText != null || timeLeftText != null || progress != null) {
-            DeadlineRow(
-                deadlineText = deadlineText,
-                timeLeftText = timeLeftText,
-                progress = progress,
-                urgent = urgent,
-            )
-        }
+            qrContent?.invoke()
 
-        qrContent?.invoke()
-
-        actionText?.let {
-            PrimaryActionButton(
-                text = it,
-                onClick = onActionClick,
-                isLoading = actionInProgress,
-            )
+            actionText?.let {
+                PrimaryActionButton(
+                    text = it,
+                    onClick = onActionClick,
+                    isLoading = actionInProgress,
+                )
+            }
         }
     }
 }
 
 /**
- * Compact card for a ready parcel that is not the focused one: title,
- * locker line and a small countdown at the trailing edge.
+ * Compact neo-brutalist card for a ready parcel that is not the focused
+ * one: title, mono locker line and a small countdown at the trailing edge.
  */
 @Composable
 fun CollapsedReadyParcelCard(
@@ -121,73 +112,66 @@ fun CollapsedReadyParcelCard(
     progress: Float? = null,
     urgent: Boolean = false,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.extraLarge)
-            .background(PaczkofastTheme.colors.cardSurface)
-            .border(1.dp, PaczkofastTheme.colors.cardBorder, MaterialTheme.shapes.extraLarge)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    PaczkofastCard(
+        modifier = modifier,
+        onClick = onClick,
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(3.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelMedium.copy(fontSize = 15.5.sp),
-                color = PaczkofastTheme.colors.textPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = PaczkofastTheme.colors.textMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-        if (timeLeftText != null || progress != null) {
-            val countdownColor = if (urgent) {
-                PaczkofastTheme.colors.urgent
-            } else {
-                PaczkofastTheme.colors.accentText
-            }
             Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
-                timeLeftText?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = countdownColor,
-                    )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = PaczkofastTheme.colors.textPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = subtitle.uppercase(),
+                    style = MonoLabel,
+                    color = PaczkofastTheme.colors.monoLabel,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            if (timeLeftText != null || progress != null) {
+                val countdownColor = if (urgent) {
+                    PaczkofastTheme.colors.alertText
+                } else {
+                    PaczkofastTheme.colors.textPrimary
                 }
-                progress?.let {
-                    DeadlineProgressBar(
-                        progress = it,
-                        urgent = urgent,
-                        modifier = Modifier.width(56.dp),
-                    )
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    timeLeftText?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = countdownColor,
+                        )
+                    }
+                    progress?.let {
+                        DeadlineProgressBar(
+                            progress = it,
+                            urgent = urgent,
+                            modifier = Modifier.width(56.dp),
+                        )
+                    }
                 }
             }
         }
-        Text(
-            text = "›",
-            style = MaterialTheme.typography.titleLarge,
-            color = PaczkofastTheme.colors.textFaint,
-        )
     }
 }
 
 /**
- * Subtle card for a parcel still on its way: sender, status line and a
- * segmented delivery progress bar.
+ * Neo-brutalist card for a parcel still on its way: sender, size badge and
+ * a segmented delivery progress bar with a mono status caption.
  */
 @Composable
 fun TransitParcelCard(
@@ -199,51 +183,37 @@ fun TransitParcelCard(
     completedSegments: Int = 0,
     totalSegments: Int = 4,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(PaczkofastTheme.colors.cardSurfaceSubtle)
-            .border(1.dp, PaczkofastTheme.colors.cardBorderSubtle, MaterialTheme.shapes.large)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 15.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+    PaczkofastCard(
+        modifier = modifier,
+        onClick = onClick,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.labelMedium.copy(fontSize = 15.sp),
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp),
                     color = PaczkofastTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
                 )
-                Text(
-                    text = statusText,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = PaczkofastTheme.colors.textMuted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                sizeLabel?.let { SizeBadge(size = it) }
             }
-            sizeLabel?.let { SizeBadge(size = it) }
+            SegmentedProgressBar(
+                completedSegments = completedSegments,
+                totalSegments = totalSegments,
+                statusLabel = "${statusText.uppercase()} · $completedSegments/$totalSegments",
+            )
         }
-        SegmentedProgressBar(
-            completedSegments = completedSegments,
-            totalSegments = totalSegments,
-        )
     }
 }
 
 /**
  * Deadline line + countdown + progress bar shared by ready cards and the
- * detail screen's deadline card.
+ * detail screen's deadline card. Thin wrapper over [DeadlineProgressBar].
  */
 @Composable
 internal fun DeadlineRow(
@@ -253,40 +223,13 @@ internal fun DeadlineRow(
     urgent: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val countdownColor = if (urgent) {
-        PaczkofastTheme.colors.urgent
-    } else {
-        PaczkofastTheme.colors.accentText
-    }
-    Column(
+    DeadlineProgressBar(
+        progress = progress ?: 0f,
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = deadlineText.orEmpty(),
-                style = MaterialTheme.typography.titleSmall,
-                color = PaczkofastTheme.colors.textPrimary,
-            )
-            timeLeftText?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = countdownColor,
-                )
-            }
-        }
-        progress?.let {
-            DeadlineProgressBar(
-                progress = it,
-                urgent = urgent,
-            )
-        }
-    }
+        urgent = urgent,
+        label = deadlineText,
+        value = timeLeftText,
+    )
 }
 
 @PaczkofastPreviews
@@ -295,31 +238,42 @@ private fun ParcelCardsPreview() {
     PaczkofastTheme {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ReadyParcelCard(
-                title = "Zalando",
-                subtitle = "Locker WAW04B · Górczewska 12 · 350 m",
+                title = "Example Shop",
+                subtitle = "WAW01A · Example street 12",
                 deadlineText = "Pick up by Fri 3 Jul, 12:56",
                 timeLeftText = "46 h left",
                 progress = 0.64f,
                 sizeLabel = "M",
-                actionText = "Open box remotely",
+                actionText = "Open locker",
+                onClick = {},
+            )
+            ReadyParcelCard(
+                title = "Example Sender sp. z o.o.",
+                subtitle = "WAW01A · Example street 12",
+                deadlineText = "Time left",
+                timeLeftText = "9 h — hurry!",
+                progress = 0.06f,
+                urgent = true,
+                sizeLabel = "S",
+                actionText = "Open locker",
                 onClick = {},
             )
             CollapsedReadyParcelCard(
-                title = "Marta K. · Vinted",
-                subtitle = "Locker WAW04B · Górczewska 12",
+                title = "Example Sender sp. z o.o.",
+                subtitle = "WAW01A · Example street 12",
                 timeLeftText = "9 h left",
                 progress = 0.18f,
                 urgent = true,
                 onClick = {},
             )
             TransitParcelCard(
-                title = "MediaExpert",
-                statusText = "In transit · arriving tomorrow",
+                title = "Example Shop",
+                statusText = "Out for delivery",
                 sizeLabel = "L",
-                completedSegments = 2,
+                completedSegments = 3,
                 onClick = {},
             )
         }

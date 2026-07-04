@@ -2,8 +2,12 @@ package pl.tajchert.paczko.fast.core.designsystem.component
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -36,9 +38,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
+private val ActionButtonShape = RoundedCornerShape(12.dp)
+
 /**
- * Primary amber action button, e.g. "Open box remotely".
- * Full width, 50dp tall, Space Grotesk label.
+ * Primary yellow action button, e.g. "Open locker" / "Open box remotely".
+ * A [NeoSurface] with an ink border and hard offset shadow, ~46dp tall,
+ * Space Grotesk label.
  */
 @Composable
 fun PrimaryActionButton(
@@ -48,35 +53,49 @@ fun PrimaryActionButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
 ) {
-    Button(
-        onClick = onClick,
-        enabled = enabled && !isLoading,
-        shape = MaterialTheme.shapes.medium,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = PaczkofastTheme.colors.accent,
-            contentColor = PaczkofastTheme.colors.onAccent,
-            disabledContainerColor = PaczkofastTheme.colors.accentDisabled,
-            disabledContentColor = PaczkofastTheme.colors.onAccentDisabled,
-        ),
+    val colors = PaczkofastTheme.colors
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val isEnabled = enabled && !isLoading
+
+    NeoSurface(
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(46.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = isEnabled,
+                onClick = onClick,
+            ),
+        shape = ActionButtonShape,
+        fill = if (isEnabled) colors.accent else colors.accentDisabled,
+        borderColor = colors.borderStrong,
+        shadow = isEnabled,
+        pressed = pressed && isEnabled,
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(22.dp),
-                strokeWidth = 2.5.dp,
-                color = PaczkofastTheme.colors.onAccentDisabled,
-            )
-        } else {
-            Text(text = text, style = MaterialTheme.typography.labelLarge)
+        Box(modifier = Modifier.align(Alignment.Center), contentAlignment = Alignment.Center) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    strokeWidth = 2.5.dp,
+                    color = colors.onAccentDisabled,
+                )
+            } else {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = if (isEnabled) colors.onAccent else colors.onAccentDisabled,
+                )
+            }
         }
     }
 }
 
 /**
- * Secondary outlined action button, e.g. "Navigate" on the locker card.
- * Full width, 42dp tall, subtle amber-tinted border.
+ * Secondary outlined action button, e.g. "Navigate" on the locker card. A
+ * white [NeoSurface] with an ink border and a lighter hard shadow, ~42dp
+ * tall.
  */
 @Composable
 fun OutlinedActionButton(
@@ -85,21 +104,31 @@ fun OutlinedActionButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    OutlinedButton(
-        onClick = onClick,
-        enabled = enabled,
-        shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(1.dp, PaczkofastTheme.colors.outlineButtonBorder),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = PaczkofastTheme.colors.textPrimary,
-        ),
+    val colors = PaczkofastTheme.colors
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+
+    NeoSurface(
         modifier = modifier
             .fillMaxWidth()
-            .height(42.dp),
+            .height(42.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = enabled,
+                onClick = onClick,
+            ),
+        shape = ActionButtonShape,
+        fill = colors.cardSurface,
+        borderColor = colors.borderStrong,
+        shadowOffset = 2.dp,
+        pressed = pressed && enabled,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
+            color = if (enabled) colors.textPrimary else colors.textFaint,
+            modifier = Modifier.align(Alignment.Center),
         )
     }
 }
@@ -117,6 +146,7 @@ fun HoldToConfirmButton(
     enabled: Boolean = true,
     holdDurationMillis: Int = 1200,
 ) {
+    val colors = PaczkofastTheme.colors
     val controller = remember(holdDurationMillis) { HoldProgress(holdDurationMillis.toLong()) }
     val fill = remember { Animatable(0f) }
     val haptics = LocalHapticFeedback.current
@@ -145,13 +175,13 @@ fun HoldToConfirmButton(
         }
     }
 
-    Surface(
-        shape = MaterialTheme.shapes.medium,
-        color = if (enabled) PaczkofastTheme.colors.accent else PaczkofastTheme.colors.accentDisabled,
-        contentColor = if (enabled) PaczkofastTheme.colors.onAccent else PaczkofastTheme.colors.onAccentDisabled,
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(if (enabled) colors.accent else colors.accentDisabled)
+            .border(2.5.dp, colors.borderStrong, RoundedCornerShape(14.dp))
             .pointerInput(enabled) {
                 if (!enabled) return@pointerInput
                 detectTapGestures(
@@ -164,7 +194,9 @@ fun HoldToConfirmButton(
             },
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -175,12 +207,13 @@ fun HoldToConfirmButton(
                         .size(22.dp)
                         .graphicsLayer { alpha = if (fill.value > 0f) 1f else 0.35f },
                     strokeWidth = 2.5.dp,
-                    color = if (enabled) PaczkofastTheme.colors.onAccent else PaczkofastTheme.colors.onAccentDisabled,
+                    color = if (enabled) colors.onAccent else colors.onAccentDisabled,
                 )
             }
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
+                color = if (enabled) colors.onAccent else colors.onAccentDisabled,
                 modifier = Modifier.padding(start = 10.dp),
             )
         }
@@ -195,8 +228,8 @@ private fun ActionButtonsPreview() {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PrimaryActionButton(text = "Open box remotely", onClick = {})
-            PrimaryActionButton(text = "Open box remotely", onClick = {}, isLoading = true)
+            PrimaryActionButton(text = "Open locker", onClick = {})
+            PrimaryActionButton(text = "Open locker", onClick = {}, isLoading = true)
             HoldToConfirmButton(text = "Hold to open", onConfirmed = {})
             HoldToConfirmButton(text = "Hold to open", onConfirmed = {}, enabled = false)
             OutlinedActionButton(text = "Navigate", onClick = {})

@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,10 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -51,7 +55,7 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  * }
  * ```
  *
- * @param icon Icon to display above the title
+ * @param icon Icon to display above the title, inside a neo-brutalist tile
  * @param title Main message explaining the empty state
  * @param modifier Modifier for the container
  * @param description Optional additional description
@@ -74,20 +78,15 @@ fun PaczkofastEmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null, // Decorative
-            modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.outline,
-        )
+        EmptyStateTile(icon = icon, tint = PaczkofastTheme.colors.textPrimary)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = PaczkofastTheme.colors.textPrimary,
         )
 
         if (description != null) {
@@ -95,9 +94,9 @@ fun PaczkofastEmptyState(
 
             Text(
                 text = description,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MonoLabel,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = PaczkofastTheme.colors.monoLabel,
             )
         }
 
@@ -132,20 +131,24 @@ fun PaczkofastErrorState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        EmptyStateTile(icon = Icons.Outlined.ErrorOutline, tint = PaczkofastTheme.colors.alertText)
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         Text(
             text = "Something went wrong",
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.error,
+            color = PaczkofastTheme.colors.textPrimary,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = message,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MonoLabel,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = PaczkofastTheme.colors.monoLabel,
         )
 
         if (onRetry != null) {
@@ -156,6 +159,26 @@ fun PaczkofastErrorState(
                 text = "Try Again",
             )
         }
+    }
+}
+
+/** Shared ink-bordered yellow icon tile used above empty/error captions. */
+@Composable
+private fun EmptyStateTile(icon: ImageVector, tint: Color) {
+    NeoSurface(
+        modifier = Modifier.size(84.dp),
+        shape = RoundedCornerShape(20.dp),
+        fill = PaczkofastTheme.colors.accent,
+        borderColor = PaczkofastTheme.colors.borderStrong,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null, // Decorative
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(36.dp),
+            tint = tint,
+        )
     }
 }
 
