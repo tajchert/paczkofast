@@ -1,33 +1,36 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
  * Primary filled button for the Paczkofast app.
  *
- * ## Why Wrap Material Button?
+ * ## Why a Custom [NeoSurface]-Based Implementation?
  *
- * Wrapping Material 3's Button component allows us to:
- * 1. **Enforce consistent sizing**: All buttons have minimum height
- * 2. **Add loading states**: Built-in loading indicator support
- * 3. **App-specific styling**: Consistent padding and content padding
- * 4. **Easy global updates**: Change all buttons from one place
+ * The neo-brutalist design system relies on a hard offset shadow that visually
+ * "collapses" when pressed (the surface slides into its own shadow). Material 3's
+ * `Button` draws its own ripple/elevation and would fight with that effect, so this
+ * button is built directly on [NeoSurface] with a manual `clickable` + interaction
+ * source instead of wrapping `Button`.
  *
  * ## Usage
  *
@@ -53,23 +56,49 @@ fun PaczkofastButton(
     isLoading: Boolean = false,
     text: String,
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
-        enabled = enabled && !isLoading,
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+    val colors = PaczkofastTheme.colors
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val isEnabled = enabled && !isLoading
+
+    NeoSurface(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 52.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = isEnabled,
+                onClick = onClick,
+            ),
+        shape = RoundedCornerShape(14.dp),
+        fill = if (isEnabled) colors.accent else colors.accentDisabled,
+        borderColor = colors.borderStrong,
+        shadow = isEnabled,
+        shadowOffset = 3.dp,
+        pressed = pressed && isEnabled,
     ) {
-        PaczkofastButtonContent(
-            text = text,
-            isLoading = isLoading,
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .align(Alignment.Center),
+            contentAlignment = Alignment.Center,
+        ) {
+            PaczkofastButtonContent(
+                text = text,
+                isLoading = isLoading,
+                contentColor = if (isEnabled) colors.onAccent else colors.onAccentDisabled,
+            )
+        }
     }
 }
 
 /**
  * Outlined button variant - for secondary actions.
  *
- * Use this for actions that are less prominent than the primary action.
+ * Use this for actions that are less prominent than the primary action, e.g.
+ * "Navigate" or "Contact support".
  */
 @Composable
 fun PaczkofastOutlinedButton(
@@ -79,23 +108,49 @@ fun PaczkofastOutlinedButton(
     isLoading: Boolean = false,
     text: String,
 ) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
-        enabled = enabled && !isLoading,
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+    val colors = PaczkofastTheme.colors
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val isEnabled = enabled && !isLoading
+
+    NeoSurface(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = isEnabled,
+                onClick = onClick,
+            ),
+        shape = RoundedCornerShape(14.dp),
+        fill = colors.cardSurface,
+        borderColor = colors.outlineButtonBorder,
+        shadow = true,
+        shadowOffset = 2.dp,
+        pressed = pressed && isEnabled,
     ) {
-        PaczkofastButtonContent(
-            text = text,
-            isLoading = isLoading,
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .align(Alignment.Center),
+            contentAlignment = Alignment.Center,
+        ) {
+            PaczkofastButtonContent(
+                text = text,
+                isLoading = isLoading,
+                contentColor = colors.textPrimary,
+            )
+        }
     }
 }
 
 /**
  * Text button variant - for the least prominent actions.
  *
- * Use this for actions in dialogs or as tertiary actions.
+ * Use this for actions in dialogs or as tertiary actions. Just a clickable [Text],
+ * no surface/border/shadow.
  */
 @Composable
 fun PaczkofastTextButton(
@@ -104,13 +159,20 @@ fun PaczkofastTextButton(
     enabled: Boolean = true,
     text: String,
 ) {
-    TextButton(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
-        enabled = enabled,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+    Box(
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(text = text)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            color = PaczkofastTheme.colors.textPrimary.let {
+                if (enabled) it else it.copy(alpha = 0.5f)
+            },
+        )
     }
 }
 
@@ -121,15 +183,21 @@ fun PaczkofastTextButton(
 private fun PaczkofastButtonContent(
     text: String,
     isLoading: Boolean,
+    contentColor: androidx.compose.ui.graphics.Color,
 ) {
     if (isLoading) {
         CircularProgressIndicator(
             modifier = Modifier.size(20.dp),
             strokeWidth = 2.dp,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = contentColor,
         )
     } else {
-        Text(text = text)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            color = contentColor,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -137,7 +205,7 @@ private fun PaczkofastButtonContent(
 // PREVIEWS
 // =============================================================================
 
-@Preview(showBackground = true, name = "Primary Button")
+@PaczkofastPreviews
 @Composable
 private fun PaczkofastButtonPreview() {
     PaczkofastTheme {
@@ -149,7 +217,7 @@ private fun PaczkofastButtonPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Loading Button")
+@PaczkofastPreviews
 @Composable
 private fun PaczkofastButtonLoadingPreview() {
     PaczkofastTheme {
@@ -162,7 +230,20 @@ private fun PaczkofastButtonLoadingPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Outlined Button")
+@PaczkofastPreviews
+@Composable
+private fun PaczkofastButtonDisabledPreview() {
+    PaczkofastTheme {
+        PaczkofastButton(
+            onClick = {},
+            text = "Disabled",
+            enabled = false,
+            modifier = Modifier.padding(16.dp),
+        )
+    }
+}
+
+@PaczkofastPreviews
 @Composable
 private fun PaczkofastOutlinedButtonPreview() {
     PaczkofastTheme {
@@ -174,7 +255,7 @@ private fun PaczkofastOutlinedButtonPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Text Button")
+@PaczkofastPreviews
 @Composable
 private fun PaczkofastTextButtonPreview() {
     PaczkofastTheme {

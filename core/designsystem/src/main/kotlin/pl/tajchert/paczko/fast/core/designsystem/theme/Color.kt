@@ -27,6 +27,12 @@ internal val OnAmberDisabledDark = Color(0xFF8A7A50)
 internal val AmberDisabledLight = Color(0xFFEDE2C3)
 internal val OnAmberDisabledLight = Color(0xFFA79465)
 
+// Neo-brutalist disabled primary button ("faded yellow")
+internal val YellowDisabledLight = Color(0xFFF3EAB6)
+internal val OnYellowDisabledLight = Color(0xFF9E9678)
+internal val YellowDisabledDark = Color(0xFF3A3626)
+internal val OnYellowDisabledDark = Color(0xFF8A8266)
+
 // Dark ("Black Amber") palette
 internal val Night0 = Color(0xFF0B0A08)
 internal val Night1 = Color(0xFF16130F)
@@ -196,8 +202,8 @@ data class PaczkofastColors(
 internal val DarkPaczkofastColors = PaczkofastColors(
     accent = Yellow,
     onAccent = Ink,
-    accentDisabled = AmberDisabledDark,
-    onAccentDisabled = OnAmberDisabledDark,
+    accentDisabled = YellowDisabledDark,
+    onAccentDisabled = OnYellowDisabledDark,
     accentText = Yellow,
     urgent = AlertDark,
     background = NightBg,
@@ -242,8 +248,8 @@ internal val DarkPaczkofastColors = PaczkofastColors(
 internal val LightPaczkofastColors = PaczkofastColors(
     accent = Yellow,
     onAccent = Ink,
-    accentDisabled = AmberDisabledLight,
-    onAccentDisabled = OnAmberDisabledLight,
+    accentDisabled = YellowDisabledLight,
+    onAccentDisabled = OnYellowDisabledLight,
     accentText = Ink,
     urgent = AlertText,
     background = Cream,
