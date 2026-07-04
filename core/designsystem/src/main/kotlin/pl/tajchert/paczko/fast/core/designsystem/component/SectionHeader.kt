@@ -1,6 +1,7 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,13 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
- * Uppercase section label with a count badge, e.g. "READY FOR PICKUP (2)".
+ * Uppercase mono section caption with a count badge, e.g. "READY FOR PICKUP (2)".
+ *
+ * Matches the neo-brutalist mono captions used elsewhere in the app (e.g.
+ * "JULY" history group labels, "TRACKING" settings group labels).
  *
  * @param highlighted When true the badge uses the amber accent
- *   (ready-for-pickup section); otherwise a neutral badge (on-the-way section).
+ *   (ready-for-pickup section); otherwise a neutral, bordered badge
+ *   (on-the-way section).
  */
 @Composable
 fun SectionHeader(
@@ -38,15 +44,15 @@ fun SectionHeader(
     ) {
         Text(
             text = label.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = PaczkofastTheme.colors.textMuted,
+            style = MonoLabel,
+            color = PaczkofastTheme.colors.monoLabel,
         )
         CountBadge(count = count, highlighted = highlighted)
     }
 }
 
 /**
- * Small pill badge showing a count.
+ * Small bordered neo-brutalist badge showing a count.
  */
 @Composable
 fun CountBadge(
@@ -66,15 +72,16 @@ fun CountBadge(
     }
     Box(
         modifier = modifier
-            .widthIn(min = 20.dp)
+            .widthIn(min = 22.dp)
             .height(20.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(background),
+            .clip(RoundedCornerShape(7.dp))
+            .background(background)
+            .border(2.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(7.dp)),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = count.toString(),
-            style = MaterialTheme.typography.labelMedium,
+            style = MonoLabel,
             color = contentColor,
             modifier = Modifier.padding(horizontal = 6.dp),
         )

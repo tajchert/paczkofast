@@ -1,27 +1,27 @@
 package pl.tajchert.paczko.fast.core.designsystem.component
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
- * Standard card component for the Paczkofast app.
+ * Standard neo-brutalist card component for the Paczkofast app.
  *
- * ## Why Wrap Material Card?
- *
- * 1. **Consistent elevation and shape**: All cards look the same
- * 2. **Standard padding**: Content is always properly padded
- * 3. **Easy theming**: Update all cards from one place
+ * A white [NeoSurface] with a thick ink border and hard offset shadow, 18dp
+ * corner radius. When [onClick] is provided the card presses into its own
+ * shadow on tap (see [NeoSurface]'s `pressed` behavior).
  *
  * ## Usage
  *
@@ -35,7 +35,8 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  * ```
  *
  * @param modifier Modifier for the card
- * @param onClick Optional click handler. If provided, the card becomes clickable.
+ * @param onClick Optional click handler. If provided, the card becomes clickable
+ *   and animates toward its shadow while pressed.
  * @param content The card content
  */
 @Composable
@@ -44,44 +45,40 @@ fun PaczkofastCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    if (onClick != null) {
-        Card(
-            onClick = onClick,
-            modifier = modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed = onClick != null && interactionSource.collectIsPressedAsState().value
+
+    NeoSurface(
+        modifier = modifier
+            .fillMaxWidth()
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = onClick,
+                    )
+                } else {
+                    Modifier
+                },
             ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 1.dp,
-            ),
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                content = content,
-            )
-        }
-    } else {
-        Card(
-            modifier = modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 1.dp,
-            ),
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                content = content,
-            )
-        }
+        shape = RoundedCornerShape(18.dp),
+        fill = PaczkofastTheme.colors.cardSurface,
+        borderColor = PaczkofastTheme.colors.borderStrong,
+        pressed = pressed,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            content = content,
+        )
     }
 }
 
 /**
- * Elevated card variant for more prominent content.
+ * More prominent card variant — same neo-brutalist surface with a deeper
+ * hard shadow to draw extra attention (e.g. featured/expanded content).
  */
 @Composable
 fun PaczkofastElevatedCard(
@@ -89,39 +86,35 @@ fun PaczkofastElevatedCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    if (onClick != null) {
-        Card(
-            onClick = onClick,
-            modifier = modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed = onClick != null && interactionSource.collectIsPressedAsState().value
+
+    NeoSurface(
+        modifier = modifier
+            .fillMaxWidth()
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = onClick,
+                    )
+                } else {
+                    Modifier
+                },
             ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 4.dp,
-            ),
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                content = content,
-            )
-        }
-    } else {
-        Card(
-            modifier = modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 4.dp,
-            ),
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                content = content,
-            )
-        }
+        shape = RoundedCornerShape(18.dp),
+        fill = PaczkofastTheme.colors.cardSurface,
+        borderColor = PaczkofastTheme.colors.borderStrong,
+        shadowOffset = 4.dp,
+        pressed = pressed,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            content = content,
+        )
     }
 }
 
@@ -129,7 +122,7 @@ fun PaczkofastElevatedCard(
 // PREVIEWS
 // =============================================================================
 
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun PaczkofastCardPreview() {
     PaczkofastTheme {
@@ -149,7 +142,7 @@ private fun PaczkofastCardPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun PaczkofastElevatedCardPreview() {
     PaczkofastTheme {
@@ -161,7 +154,7 @@ private fun PaczkofastElevatedCardPreview() {
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = "This card has higher elevation for more prominence.",
+                text = "This card has a deeper shadow for more prominence.",
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
