@@ -54,6 +54,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.list.previewParcels
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelMetadataLines
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
+import pl.tajchert.paczko.fast.feature.parcels.impl.pickupWaitLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.trackingTimelineEvents
 
 /**
@@ -234,13 +235,22 @@ private fun ParcelDetailBody(
             trackingEvents(parcel)
         }
         if (timeline.isNotEmpty()) {
+            val pickupWait = parcel.pickupWaitLabel()
             Column(modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)) {
                 Text(
                     text = "TRACKING",
                     style = MaterialTheme.typography.labelSmall,
                     color = PaczkofastTheme.colors.textMuted,
-                    modifier = Modifier.padding(bottom = 14.dp),
+                    modifier = Modifier.padding(bottom = if (pickupWait != null) 4.dp else 14.dp),
                 )
+                if (pickupWait != null) {
+                    Text(
+                        text = "Picked up $pickupWait after it was ready",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = PaczkofastTheme.colors.accentText,
+                        modifier = Modifier.padding(bottom = 14.dp),
+                    )
+                }
                 TrackingTimeline(events = timeline)
             }
         }

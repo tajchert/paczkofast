@@ -201,6 +201,32 @@ internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): Pick
 internal fun formatTimelineTime(value: String?): String? =
     parseInstant(value)?.let { TIMELINE_TIME_FORMAT.format(it.atZone(ZoneId.systemDefault())) }
 
+/**
+ * How long a collected locker parcel sat between becoming ready for pickup
+ * ([Parcel.storedDate]) and being picked up ([Parcel.pickUpDate]), formatted
+ * coarsely (e.g. "44 h", "1 d 20 h", "35 min"). Null when either timestamp is
+ * missing or inconsistent — i.e. for parcels that were never a locker pickup or
+ * haven't been collected yet.
+ */
+internal fun Parcel.pickupWaitLabel(): String? {
+    val ready = parseInstant(storedDate) ?: return null
+    val collected = parseInstant(pickUpDate) ?: return null
+    val wait = Duration.between(ready, collected)
+    if (wait.isNegative || wait.isZero) return null
+    return formatCoarseDuration(wait)
+}
+
+/** "35 min" / "44 h" / "1 d 20 h" — largest two units, no seconds. */
+private fun formatCoarseDuration(duration: Duration): String = when {
+    duration.toMinutes() < 60 -> "${duration.toMinutes()} min"
+    duration.toHours() < 48 -> "${duration.toHours()} h"
+    else -> {
+        val days = duration.toDays()
+        val hours = duration.minusDays(days).toHours()
+        if (hours == 0L) "$days d" else "$days d $hours h"
+    }
+}
+
 internal fun parseInstant(value: String?): Instant? {
     if (value.isNullOrBlank()) return null
     return runCatching { OffsetDateTime.parse(value).toInstant() }
