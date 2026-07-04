@@ -12,15 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -42,9 +43,9 @@ fun <T> SegmentedControl(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(PaczkofastTheme.colors.background)
-            .border(1.dp, PaczkofastTheme.colors.cardBorder, RoundedCornerShape(12.dp))
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+            .border(2.5.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(12.dp))
+            .padding(5.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         options.forEach { (value, label) ->
             SegmentedItem(
@@ -65,10 +66,15 @@ private fun RowScope.SegmentedItem(
     Box(
         modifier = Modifier
             .weight(1f)
-            .height(38.dp)
-            .clip(RoundedCornerShape(9.dp))
-            .background(
-                if (selected) PaczkofastTheme.colors.accent else PaczkofastTheme.colors.cardSurface,
+            .height(36.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (selected) PaczkofastTheme.colors.accent else Color.Transparent)
+            .then(
+                if (selected) {
+                    Modifier.border(2.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(8.dp))
+                } else {
+                    Modifier
+                },
             )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -79,11 +85,10 @@ private fun RowScope.SegmentedItem(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold,
-            ),
+            fontSize = 13.5.sp,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
             color = if (selected) {
-                PaczkofastTheme.colors.onAccent
+                PaczkofastTheme.colors.textPrimary
             } else {
                 PaczkofastTheme.colors.textMuted
             },
@@ -97,7 +102,7 @@ private fun SegmentedControlPreview() {
     PaczkofastTheme {
         SegmentedControl(
             options = listOf("system" to "System", "light" to "Light", "dark" to "Dark"),
-            selected = "system",
+            selected = "light",
             onSelect = {},
             modifier = Modifier.padding(16.dp),
         )
