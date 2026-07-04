@@ -163,13 +163,17 @@ private fun ParcelListContent(
         },
     ) { paddingValues ->
         val refreshState = rememberPullToRefreshState()
+        // The initial fetch is shown by the full-screen center loader, so don't
+        // also surface the pull-to-refresh spinner then — otherwise two loaders
+        // appear at once on first open.
+        val showRefreshing = uiState.isRefreshing && !uiState.isLoading
         PullToRefreshBox(
-            isRefreshing = uiState.isRefreshing,
+            isRefreshing = showRefreshing,
             onRefresh = onRefreshClick,
             state = refreshState,
             indicator = {
                 PaczkofastPullRefreshIndicator(
-                    isRefreshing = uiState.isRefreshing,
+                    isRefreshing = showRefreshing,
                     state = refreshState,
                     modifier = Modifier.align(Alignment.TopCenter),
                 )
