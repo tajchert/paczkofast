@@ -9,12 +9,16 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
 
@@ -130,6 +135,7 @@ fun HoldToOpenPanel(
 
         HoldBar(
             progress = fill.value,
+            pressed = pressed,
             enabled = enabled,
             onPressChange = { pressed = it },
         )
@@ -208,41 +214,105 @@ private fun DistanceRing(
 @Composable
 private fun HoldBar(
     progress: Float,
+    pressed: Boolean,
     enabled: Boolean,
     onPressChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val currentOnPressChange by rememberUpdatedState(onPressChange)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(62.dp)
-            .clip(RoundedCornerShape(31.dp))
-            .background(PaczkofastTheme.colors.cardSurface)
-            .border(1.5.dp, PaczkofastTheme.colors.accent.copy(alpha = 0.5f), RoundedCornerShape(31.dp))
-            .pointerInput(enabled) {
-                if (!enabled) return@pointerInput
-                detectTapGestures(
-                    onPress = {
-                        currentOnPressChange(true)
-                        tryAwaitRelease()
-                        currentOnPressChange(false)
-                    },
-                )
-            },
-        contentAlignment = Alignment.Center,
+    val holding = pressed && enabled
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
+        if (holding) {
+            HoldProgressBar(progress = progress)
+        }
+        NeoSurface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .pointerInput(enabled) {
+                    if (!enabled) return@pointerInput
+                    detectTapGestures(
+                        onPress = {
+                            currentOnPressChange(true)
+                            tryAwaitRelease()
+                            currentOnPressChange(false)
+                        },
+                    )
+                },
+            shape = RoundedCornerShape(14.dp),
+            fill = PaczkofastTheme.colors.accent,
+            borderColor = PaczkofastTheme.colors.borderStrong,
+            pressed = holding,
+        ) {
+            Row(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (holding) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.5.dp,
+                        color = PaczkofastTheme.colors.onAccent,
+                    )
+                }
+                Text(
+                    text = "Hold to open",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = PaczkofastTheme.colors.onAccent,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * "KEEP HOLDING…" mono caption above a thick bordered progress bar (design 5a):
+ * the ink-outlined track fills with accent yellow up to [progress], with a
+ * small ink divider marking the fill's leading edge.
+ */
+@Composable
+private fun HoldProgressBar(progress: Float) {
+    val clamped = progress.coerceIn(0f, 1f)
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = "Keep holding…".uppercase(),
+            style = MonoLabel,
+            color = PaczkofastTheme.colors.monoLabel,
+        )
         Box(
             modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(progress)
-                .background(PaczkofastTheme.colors.accent)
-                .align(Alignment.CenterStart),
-        )
-        Text(
-            text = "Hold to open",
-            style = MaterialTheme.typography.labelLarge,
-            color = PaczkofastTheme.colors.textPrimary,
-        )
+                .fillMaxWidth()
+                .height(14.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(PaczkofastTheme.colors.trackBackground)
+                .border(2.5.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(8.dp)),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(clamped)
+                    .align(Alignment.CenterStart),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(PaczkofastTheme.colors.accent),
+                )
+                if (clamped > 0f) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .fillMaxHeight()
+                            .width(2.5.dp)
+                            .background(PaczkofastTheme.colors.borderStrong),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -255,6 +325,34 @@ private fun HoldToOpenPanelPreview() {
             lockerCaption = "to locker WAW04B",
             subline = "Box pops open below eye level",
             onConfirmed = {},
+            modifier = Modifier.padding(20.dp),
+        )
+    }
+}
+
+@PaczkofastPreviews
+@Composable
+private fun HoldBarHoldingPreview() {
+    PaczkofastTheme {
+        HoldBar(
+            progress = 0.6f,
+            pressed = true,
+            enabled = true,
+            onPressChange = {},
+            modifier = Modifier.padding(20.dp),
+        )
+    }
+}
+
+@PaczkofastPreviews
+@Composable
+private fun HoldBarIdlePreview() {
+    PaczkofastTheme {
+        HoldBar(
+            progress = 0f,
+            pressed = false,
+            enabled = true,
+            onPressChange = {},
             modifier = Modifier.padding(20.dp),
         )
     }
