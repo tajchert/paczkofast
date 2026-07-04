@@ -13,12 +13,13 @@ import pl.tajchert.paczko.fast.core.designsystem.R
  * Typography for the Paczkofast app.
  *
  * The design uses two families:
- * - **Manrope** — body text, card titles, labels (weights 400–800)
+ * - **Space Mono** — metadata / mono captions and codes (weights 400/700)
  * - **Space Grotesk** — display text: wordmark, screen titles, buttons,
- *   pickup deadlines and codes
+ *   pickup deadlines and codes, plus body copy
  *
- * Both are bundled as variable fonts; specific weights are instantiated
- * via [FontVariation.Settings].
+ * Space Grotesk is bundled as a variable font; specific weights are
+ * instantiated via [FontVariation.Settings]. Space Mono is bundled as
+ * separate weight files (regular/bold).
  */
 
 @OptIn(androidx.compose.ui.text.ExperimentalTextApi::class)
@@ -28,18 +29,24 @@ private fun variableFont(resId: Int, weight: FontWeight) = Font(
     variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)),
 )
 
-val ManropeFamily = FontFamily(
-    variableFont(R.font.manrope, FontWeight.Normal),
-    variableFont(R.font.manrope, FontWeight.Medium),
-    variableFont(R.font.manrope, FontWeight.SemiBold),
-    variableFont(R.font.manrope, FontWeight.Bold),
-    variableFont(R.font.manrope, FontWeight.ExtraBold),
+val SpaceMonoFamily = FontFamily(
+    Font(R.font.space_mono, FontWeight.Normal),
+    Font(R.font.space_mono_bold, FontWeight.Bold),
 )
 
 val SpaceGroteskFamily = FontFamily(
     variableFont(R.font.space_grotesk, FontWeight.Medium),
     variableFont(R.font.space_grotesk, FontWeight.SemiBold),
     variableFont(R.font.space_grotesk, FontWeight.Bold),
+)
+
+// Uppercase tracked mono caption, e.g. "READY TO PICKUP", "LOCKER WAW01A"
+val MonoLabel = TextStyle(
+    fontFamily = SpaceMonoFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 10.5.sp,
+    lineHeight = 14.sp,
+    letterSpacing = 1.sp,
 )
 
 val PaczkofastTypography = Typography(
@@ -67,24 +74,24 @@ val PaczkofastTypography = Typography(
         letterSpacing = 0.sp,
     ),
 
-    // Headline styles — Manrope extra-bold, e.g. sender name on detail
+    // Headline styles — Space Grotesk bold, e.g. sender name on detail
     headlineLarge = TextStyle(
-        fontFamily = ManropeFamily,
-        fontWeight = FontWeight.ExtraBold,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 34.sp,
         letterSpacing = 0.sp,
     ),
     headlineMedium = TextStyle(
-        fontFamily = ManropeFamily,
-        fontWeight = FontWeight.ExtraBold,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 30.sp,
         letterSpacing = 0.sp,
     ),
     headlineSmall = TextStyle(
-        fontFamily = ManropeFamily,
-        fontWeight = FontWeight.ExtraBold,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
@@ -116,24 +123,24 @@ val PaczkofastTypography = Typography(
         letterSpacing = 0.sp,
     ),
 
-    // Body styles — Manrope
+    // Body styles — Space Grotesk (disclaimer text and similar body copy)
     bodyLarge = TextStyle(
-        fontFamily = ManropeFamily,
+        fontFamily = SpaceGroteskFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 23.sp,
         letterSpacing = 0.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = ManropeFamily,
-        fontWeight = FontWeight.Normal,
+        fontFamily = SpaceGroteskFamily,
+        fontWeight = FontWeight.Medium,
         fontSize = 13.5.sp,
         lineHeight = 19.sp,
         letterSpacing = 0.sp,
     ),
-    // Card metadata lines ("Locker WAW04B · Górczewska 12 · 350 m")
+    // Card metadata lines ("Locker WAW04B · Górczewska 12 · 350 m") — Space Mono
     bodySmall = TextStyle(
-        fontFamily = ManropeFamily,
+        fontFamily = SpaceMonoFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 12.5.sp,
         lineHeight = 17.sp,
@@ -149,18 +156,18 @@ val PaczkofastTypography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.sp,
     ),
-    // Emphasised small labels ("46 h left", count badges)
+    // Emphasised small labels ("46 h left", count badges) — Space Mono
     labelMedium = TextStyle(
-        fontFamily = ManropeFamily,
-        fontWeight = FontWeight.ExtraBold,
+        fontFamily = SpaceMonoFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 12.5.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
     ),
-    // Uppercase section labels ("READY FOR PICKUP")
+    // Uppercase section labels ("READY FOR PICKUP") — Space Mono
     labelSmall = TextStyle(
-        fontFamily = ManropeFamily,
-        fontWeight = FontWeight.ExtraBold,
+        fontFamily = SpaceMonoFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 11.sp,
         lineHeight = 14.sp,
         letterSpacing = 1.5.sp,
