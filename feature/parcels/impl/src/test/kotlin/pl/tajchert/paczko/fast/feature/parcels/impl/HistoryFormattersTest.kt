@@ -56,24 +56,24 @@ class HistoryFormattersTest {
     }
 
     @Test
-    fun dateLabelShowsTimeInCurrentMonthAndDateOnlyForOlder() {
+    fun dateLabelShowsDateOnlyWithoutTime() {
         val thisMonth = parcel("claimed", storedDate = "2026-07-02T12:32:00Z")
         val lastMonth = parcel("claimed", storedDate = "2026-06-28T12:00:00Z")
 
-        assertEquals("2 Jul, 14:32", historyDateLabel(thisMonth, now = now, zone = zone))
-        assertEquals("28 Jun", historyDateLabel(lastMonth, now = now, zone = zone))
-        assertEquals("", historyDateLabel(parcel("claimed"), now = now, zone = zone))
+        assertEquals("2 Jul", historyDateLabel(thisMonth, zone = zone))
+        assertEquals("28 Jun", historyDateLabel(lastMonth, zone = zone))
+        assertEquals("", historyDateLabel(parcel("claimed"), zone = zone))
     }
 
     @Test
     fun dateLabelPrefersPickUpDateOverStoredDate() {
-        // pickUpDate is the real collection time and must win over storedDate.
+        // pickUpDate is the real collection date and must win over storedDate.
         val p = parcel(
             "claimed",
             storedDate = "2026-06-20T08:00:00Z",
             pickUpDate = "2026-07-02T12:32:00Z",
         )
-        assertEquals("2 Jul, 14:32", historyDateLabel(p, now = now, zone = zone))
+        assertEquals("2 Jul", historyDateLabel(p, zone = zone))
     }
 
     @Test

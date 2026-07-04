@@ -302,8 +302,6 @@ internal fun historyOutcomeLine(parcel: Parcel): String = when (historyOutcome(p
     HistoryOutcome.Returned -> humanizeStatus(parcel.status)
 }
 
-private val HISTORY_DATE_TIME_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.ENGLISH)
 private val HISTORY_DATE_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
 private val HISTORY_MONTH_FORMAT: DateTimeFormatter =
@@ -312,24 +310,15 @@ private val HISTORY_MONTH_YEAR_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
 
 /**
- * Trailing date label for a history row. Parcels finished in the current month
- * show the time ("2 Jul, 14:32"); older ones show the date only ("28 Jun").
+ * Trailing date label for a history row — date only, no time ("28 Jun").
  * Falls back to an empty string when no completion date is known.
  */
 internal fun historyDateLabel(
     parcel: Parcel,
-    now: Instant = Instant.now(),
     zone: ZoneId = ZoneId.systemDefault(),
 ): String {
     val instant = historyInstant(parcel) ?: return ""
-    val date = instant.atZone(zone)
-    val nowDate = now.atZone(zone)
-    val sameMonth = date.year == nowDate.year && date.month == nowDate.month
-    return if (sameMonth) {
-        HISTORY_DATE_TIME_FORMAT.format(date)
-    } else {
-        HISTORY_DATE_FORMAT.format(date)
-    }
+    return HISTORY_DATE_FORMAT.format(instant.atZone(zone))
 }
 
 /** Grouping key for the History tab's month sections, newest month first. */
