@@ -70,7 +70,7 @@ fun PaczkofastNavHost(
     NavDisplay(
         backStack = backStack,
         modifier = modifier,
-        onBack = { backStack.removeLastOrNull() },
+        onBack = { backStack.popEntry() },
         // The ViewModelStoreNavEntryDecorator scopes ViewModels to their
         // back stack entry, so each destination gets its own ViewModel that
         // is cleared when the entry is popped. Specifying entryDecorators
@@ -94,15 +94,15 @@ fun PaczkofastNavHost(
 
             parcelEntries(
                 onNavigate = { key -> backStack.add(key) },
-                onBack = { backStack.removeLastOrNull() },
+                onBack = { backStack.popEntry() },
                 onOpenSettings = { backStack.add(SettingsRoute) },
             )
 
             settingsEntries(
                 // Settings sits on top of the parcel list; returning to either
                 // tab just pops back to it (its own tab state is preserved).
-                onOpenParcels = { backStack.removeLastOrNull() },
-                onOpenHistory = { backStack.removeLastOrNull() },
+                onOpenParcels = { backStack.popEntry() },
+                onOpenHistory = { backStack.popEntry() },
                 onLoggedOut = {
                     backStack.clear()
                     backStack.add(AuthRoute)
