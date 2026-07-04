@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pl.tajchert.paczko.fast.core.database.PaczkofastDatabase
+import pl.tajchert.paczko.fast.core.database.migration.MIGRATIONS
 import javax.inject.Singleton
 
 /**
@@ -20,13 +21,10 @@ import javax.inject.Singleton
  * 2. All DAOs should share the same database connection
  * 3. Multiple instances would cause data inconsistencies
  *
- * ## Build Patterns
+ * ## Migrations
  *
- * For development, you might want to add:
- * - `.fallbackToDestructiveMigration()` for easier schema iteration
- * - `.setQueryCallback()` for SQL logging
- *
- * For production, ensure proper migrations are in place.
+ * Schema changes are handled by explicit [MIGRATIONS] that preserve the offline
+ * cache. See `core/database/schemas/…` for the exported schema per version.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,8 +42,6 @@ internal object DatabaseModule {
         PaczkofastDatabase::class.java,
         "paczkofast-database",
     )
-        // For development: destroy and recreate on schema changes
-        // Remove this for production and add proper migrations
-        .fallbackToDestructiveMigration(dropAllTables = true)
+        .addMigrations(*MIGRATIONS)
         .build()
 }

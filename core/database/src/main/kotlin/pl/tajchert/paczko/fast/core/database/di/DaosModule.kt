@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pl.tajchert.paczko.fast.core.database.PaczkofastDatabase
 import pl.tajchert.paczko.fast.core.database.dao.ParcelDao
+import pl.tajchert.paczko.fast.core.database.dao.ParcelDetailsDao
 
 /**
  * Hilt module providing DAO instances.
@@ -30,4 +31,8 @@ internal object DaosModule {
 
     @Provides
     fun providesParcelDao(database: PaczkofastDatabase): ParcelDao = database.parcelDao()
+
+    @Provides
+    fun providesParcelDetailsDao(database: PaczkofastDatabase): ParcelDetailsDao =
+        database.parcelDetailsDao()
 }

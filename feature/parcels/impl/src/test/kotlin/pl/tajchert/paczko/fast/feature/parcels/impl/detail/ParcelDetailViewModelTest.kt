@@ -13,8 +13,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
-import pl.tajchert.paczko.fast.core.domain.GetParcelDetailsUseCase
+import pl.tajchert.paczko.fast.core.domain.ObserveParcelDetailsUseCase
 import pl.tajchert.paczko.fast.core.domain.ObserveParcelUseCase
+import pl.tajchert.paczko.fast.core.domain.RefreshParcelDetailsUseCase
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
@@ -35,7 +36,8 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "456",
             observeParcel = ObserveParcelUseCase(repository),
-            getParcelDetails = GetParcelDetailsUseCase(repository),
+            observeParcelDetails = ObserveParcelDetailsUseCase(repository),
+            refreshParcelDetails = RefreshParcelDetailsUseCase(repository),
         )
 
         assertFalse(viewModel.uiState.value.isLoading)
@@ -51,7 +53,8 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "missing",
             observeParcel = ObserveParcelUseCase(repository),
-            getParcelDetails = GetParcelDetailsUseCase(repository),
+            observeParcelDetails = ObserveParcelDetailsUseCase(repository),
+            refreshParcelDetails = RefreshParcelDetailsUseCase(repository),
         )
 
         assertFalse(viewModel.uiState.value.isLoading)
@@ -68,7 +71,8 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
-            getParcelDetails = GetParcelDetailsUseCase(repository),
+            observeParcelDetails = ObserveParcelDetailsUseCase(repository),
+            refreshParcelDetails = RefreshParcelDetailsUseCase(repository),
         )
 
         assertTrue(viewModel.uiState.value.isLoading)
@@ -90,7 +94,8 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
-            getParcelDetails = GetParcelDetailsUseCase(repository),
+            observeParcelDetails = ObserveParcelDetailsUseCase(repository),
+            refreshParcelDetails = RefreshParcelDetailsUseCase(repository),
         )
         advanceUntilIdle()
 
@@ -110,7 +115,8 @@ class ParcelDetailViewModelTest {
         val viewModel = ParcelDetailViewModel(
             shipmentNumber = "123",
             observeParcel = ObserveParcelUseCase(repository),
-            getParcelDetails = GetParcelDetailsUseCase(repository),
+            observeParcelDetails = ObserveParcelDetailsUseCase(repository),
+            refreshParcelDetails = RefreshParcelDetailsUseCase(repository),
         )
         advanceUntilIdle()
 
@@ -128,6 +134,8 @@ private class FakeParcelRepository(
     private val failDetails: Boolean = false,
 ) : ParcelRepository {
     private val parcelState = MutableStateFlow(parcels)
+    // Cached details start empty and are populated by a successful refresh.
+    private val detailsState = MutableStateFlow(ParcelDetails())
 
     override fun observeParcels(): Flow<List<Parcel>> = parcelState
 
@@ -142,9 +150,11 @@ private class FakeParcelRepository(
 
     override suspend fun refreshTrackedParcels() = Unit
 
-    override suspend fun getParcelDetails(shipmentNumber: String): ParcelDetails {
+    override fun observeParcelDetails(shipmentNumber: String): Flow<ParcelDetails> = detailsState
+
+    override suspend fun refreshParcelDetails(shipmentNumber: String) {
         if (failDetails) error("boom")
-        return details
+        detailsState.value = details
     }
 }
 

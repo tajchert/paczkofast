@@ -2,9 +2,14 @@ package pl.tajchert.paczko.fast.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import pl.tajchert.paczko.fast.core.database.dao.ParcelDao
+import pl.tajchert.paczko.fast.core.database.dao.ParcelDetailsDao
+import pl.tajchert.paczko.fast.core.database.entity.ParcelDetailsEntity
 import pl.tajchert.paczko.fast.core.database.entity.ParcelEntity
+import pl.tajchert.paczko.fast.core.database.entity.TrackingEventEntity
 import pl.tajchert.paczko.fast.core.network.InpostParcelApi
 import pl.tajchert.paczko.fast.core.network.dto.EventLogEntryDto
 import pl.tajchert.paczko.fast.core.network.dto.MultiCompartmentDto
@@ -23,7 +28,7 @@ class DefaultParcelRepositoryTest {
             TrackedParcelsResponseDto(parcels = listOf(parcelDto("2")), more = false),
         )
         val dao = FakeParcelDao()
-        val repository = DefaultParcelRepository(network, dao)
+        val repository = DefaultParcelRepository(network, dao, FakeParcelDetailsDao())
 
         repository.refreshTrackedParcels()
 
@@ -42,7 +47,7 @@ class DefaultParcelRepositoryTest {
             ),
         )
         val dao = FakeParcelDao(existing = listOf(parcelEntity("old")))
-        val repository = DefaultParcelRepository(network, dao)
+        val repository = DefaultParcelRepository(network, dao, FakeParcelDetailsDao())
 
         repository.refreshTrackedParcels()
 
@@ -67,7 +72,7 @@ class DefaultParcelRepositoryTest {
             ),
         )
         val dao = FakeParcelDao()
-        val repository = DefaultParcelRepository(network, dao)
+        val repository = DefaultParcelRepository(network, dao, FakeParcelDetailsDao())
 
         repository.refreshTrackedParcels()
 
@@ -77,7 +82,7 @@ class DefaultParcelRepositoryTest {
     }
 
     @Test
-    fun getParcelDetailsMapsEventsAndDisplayFields() = runTest {
+    fun refreshParcelDetailsCachesEventsAndDisplayFields() = runTest {
         val network = FakeParcelApi(
             detail = parcelDto("123").copy(
                 parcelSize = "C",
@@ -89,14 +94,25 @@ class DefaultParcelRepositoryTest {
                 ),
             ),
         )
-        val repository = DefaultParcelRepository(network, FakeParcelDao())
+        val repository = DefaultParcelRepository(network, FakeParcelDao(), FakeParcelDetailsDao())
 
-        val details = repository.getParcelDetails("123")
+        repository.refreshParcelDetails("123")
+        val details = repository.observeParcelDetails("123").first()
 
         assertEquals(listOf("DELIVERED"), details.events.map { it.status })
         assertEquals("C", details.sizeCode)
         assertEquals("Amazon Polska", details.senderName)
         assertEquals("courier", details.shipmentType)
+    }
+
+    @Test
+    fun observeParcelDetailsEmitsEmptyWhenNothingCached() = runTest {
+        val repository = DefaultParcelRepository(FakeParcelApi(), FakeParcelDao(), FakeParcelDetailsDao())
+
+        val details = repository.observeParcelDetails("nope").first()
+
+        assertEquals(emptyList(), details.events)
+        assertEquals(null, details.sizeCode)
     }
 }
 
@@ -137,6 +153,30 @@ private class FakeParcelApi(
 
     override suspend fun getTrackedParcel(shipmentNumber: String): ParcelDto =
         detail ?: error("Unexpected getTrackedParcel call")
+}
+
+private class FakeParcelDetailsDao : ParcelDetailsDao {
+    private val details = MutableStateFlow<Map<String, ParcelDetailsEntity>>(emptyMap())
+    private val events = MutableStateFlow<Map<String, List<TrackingEventEntity>>>(emptyMap())
+
+    override fun observeDetails(shipmentNumber: String): Flow<ParcelDetailsEntity?> =
+        details.map { it[shipmentNumber] }
+
+    override fun observeTrackingEvents(shipmentNumber: String): Flow<List<TrackingEventEntity>> =
+        events.map { it[shipmentNumber].orEmpty().sortedBy(TrackingEventEntity::position) }
+
+    override suspend fun upsertDetails(details: ParcelDetailsEntity) {
+        this.details.value = this.details.value + (details.shipmentNumber to details)
+    }
+
+    override suspend fun upsertTrackingEvents(events: List<TrackingEventEntity>) {
+        val shipmentNumber = events.firstOrNull()?.shipmentNumber ?: return
+        this.events.value = this.events.value + (shipmentNumber to events)
+    }
+
+    override suspend fun deleteTrackingEvents(shipmentNumber: String) {
+        events.value = events.value - shipmentNumber
+    }
 }
 
 private class FakeParcelDao(

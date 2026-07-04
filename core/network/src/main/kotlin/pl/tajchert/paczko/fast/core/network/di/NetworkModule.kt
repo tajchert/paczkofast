@@ -135,9 +135,9 @@ object NetworkModule {
 
     private fun baseOkHttpBuilder(): OkHttpClient.Builder = OkHttpClient.Builder()
         .addInterceptor(commonHeadersInterceptor())
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
 
     private fun commonHeadersInterceptor(): Interceptor = Interceptor { chain ->
         val request = chain.request().newBuilder()
@@ -151,6 +151,10 @@ object NetworkModule {
         // In production, set this based on BuildConfig.DEBUG
         level = HttpLoggingInterceptor.Level.BASIC
     }
+
+    // Fail fast on slow/stalled connections so the UI can surface an error
+    // (and fall back to cached data) instead of hanging.
+    private const val TIMEOUT_SECONDS = 5L
 
     private const val ACCEPT_HEADER = "Accept"
     private const val APPLICATION_JSON = "application/json"

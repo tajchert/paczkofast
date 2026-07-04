@@ -8,5 +8,10 @@ interface ParcelRepository {
     fun observeParcels(): Flow<List<Parcel>>
     fun observeParcel(shipmentNumber: String): Flow<Parcel?>
     suspend fun refreshTrackedParcels()
-    suspend fun getParcelDetails(shipmentNumber: String): ParcelDetails
+
+    /** The cached detail fields + tracking timeline for a parcel (survives offline cold start). */
+    fun observeParcelDetails(shipmentNumber: String): Flow<ParcelDetails>
+
+    /** Fetches the latest parcel detail from the network and caches it. */
+    suspend fun refreshParcelDetails(shipmentNumber: String)
 }

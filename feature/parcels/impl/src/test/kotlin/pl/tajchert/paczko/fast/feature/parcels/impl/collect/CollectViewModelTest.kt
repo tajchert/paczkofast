@@ -280,8 +280,10 @@ private class FakeParcelRepository(
 
     override suspend fun refreshTrackedParcels() = Unit
 
-    override suspend fun getParcelDetails(shipmentNumber: String): pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails =
-        pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails()
+    override fun observeParcelDetails(shipmentNumber: String): Flow<pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails> =
+        MutableStateFlow(pl.tajchert.paczko.fast.core.model.parcel.ParcelDetails())
+
+    override suspend fun refreshParcelDetails(shipmentNumber: String) = Unit
 }
 
 private class FakeCollectRepository : CollectRepository {

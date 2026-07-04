@@ -16,6 +16,9 @@ import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -44,6 +47,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageMember
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastBottomBar
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastLoadingIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.component.ReadyParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.SectionHeader
@@ -98,6 +102,7 @@ fun ParcelListScreen(
         onCollectClick = onCollectClick,
         onRefreshClick = viewModel::refresh,
         onOpenSettings = onOpenSettings,
+        onErrorShown = viewModel::onErrorShown,
     )
 }
 
@@ -110,12 +115,27 @@ private fun ParcelListContent(
     onCollectClick: (shipmentNumber: String) -> Unit,
     onRefreshClick: () -> Unit,
     onOpenSettings: () -> Unit,
+    onErrorShown: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(BottomNavDestination.Parcels) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Surface refresh failures as a self-dismissing snackbar, but only when we
+    // still have cached parcels to show; an empty cache uses the full-screen
+    // error state below instead.
+    LaunchedEffect(uiState.errorMessage) {
+        val message = uiState.errorMessage
+        if (message != null && uiState.parcels.isNotEmpty()) {
+            snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Short)
+            onErrorShown()
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (selectedTab == BottomNavDestination.History) {
                 HomeHeader(title = "History", showLogo = false)
@@ -155,17 +175,6 @@ private fun ParcelListContent(
                 .padding(paddingValues),
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                if (uiState.parcels.isNotEmpty() && uiState.errorMessage != null) {
-                    Text(
-                        text = uiState.errorMessage,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
-
                 val activeParcels = remember(uiState.parcels) {
                     uiState.parcels.filter { !it.isFinished }
                 }
@@ -184,6 +193,9 @@ private fun ParcelListContent(
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState()),
                         )
+
+                    uiState.isLoading ->
+                        PaczkofastLoadingIndicator(modifier = Modifier.fillMaxSize())
 
                     selectedTab == BottomNavDestination.History ->
                         if (historyParcels.isNotEmpty()) {
@@ -251,7 +263,7 @@ private fun ParcelSections(
                     label = "Ready for pickup",
                     count = ready.size,
                     highlighted = true,
-                    modifier = Modifier.padding(top = 6.dp),
+                    modifier = Modifier.animateItem().padding(top = 6.dp),
                 )
             }
             // Expand the first standalone parcel (deadline + action); collapse the rest.
@@ -265,6 +277,7 @@ private fun ParcelSections(
                                 group = group,
                                 onClick = { onOpenBox(group.representative.shipmentNumber) },
                                 onCollectClick = { onCollectClick(group.representative.shipmentNumber) },
+                                modifier = Modifier.animateItem(),
                             )
                         }
                     }
@@ -279,11 +292,13 @@ private fun ParcelSections(
                                     parcel = parcel,
                                     onClick = { onParcelClick(parcel.shipmentNumber) },
                                     onCollectClick = { onCollectClick(parcel.shipmentNumber) },
+                                    modifier = Modifier.animateItem(),
                                 )
                             } else {
                                 CollapsedReadyCard(
                                     parcel = parcel,
                                     onClick = { onParcelClick(parcel.shipmentNumber) },
+                                    modifier = Modifier.animateItem(),
                                 )
                             }
                         }
@@ -297,7 +312,7 @@ private fun ParcelSections(
                 SectionHeader(
                     label = "On the way",
                     count = onTheWay.size,
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.animateItem().padding(top = 10.dp),
                 )
             }
             items(items = onTheWay, key = Parcel::shipmentNumber) { parcel ->
@@ -308,6 +323,7 @@ private fun ParcelSections(
                     completedSegments = transitCompletedSegments(parcel.status),
                     totalSegments = TRANSIT_SEGMENTS,
                     onClick = { onParcelClick(parcel.shipmentNumber) },
+                    modifier = Modifier.animateItem(),
                 )
             }
         }
@@ -339,7 +355,7 @@ private fun HistoryList(
                 item(key = "month-$month") {
                     MonthHeader(
                         label = historyMonthLabel(month),
-                        modifier = Modifier.padding(top = 6.dp),
+                        modifier = Modifier.animateItem().padding(top = 6.dp),
                     )
                 }
             }
@@ -359,6 +375,7 @@ private fun HistoryList(
                                 )
                             },
                             onClick = { onOpenBox(anchor.shipmentNumber) },
+                            modifier = Modifier.animateItem(),
                         )
                     }
 
@@ -371,6 +388,7 @@ private fun HistoryList(
                             outcome = historyOutcome(parcel),
                             muted = muted,
                             onClick = { onParcelClick(parcel.shipmentNumber) },
+                            modifier = Modifier.animateItem(),
                         )
                     }
                 }
@@ -546,6 +564,7 @@ private fun ParcelListContentPreview(
             onCollectClick = {},
             onRefreshClick = {},
             onOpenSettings = {},
+            onErrorShown = {},
         )
     }
 }

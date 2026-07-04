@@ -31,11 +31,16 @@ class ParcelListViewModel @Inject constructor(
             is Result.Loading -> ParcelListUiState(
                 isRefreshing = refreshState.isRefreshing,
                 errorMessage = refreshState.errorMessage,
+                isLoading = true,
             )
             is Result.Success -> ParcelListUiState(
                 parcels = parcelsResult.data,
                 isRefreshing = refreshState.isRefreshing,
                 errorMessage = refreshState.errorMessage,
+                // First load: cache is empty and we're still fetching, no error yet.
+                isLoading = parcelsResult.data.isEmpty() &&
+                    refreshState.isRefreshing &&
+                    refreshState.errorMessage == null,
             )
             is Result.Error -> ParcelListUiState(
                 isRefreshing = refreshState.isRefreshing,
@@ -61,6 +66,11 @@ class ParcelListViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    /** Clears a refresh error once it has been shown (e.g. in a snackbar). */
+    fun onErrorShown() {
+        refreshState.value = refreshState.value.copy(errorMessage = null)
     }
 }
 
