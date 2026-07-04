@@ -3,72 +3,108 @@ package pl.tajchert.paczko.fast.core.designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
+private val StatusChipShape = RoundedCornerShape(7.dp)
+
+/** Visual treatment for [StatusChip]. */
+enum class StatusChipStyle {
+    /** Yellow fill, ink text, e.g. "READY TO PICKUP". */
+    Accent,
+
+    /** Inverted ink fill, yellow text, e.g. "DELIVERED". */
+    Ink,
+
+    /** Neutral white/card fill, ink text, e.g. "ECONOMY", "SIZE M". */
+    Neutral,
+}
+
+private data class StatusChipColors(val fill: Color, val content: Color)
+
+@Composable
+private fun colorsFor(style: StatusChipStyle): StatusChipColors = when (style) {
+    StatusChipStyle.Accent -> StatusChipColors(
+        fill = PaczkofastTheme.colors.accent,
+        content = PaczkofastTheme.colors.onAccent,
+    )
+    StatusChipStyle.Ink -> StatusChipColors(
+        fill = PaczkofastTheme.colors.borderStrong,
+        content = PaczkofastTheme.colors.accent,
+    )
+    StatusChipStyle.Neutral -> StatusChipColors(
+        fill = PaczkofastTheme.colors.cardSurface,
+        content = PaczkofastTheme.colors.textPrimary,
+    )
+}
+
 /**
- * Uppercase status chip on translucent amber, e.g. "READY FOR PICKUP"
- * at the top of the parcel detail screen.
+ * Uppercase mono status pill, e.g. "READY TO PICKUP" / "DELIVERED" at the top
+ * of the parcel detail screen. See [StatusChipStyle] for the available fills.
  */
 @Composable
 fun StatusChip(
     text: String,
     modifier: Modifier = Modifier,
+    style: StatusChipStyle = StatusChipStyle.Accent,
 ) {
+    val colors = colorsFor(style)
     Box(
         modifier = modifier
-            .clip(MaterialTheme.shapes.extraSmall)
-            .background(PaczkofastTheme.colors.statusChipBackground),
+            .clip(StatusChipShape)
+            .background(colors.fill)
+            .border(width = 2.dp, color = PaczkofastTheme.colors.borderStrong, shape = StatusChipShape),
     ) {
         Text(
             text = text.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = PaczkofastTheme.colors.statusChipContent,
-            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+            style = MonoLabel,
+            color = colors.content,
+            modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp),
         )
     }
 }
 
 /**
- * Outlined companion to [StatusChip] — an uppercase label inside a hairline
- * border, e.g. the "SIZE M" chip beside the status on the detail screen.
+ * Neutral companion to [StatusChip] — a white/card-fill uppercase label with
+ * an ink border, e.g. the "SIZE M" chip beside the status on the detail
+ * screen. Equivalent to `StatusChip(text, modifier, StatusChipStyle.Neutral)`.
  */
 @Composable
 fun OutlinedStatusChip(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.extraSmall)
-            .border(
-                width = 1.dp,
-                color = PaczkofastTheme.colors.sizeBadgeBorder,
-                shape = MaterialTheme.shapes.extraSmall,
-            ),
-    ) {
-        Text(
-            text = text.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = PaczkofastTheme.colors.sizeBadgeContent,
-            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
-        )
-    }
+    StatusChip(text = text, modifier = modifier, style = StatusChipStyle.Neutral)
 }
 
 @PaczkofastPreviews
 @Composable
 private fun StatusChipPreview() {
     PaczkofastTheme {
-        StatusChip(
-            text = "Ready for pickup",
+        Row(
             modifier = Modifier.padding(16.dp),
-        )
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+        ) {
+            StatusChip(text = "Ready to pickup", style = StatusChipStyle.Accent)
+            StatusChip(text = "Delivered", style = StatusChipStyle.Ink)
+            StatusChip(text = "Economy", style = StatusChipStyle.Neutral)
+        }
+    }
+}
+
+@PaczkofastPreviews
+@Composable
+private fun OutlinedStatusChipPreview() {
+    PaczkofastTheme {
+        OutlinedStatusChip(text = "Size M", modifier = Modifier.padding(16.dp))
     }
 }
