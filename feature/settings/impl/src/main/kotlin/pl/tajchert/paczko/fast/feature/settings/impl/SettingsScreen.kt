@@ -122,8 +122,8 @@ private fun SettingsContent(
                     if (phoneNumber != null) {
                         Text(
                             text = phoneNumber,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = PaczkofastTheme.colors.textMuted,
+                            style = MonoLabel,
+                            color = PaczkofastTheme.colors.monoLabel,
                         )
                     }
                 }
