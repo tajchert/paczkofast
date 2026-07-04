@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /** One parcel inside a [MultiPackageCard] / multi-package pickup. */
@@ -81,14 +82,14 @@ fun MultiPackageCard(
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 17.sp),
+                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 19.sp),
                     color = colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = subtitle.uppercase(),
-                    style = MonoLabel,
+                    style = MonoLabelLarge,
                     color = colors.monoLabel,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -153,7 +154,7 @@ internal fun MemberSubPanel(members: List<MultiPackageMember>, modifier: Modifie
             ) {
                 Text(
                     text = member.title,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.5.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.sp),
                     color = colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -162,7 +163,7 @@ internal fun MemberSubPanel(members: List<MultiPackageMember>, modifier: Modifie
                 member.sizeLabel?.let {
                     Text(
                         text = it.uppercase(),
-                        style = MonoLabel,
+                        style = MonoLabelLarge,
                         color = colors.monoLabel,
                     )
                 }

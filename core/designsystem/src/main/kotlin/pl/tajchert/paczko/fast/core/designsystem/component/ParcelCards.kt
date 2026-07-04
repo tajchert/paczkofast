@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -60,7 +60,7 @@ fun ReadyParcelCard(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 17.sp),
+                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
                     color = PaczkofastTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -70,7 +70,7 @@ fun ReadyParcelCard(
             }
             Text(
                 text = subtitle.uppercase(),
-                style = MonoLabel,
+                style = MonoLabelLarge,
                 color = PaczkofastTheme.colors.monoLabel,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -126,14 +126,14 @@ fun CollapsedReadyParcelCard(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     color = PaczkofastTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = subtitle.uppercase(),
-                    style = MonoLabel,
+                    style = MonoLabelLarge,
                     color = PaczkofastTheme.colors.monoLabel,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -152,7 +152,7 @@ fun CollapsedReadyParcelCard(
                     timeLeftText?.let {
                         Text(
                             text = it,
-                            style = MaterialTheme.typography.labelMedium,
+                            style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.5.sp),
                             color = countdownColor,
                         )
                     }
@@ -194,7 +194,7 @@ fun TransitParcelCard(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp),
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                     color = PaczkofastTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
@@ -56,6 +57,7 @@ fun StatusChip(
     text: String,
     modifier: Modifier = Modifier,
     style: StatusChipStyle = StatusChipStyle.Accent,
+    textStyle: TextStyle = MonoLabel,
 ) {
     val colors = colorsFor(style)
     Box(
@@ -66,9 +68,9 @@ fun StatusChip(
     ) {
         Text(
             text = text.uppercase(),
-            style = MonoLabel,
+            style = textStyle,
             color = colors.content,
-            modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
         )
     }
 }
@@ -82,8 +84,9 @@ fun StatusChip(
 fun OutlinedStatusChip(
     text: String,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MonoLabel,
 ) {
-    StatusChip(text = text, modifier = modifier, style = StatusChipStyle.Neutral)
+    StatusChip(text = text, modifier = modifier, style = StatusChipStyle.Neutral, textStyle = textStyle)
 }
 
 @PaczkofastPreviews

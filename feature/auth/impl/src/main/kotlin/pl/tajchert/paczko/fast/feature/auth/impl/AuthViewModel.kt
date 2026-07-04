@@ -47,6 +47,23 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Replaces the phone number from a native text field: keeps digits only and
+     * caps at [PHONE_LENGTH]. Ignored while a request is in flight.
+     */
+    fun onPhoneChange(input: String) {
+        _uiState.update { state ->
+            if (state.isLoading) {
+                state
+            } else {
+                state.copy(
+                    phoneDigits = input.filter(Char::isDigit).take(PHONE_LENGTH),
+                    errorMessage = null,
+                )
+            }
+        }
+    }
+
     fun onCodeDigit(digit: Char) {
         if (!digit.isDigit()) return
         _uiState.update { state ->
@@ -64,6 +81,23 @@ class AuthViewModel @Inject constructor(
                 state
             } else {
                 state.copy(codeDigits = state.codeDigits.dropLast(1), errorMessage = null)
+            }
+        }
+    }
+
+    /**
+     * Replaces the SMS code from a native text field: keeps digits only and
+     * caps at [CODE_LENGTH]. Ignored while a request is in flight.
+     */
+    fun onCodeChange(input: String) {
+        _uiState.update { state ->
+            if (state.isLoading) {
+                state
+            } else {
+                state.copy(
+                    codeDigits = input.filter(Char::isDigit).take(CODE_LENGTH),
+                    errorMessage = null,
+                )
             }
         }
     }

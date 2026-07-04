@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -112,8 +113,14 @@ private fun SettingsContent(
             }
 
             SectionLabel(text = "Account")
-            PaczkofastCard {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            // Zero content padding so the logout row can span the whole card —
+            // its tap ripple then fills the full width, clipped to the card's
+            // rounded corners. The upper block keeps its own inset.
+            PaczkofastCard(contentPadding = PaddingValues(0.dp)) {
+                Column(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
                     Text(
                         text = "Logged in",
                         style = MaterialTheme.typography.titleMedium,
@@ -130,14 +137,15 @@ private fun SettingsContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 14.dp)
+                        .padding(top = 14.dp)
                         .height(2.5.dp)
                         .background(PaczkofastTheme.colors.borderStrong),
                 )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showLogoutDialog = true },
+                        .clickable { showLogoutDialog = true }
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(

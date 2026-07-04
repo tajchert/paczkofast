@@ -49,6 +49,15 @@ val MonoLabel = TextStyle(
     letterSpacing = 1.sp,
 )
 
+/**
+ * Larger [MonoLabel] variant for the locker/meta lines on parcel & history
+ * cards, where the 10.5sp caption reads too small next to the card title.
+ */
+val MonoLabelLarge = MonoLabel.copy(
+    fontSize = 12.sp,
+    lineHeight = 15.sp,
+)
+
 val PaczkofastTypography = Typography(
     // Display styles — Space Grotesk, large impactful text
     displayLarge = TextStyle(

@@ -51,6 +51,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.StatusChipStyle
 import pl.tajchert.paczko.fast.core.designsystem.component.TimelineEvent
 import pl.tajchert.paczko.fast.core.designsystem.component.TrackingTimeline
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
@@ -182,10 +183,11 @@ private fun ParcelDetailBody(
                 StatusChip(
                     text = if (delivered) "Delivered" else humanizeStatus(parcel.status),
                     style = if (delivered) StatusChipStyle.Ink else StatusChipStyle.Accent,
+                    textStyle = MonoLabelLarge,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 parcelSizeLabel(effectiveSizeCode)?.let { sizeLabel ->
-                    OutlinedStatusChip(text = "Size $sizeLabel")
+                    OutlinedStatusChip(text = "Size $sizeLabel", textStyle = MonoLabelLarge)
                 }
             }
             Text(

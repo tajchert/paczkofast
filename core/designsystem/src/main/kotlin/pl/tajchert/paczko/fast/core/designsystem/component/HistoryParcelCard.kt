@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -62,8 +62,10 @@ fun HistoryParcelCard(
     muted: Boolean = false,
 ) {
     val colors = PaczkofastTheme.colors
-    val tileFill = when {
-        outcome == HistoryOutcome.PickedUp && !muted -> colors.accent
+    val tileFill = when (outcome) {
+        // Collected parcels always read as "done" — amber tile + check —
+        // regardless of how old (muted) the row is.
+        HistoryOutcome.PickedUp -> colors.accent
         else -> colors.background
     }
     val iconTint = when (outcome) {
@@ -87,7 +89,7 @@ fun HistoryParcelCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clip(HistoryTileShape)
                     .background(tileFill)
                     .border(2.dp, colors.borderStrong, HistoryTileShape),
@@ -97,7 +99,7 @@ fun HistoryParcelCard(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(14.dp),
+                    modifier = Modifier.size(17.dp),
                 )
             }
             Column(
@@ -106,14 +108,14 @@ fun HistoryParcelCard(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     color = colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = outcomeLine.uppercase(),
-                    style = MonoLabel,
+                    style = MonoLabelLarge,
                     color = colors.monoLabel,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -121,7 +123,7 @@ fun HistoryParcelCard(
             }
             Text(
                 text = dateText.uppercase(),
-                style = MonoLabel,
+                style = MonoLabelLarge,
                 color = colors.monoLabel,
             )
         }

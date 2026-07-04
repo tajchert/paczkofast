@@ -17,7 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +26,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +46,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelCard
-import pl.tajchert.paczko.fast.core.designsystem.component.HeaderIconButton
 import pl.tajchert.paczko.fast.core.designsystem.component.HistoryParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HomeHeader
 import pl.tajchert.paczko.fast.core.designsystem.component.MultiPackageCard
@@ -59,6 +56,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastEmptyState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastErrorState
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastLoadingIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPullRefreshIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.ReadyParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.TransitParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
@@ -147,15 +145,8 @@ private fun ParcelListContent(
             if (selectedTab == BottomNavDestination.History) {
                 HomeHeader(title = "History", showLogo = false)
             } else {
-                HomeHeader(
-                    actions = {
-                        HeaderIconButton(
-                            onClick = onRefreshClick,
-                            icon = Icons.Default.Refresh,
-                            contentDescription = "Refresh parcels",
-                        )
-                    },
-                )
+                // No refresh action — pull-to-refresh handles reloads.
+                HomeHeader()
             }
         },
         bottomBar = {
@@ -177,11 +168,9 @@ private fun ParcelListContent(
             onRefresh = onRefreshClick,
             state = refreshState,
             indicator = {
-                PullToRefreshDefaults.Indicator(
-                    state = refreshState,
+                PaczkofastPullRefreshIndicator(
                     isRefreshing = uiState.isRefreshing,
-                    containerColor = PaczkofastTheme.colors.cardSurface,
-                    color = PaczkofastTheme.colors.accent,
+                    state = refreshState,
                     modifier = Modifier.align(Alignment.TopCenter),
                 )
             },

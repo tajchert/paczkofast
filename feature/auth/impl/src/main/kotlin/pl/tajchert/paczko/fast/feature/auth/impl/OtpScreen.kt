@@ -8,17 +8,30 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -26,30 +39,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
 import pl.tajchert.paczko.fast.core.designsystem.component.NeoSurface
-import pl.tajchert.paczko.fast.core.designsystem.component.NumericKeypad
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastButton
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
- * Login step 2 — 6-digit SMS code entry with resend countdown (design 2f).
+ * Login step 2 — 6-digit SMS code entry with resend countdown. The code cells
+ * are backed by a hidden [BasicTextField] so the native numeric keyboard (and
+ * SMS autofill) is used; the field auto-focuses to raise it on entry.
  */
 @Composable
 fun OtpScreen(
     state: AuthUiState,
-    onDigit: (Char) -> Unit,
-    onBackspace: () -> Unit,
+    onCodeChange: (String) -> Unit,
     onConfirm: () -> Unit,
     onResend: () -> Unit,
     onBackToPhone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(PaczkofastTheme.colors.background)
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .imePadding(),
     ) {
         DetailTopBar(title = "Enter code", onBack = onBackToPhone)
 
@@ -62,7 +79,24 @@ fun OtpScreen(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 SentToLine(phoneDigits = state.phoneDigits)
-                CodeBoxes(codeDigits = state.codeDigits)
+                BasicTextField(
+                    value = state.codeDigits,
+                    onValueChange = onCodeChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    enabled = !state.isLoading,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { if (state.canConfirmCode) onConfirm() },
+                    ),
+                    textStyle = TextStyle(color = Color.Transparent),
+                    cursorBrush = SolidColor(Color.Transparent),
+                    decorationBox = { CodeBoxes(codeDigits = state.codeDigits) },
+                )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -88,12 +122,6 @@ fun OtpScreen(
                 }
             }
         }
-
-        NumericKeypad(
-            onDigit = onDigit,
-            onBackspace = onBackspace,
-            modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 14.dp, bottom = 14.dp),
-        )
     }
 }
 
@@ -221,8 +249,7 @@ private fun OtpScreenPreview() {
                 codeDigits = "417",
                 resendSecondsLeft = 24,
             ),
-            onDigit = {},
-            onBackspace = {},
+            onCodeChange = {},
             onConfirm = {},
             onResend = {},
             onBackToPhone = {},

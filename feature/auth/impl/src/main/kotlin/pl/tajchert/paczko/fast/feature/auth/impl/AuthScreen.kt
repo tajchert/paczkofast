@@ -25,8 +25,7 @@ fun AuthScreen(
     when (uiState.step) {
         AuthStep.Phone -> PhoneLoginScreen(
             state = uiState,
-            onDigit = viewModel::onPhoneDigit,
-            onBackspace = viewModel::onPhoneBackspace,
+            onPhoneChange = viewModel::onPhoneChange,
             onSendCode = viewModel::onSendCode,
         )
 
@@ -34,8 +33,7 @@ fun AuthScreen(
             BackHandler(onBack = viewModel::onBackToPhone)
             OtpScreen(
                 state = uiState,
-                onDigit = viewModel::onCodeDigit,
-                onBackspace = viewModel::onCodeBackspace,
+                onCodeChange = viewModel::onCodeChange,
                 onConfirm = viewModel::onConfirmCode,
                 onResend = viewModel::onResendCode,
                 onBackToPhone = viewModel::onBackToPhone,

@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,6 +81,10 @@ private fun TimelineRow(
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Past stages are neither current nor upcoming — mark them done
+            // with an amber node and an ink check, matching the app's
+            // pickup/completion motif.
+            val isCompleted = !event.isCurrent && !event.isUpcoming
             Box(
                 modifier = Modifier
                     .padding(top = 2.dp)
@@ -87,7 +94,7 @@ private fun TimelineRow(
                         when {
                             event.isCurrent -> PaczkofastTheme.colors.accent
                             event.isUpcoming -> PaczkofastTheme.colors.timelineDotInactive
-                            else -> PaczkofastTheme.colors.cardSurface
+                            else -> PaczkofastTheme.colors.accent
                         },
                     )
                     .border(
@@ -99,7 +106,17 @@ private fun TimelineRow(
                         },
                         shape = NodeShape,
                     ),
-            )
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isCompleted) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = PaczkofastTheme.colors.onAccent,
+                        modifier = Modifier.size(11.dp),
+                    )
+                }
+            }
             if (!isLast) {
                 Box(
                     modifier = Modifier
