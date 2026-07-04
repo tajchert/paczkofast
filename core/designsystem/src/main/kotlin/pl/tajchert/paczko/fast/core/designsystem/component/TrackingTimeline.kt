@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -30,10 +31,10 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
  *
  * @param time Timestamp line under the label; null when unknown (e.g.
  *   upcoming stages).
- * @param isCurrent The most recent event — rendered with a larger amber
- *   dot and emphasized label.
+ * @param isCurrent The most recent event — rendered with a filled amber
+ *   square node and bold label.
  * @param isUpcoming A future stage that hasn't happened yet — rendered
- *   with a hollow dot and faint label.
+ *   with a hollow node and faint label.
  */
 @Immutable
 data class TimelineEvent(
@@ -44,7 +45,8 @@ data class TimelineEvent(
 )
 
 /**
- * Vertical tracking timeline: dots connected by a rail, newest event first.
+ * Vertical tracking timeline: square nodes connected by a rail, newest
+ * event first.
  */
 @Composable
 fun TrackingTimeline(
@@ -58,6 +60,9 @@ fun TrackingTimeline(
     }
 }
 
+private val NodeSize = 14.dp
+private val NodeShape = RoundedCornerShape(3.dp)
+
 @Composable
 private fun TimelineRow(
     event: TimelineEvent,
@@ -65,60 +70,55 @@ private fun TimelineRow(
 ) {
     Row(
         modifier = Modifier.height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(
             modifier = Modifier
-                .width(16.dp)
+                .width(NodeSize)
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val dotSize = if (event.isCurrent) 14.dp else 8.dp
             Box(
                 modifier = Modifier
-                    .padding(top = 3.dp)
-                    .size(dotSize)
-                    .clip(RoundedCornerShape(5.dp))
-                    .let { dot ->
+                    .padding(top = 2.dp)
+                    .size(NodeSize)
+                    .clip(NodeShape)
+                    .background(
                         when {
-                            // Current stage and every already-passed stage are
-                            // filled amber; only not-yet-reached stages stay hollow.
-                            event.isUpcoming -> dot.border(
-                                width = 1.5.dp,
-                                color = PaczkofastTheme.colors.timelineRail,
-                                shape = RoundedCornerShape(5.dp),
-                            )
-                            else -> dot.background(PaczkofastTheme.colors.accent)
-                        }
-                    },
+                            event.isCurrent -> PaczkofastTheme.colors.accent
+                            event.isUpcoming -> PaczkofastTheme.colors.timelineDotInactive
+                            else -> PaczkofastTheme.colors.cardSurface
+                        },
+                    )
+                    .border(
+                        width = 2.dp,
+                        color = if (event.isUpcoming) {
+                            PaczkofastTheme.colors.timelineRail
+                        } else {
+                            PaczkofastTheme.colors.borderStrong
+                        },
+                        shape = NodeShape,
+                    ),
             )
             if (!isLast) {
-                // The rail below a reached stage represents a passed transition,
-                // so it is amber; the rail hanging off an upcoming stage (down to
-                // the current one) is a transition not yet made, so it stays muted.
-                val railColor = if (event.isUpcoming) {
-                    PaczkofastTheme.colors.timelineRail
-                } else {
-                    PaczkofastTheme.colors.accent
-                }
                 Box(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
-                        .width(2.dp)
+                        .width(2.5.dp)
                         .weight(1f)
-                        .background(railColor),
+                        .background(PaczkofastTheme.colors.timelineRail),
                 )
             }
         }
         Column(
-            modifier = Modifier.padding(bottom = if (isLast) 0.dp else 18.dp),
+            modifier = Modifier.padding(bottom = if (isLast) 0.dp else 14.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = event.label,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontSize = 14.sp,
-                    fontWeight = if (event.isCurrent) FontWeight.ExtraBold else FontWeight.SemiBold,
+                    fontWeight = if (event.isCurrent) FontWeight.Bold else FontWeight.SemiBold,
                 ),
                 color = when {
                     event.isCurrent -> PaczkofastTheme.colors.textPrimary
@@ -129,8 +129,8 @@ private fun TimelineRow(
             if (event.time != null) {
                 Text(
                     text = event.time,
-                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
-                    color = PaczkofastTheme.colors.textMuted,
+                    style = MonoLabel,
+                    color = PaczkofastTheme.colors.monoLabel,
                 )
             }
         }
@@ -143,12 +143,9 @@ private fun TrackingTimelinePreview() {
     PaczkofastTheme {
         TrackingTimeline(
             events = listOf(
-                TimelineEvent("Picked up", isUpcoming = true),
-                TimelineEvent("Ready for pickup", "01.07.26 · 12:56", isCurrent = true),
-                TimelineEvent("Out for delivery", "01.07.26 · 8:14"),
-                TimelineEvent("Sorting centre · Warsaw", "01.07.26 · 0:56"),
-                TimelineEvent("In transit", "30.06.26 · 18:21"),
-                TimelineEvent("Shipment created", "30.06.26 · 14:27"),
+                TimelineEvent("Ready for pickup", "04.07.26 · 10:35", isCurrent = true),
+                TimelineEvent("Out for delivery", "04.07.26 · 06:12"),
+                TimelineEvent("Sorting centre · Warsaw", "03.07.26 · 22:48"),
             ),
             modifier = Modifier.padding(16.dp),
         )
