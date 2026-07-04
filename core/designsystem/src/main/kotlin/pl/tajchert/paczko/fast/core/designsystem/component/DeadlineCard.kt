@@ -61,7 +61,7 @@ fun DeadlineCard(
         }
         DeadlineProgressBar(
             progress = progress,
-            color = if (urgent) countdownColor else PaczkofastTheme.colors.trackActive,
+            urgent = urgent,
         )
     }
 }

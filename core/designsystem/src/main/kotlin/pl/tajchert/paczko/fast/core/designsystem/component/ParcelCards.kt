@@ -171,7 +171,7 @@ fun CollapsedReadyParcelCard(
                 progress?.let {
                     DeadlineProgressBar(
                         progress = it,
-                        color = countdownColor,
+                        urgent = urgent,
                         modifier = Modifier.width(56.dp),
                     )
                 }
@@ -283,7 +283,7 @@ internal fun DeadlineRow(
         progress?.let {
             DeadlineProgressBar(
                 progress = it,
-                color = if (urgent) countdownColor else PaczkofastTheme.colors.trackActive,
+                urgent = urgent,
             )
         }
     }
