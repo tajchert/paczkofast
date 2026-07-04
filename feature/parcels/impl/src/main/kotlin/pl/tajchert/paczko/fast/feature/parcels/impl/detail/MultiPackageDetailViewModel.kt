@@ -41,6 +41,12 @@ data class MultiPackageDetailUiState(
     val canCollect: Boolean = false,
     /** The member to validate/open the box with. */
     val representativeShipmentNumber: String? = null,
+    /**
+     * The parcel carrying the shared box identity, exposed so the screen can
+     * derive presentation-only details (e.g. delivered/picked-up state) the
+     * same way [ParcelDetailScreen] does from its own [Parcel].
+     */
+    val representative: Parcel? = null,
 )
 
 @HiltViewModel(assistedFactory = MultiPackageDetailViewModel.Factory::class)
@@ -94,6 +100,7 @@ class MultiPackageDetailViewModel @AssistedInject constructor(
             openCode = representative.openCode,
             canCollect = representative.canCollectRemotely,
             representativeShipmentNumber = representative.shipmentNumber,
+            representative = representative,
         )
     }
 }
