@@ -1,9 +1,13 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.collect
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,7 +59,7 @@ class CollectViewModel @Inject constructor(
                     it.copy(
                         lockerName = pickup?.name,
                         distanceMeters = distance,
-                        members = members.map(::toCollectMember),
+                        members = members.map(::toCollectMember).toImmutableList(),
                     )
                 }
             }
@@ -71,7 +75,7 @@ class CollectViewModel @Inject constructor(
             val members = compartmentMembers(shipmentNumber)
             val parcel = members.firstOrNull { it.shipmentNumber == shipmentNumber }
             val openCode = parcel?.openCode
-            val memberUi = members.map(::toCollectMember)
+            val memberUi = members.map(::toCollectMember).toImmutableList()
             if (openCode.isNullOrBlank()) {
                 _uiState.update {
                     CollectUiState(
@@ -125,14 +129,16 @@ class CollectViewModel @Inject constructor(
     }
 }
 
+@Immutable
 data class CollectUiState(
     val state: CollectState = CollectState.Idle,
     val lockerName: String? = null,
     val distanceMeters: Int? = null,
-    val members: List<CollectMember> = emptyList(),
+    val members: ImmutableList<CollectMember> = persistentListOf(),
 )
 
 /** One parcel in the compartment being collected — drives the checklist/summary. */
+@Immutable
 data class CollectMember(
     val shipmentNumber: String,
     val title: String,

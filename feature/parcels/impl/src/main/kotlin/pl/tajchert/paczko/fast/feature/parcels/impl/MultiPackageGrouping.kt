@@ -1,14 +1,18 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl
 
+import androidx.compose.runtime.Immutable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 
 /**
  * 2+ ready parcels sharing one locker compartment (same
  * [Parcel.multiCompartmentUuid]).
  */
+@Immutable
 data class MultiPackageGroup(
     val uuid: String,
-    val members: List<Parcel>,
+    val members: ImmutableList<Parcel>,
 ) {
     /**
      * The member to validate/open with — the one carrying the full member list
@@ -43,7 +47,7 @@ fun groupByCompartment(parcels: List<Parcel>): List<CompartmentItem> {
         val members = uuid?.let { byUuid[it] }
         if (uuid != null && members != null && members.size >= 2) {
             if (emitted.add(uuid)) {
-                items += CompartmentItem.Multi(MultiPackageGroup(uuid, members))
+                items += CompartmentItem.Multi(MultiPackageGroup(uuid, members.toImmutableList()))
             }
         } else {
             items += CompartmentItem.Single(parcel)

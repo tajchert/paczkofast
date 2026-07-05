@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import pl.tajchert.paczko.fast.core.designsystem.component.CheckOffParcelRow
 import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
 import pl.tajchert.paczko.fast.core.designsystem.component.HoldToOpenPanel
@@ -215,7 +217,7 @@ private fun CollectStatus(
  */
 @Composable
 private fun BoxOpenScreen(
-    members: List<CollectMember>,
+    members: ImmutableList<CollectMember>,
     lockerName: String?,
     finishing: Boolean,
 ) {
@@ -355,7 +357,7 @@ private fun OpenBoxBlob(modifier: Modifier = Modifier) {
  */
 @Composable
 private fun SuccessScreen(
-    members: List<CollectMember>,
+    members: ImmutableList<CollectMember>,
     onBack: () -> Unit,
 ) {
     val colors = PaczkofastTheme.colors
@@ -578,7 +580,7 @@ private val PreviewSingleMember = CollectMember(
     sizeLabel = "M",
 )
 
-private val PreviewMultiMembers = listOf(
+private val PreviewMultiMembers = persistentListOf(
     CollectMember(shipmentNumber = "PREVIEW-1", title = "Example Sender sp. z o.o.", sizeLabel = "S"),
     CollectMember(shipmentNumber = "PREVIEW-2", title = "Example Shop sp. z o.o.", sizeLabel = "S"),
 )
@@ -589,7 +591,7 @@ private fun BoxOpenSinglePreview() {
     PaczkofastTheme {
         Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
             BoxOpenScreen(
-                members = listOf(PreviewSingleMember),
+                members = persistentListOf(PreviewSingleMember),
                 lockerName = "WAW01A",
                 finishing = false,
             )
@@ -616,7 +618,7 @@ private fun BoxOpenMultiPreview() {
 private fun SuccessSinglePreview() {
     PaczkofastTheme {
         Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
-            SuccessScreen(members = listOf(PreviewSingleMember), onBack = {})
+            SuccessScreen(members = persistentListOf(PreviewSingleMember), onBack = {})
         }
     }
 }
