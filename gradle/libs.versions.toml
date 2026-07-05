@@ -26,6 +26,7 @@ ksp = "2.3.9"
 coroutines = "1.11.0"
 kotlinxSerializationJson = "1.11.0"
 kotlinxDatetime = "0.8.0"
+kotlinxCollectionsImmutable = "0.4.0"
 
 # -----------------------------------------------------------------------------
 # AndroidX Core
@@ -154,6 +155,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 # -----------------------------------------------------------------------------
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 # -----------------------------------------------------------------------------
 # Date/Time

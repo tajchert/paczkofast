@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import pl.tajchert.paczko.fast.core.designsystem.component.DeadlineCard
 import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
 import pl.tajchert.paczko.fast.core.designsystem.component.OutlinedStatusChip
@@ -193,7 +195,7 @@ private fun MultiPackageDetailContent(
 /** Parcel-list card: one tappable row per box member, ink dividers between. */
 @Composable
 private fun MemberListCard(
-    members: List<BoxMember>,
+    members: ImmutableList<BoxMember>,
     onOpenParcel: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -355,7 +357,7 @@ private fun CollapsedBoxPickupCodeRow(modifier: Modifier = Modifier) {
 // Sample shipment numbers/codes/addresses below are obviously-fake
 // placeholders (never real InPost data), per the neo-brutalist redesign's
 // PII policy for previews/mocks.
-private val readyBoxMembers = listOf(
+private val readyBoxMembers = persistentListOf(
     BoxMember(
         shipmentNumber = "000000000000000000000001",
         title = "Example Sender sp. z o.o.",

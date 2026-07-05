@@ -3,6 +3,7 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -41,7 +42,7 @@ class ParcelListViewModel @Inject constructor(
                 isLoading = true,
             )
             is Result.Success -> ParcelListUiState(
-                parcels = parcelsResult.data,
+                parcels = parcelsResult.data.toImmutableList(),
                 isRefreshing = refreshState.isRefreshing,
                 errorMessage = refreshState.errorMessage,
                 // First load: cache is empty and we're still fetching, no error yet.

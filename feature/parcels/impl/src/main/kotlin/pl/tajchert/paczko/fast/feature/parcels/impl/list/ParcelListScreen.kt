@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.core.designsystem.component.CollapsedReadyParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.HistoryParcelCard
@@ -187,12 +189,13 @@ private fun ParcelListContent(
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 val activeParcels = remember(uiState.parcels) {
-                    uiState.parcels.filter { !it.isFinished }
+                    uiState.parcels.filter { !it.isFinished }.toImmutableList()
                 }
                 val historyParcels = remember(uiState.parcels) {
                     uiState.parcels
                         .filter { it.isFinished }
                         .sortedByDescending { it.historySortKey() }
+                        .toImmutableList()
                 }
 
                 when {
@@ -252,7 +255,7 @@ private fun ParcelListContent(
 
 @Composable
 private fun ParcelSections(
-    parcels: List<Parcel>,
+    parcels: ImmutableList<Parcel>,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
@@ -340,7 +343,7 @@ private fun ParcelSections(
 
 @Composable
 private fun HistoryList(
-    parcels: List<Parcel>,
+    parcels: ImmutableList<Parcel>,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
     modifier: Modifier = Modifier,
@@ -537,7 +540,7 @@ private fun CollapsedReadyCard(
 
 internal class ParcelListPreviewProvider : PreviewParameterProvider<ParcelListUiState> {
     override val values: Sequence<ParcelListUiState> = sequenceOf(
-        ParcelListUiState(parcels = previewParcels),
+        ParcelListUiState(parcels = previewParcels.toImmutableList()),
     )
 }
 
@@ -714,7 +717,9 @@ private fun HistoryListPreview() {
         Column(modifier = Modifier.fillMaxSize().background(PaczkofastTheme.colors.background)) {
             HomeHeader(title = "History", showLogo = false)
             HistoryList(
-                parcels = previewHistoryParcels.sortedByDescending { it.historySortKey() },
+                parcels = previewHistoryParcels
+                    .sortedByDescending { it.historySortKey() }
+                    .toImmutableList(),
                 onParcelClick = {},
                 onOpenBox = {},
             )

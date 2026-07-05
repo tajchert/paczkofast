@@ -1,11 +1,15 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.detail
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -20,6 +24,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
 
 /** One parcel row on the multi-package box detail (7a). */
+@Immutable
 data class BoxMember(
     val shipmentNumber: String,
     val title: String,
@@ -27,10 +32,11 @@ data class BoxMember(
     val sizeLabel: String?,
 )
 
+@Immutable
 data class MultiPackageDetailUiState(
     val isLoading: Boolean = true,
     val statusLabel: String? = null,
-    val members: List<BoxMember> = emptyList(),
+    val members: ImmutableList<BoxMember> = persistentListOf(),
     val lockerLine: String? = null,
     val deadlineText: String? = null,
     val countdownText: String? = null,
@@ -90,7 +96,7 @@ class MultiPackageDetailViewModel @AssistedInject constructor(
                     shipmentNumberLine = formatShipmentNumber(parcel.shipmentNumber),
                     sizeLabel = parcelSizeLabel(parcel.parcelSize),
                 )
-            },
+            }.toImmutableList(),
             lockerLine = lockerLine(representative),
             deadlineText = countdown?.deadlineText,
             countdownText = countdown?.countdownText,

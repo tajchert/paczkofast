@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
 
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
 
     testImplementation(projects.core.data)
     testImplementation(projects.core.testing)
