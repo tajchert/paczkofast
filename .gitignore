@@ -33,3 +33,7 @@ google-services.json
 # Android Profiling
 *.hprof
 .DS_Store
+
+# Local design artifacts may contain real parcel/account data.
+paczkofast-app-design/
+package-tracking-app-design/
