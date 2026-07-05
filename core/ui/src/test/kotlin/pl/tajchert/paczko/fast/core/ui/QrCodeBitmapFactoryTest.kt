@@ -10,10 +10,12 @@ import org.robolectric.RobolectricTestRunner
 class QrCodeBitmapFactoryTest {
     @Test
     fun createsSquareBitmapForQrPayload() {
-        val bitmap = QrCodeBitmapFactory.create("opaque-qr", sizePx = 256)
+        val bitmap = QrCodeBitmapFactory.create("opaque-qr")
 
-        assertEquals(256, bitmap.width)
-        assertEquals(256, bitmap.height)
+        // Rendered at native module resolution: a small square (one pixel per
+        // module plus quiet zone), upscaled for display by QrCodeImage.
+        assertEquals(bitmap.width, bitmap.height)
+        assertTrue(bitmap.width in 1..128)
         val backgroundPixel = bitmap.getPixel(0, 0)
         val hasContrastingPixel = (0 until bitmap.width).any { x ->
             (0 until bitmap.height).any { y ->
