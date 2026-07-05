@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Paczkofast widgets — status reporting &amp; ready-to-pick count (no open button)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 2a — Status board 4x2 ============ -->
+<div class="dv-opt" id="2a">
+  <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Status board — 4×2 · ready count front and center, pipeline below</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2a Widget status board 4x2">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:372px;border-radius:28px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;padding:16px 18px;display:flex;flex-direction:column;gap:13px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:64px;height:64px;border-radius:18px;background:#FFD400;border:3px solid #161511;box-shadow:3px 3px 0 #161511;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none">
+            <span style="font-size:30px;font-weight:700;line-height:1">1</span>
+            <span style="font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:1px">READY</span>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:18px;font-weight:700;letter-spacing:-.3px">TechNova waits for you</span>
+            <span style="font-size:13px;color:#5F5B4C">Locker WAW-04N · 350 m · 2 days left</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;background:#FFF;border:2.5px solid #161511;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:1px"><span style="font-size:17px;font-weight:700;line-height:1.1">2</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:#5F5B4C;letter-spacing:1px">IN TRANSIT</span></div>
+          <div style="flex:1;background:#FFF;border:2.5px solid #161511;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:1px"><span style="font-size:17px;font-weight:700;line-height:1.1">1</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:#5F5B4C;letter-spacing:1px">LABEL MADE</span></div>
+          <div style="flex:1;background:#FFF;border:2.5px solid #161511;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:1px"><span style="font-size:17px;font-weight:700;line-height:1.1">TUE</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:#5F5B4C;letter-spacing:1px">NEXT DROP</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2b — Ready counter 2x2 ============ -->
+<div class="dv-opt" id="2b">
+  <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Ready counter — 2×2 · big number, transit line below</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2b Widget ready counter 2x2">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="display:flex;gap:20px;align-items:stretch">
+        <div style="width:176px;height:190px;border-radius:28px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;padding:14px">
+          <div style="width:76px;height:76px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center"><span style="font-size:38px;font-weight:700">1</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.5px;margin-top:4px">READY TO PICK</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#5F5B4C;letter-spacing:.5px">2 IN TRANSIT · NEXT TUE</span>
+        </div>
+        <div style="width:176px;height:190px;border-radius:28px;background:rgba(253,250,239,.35);border:2px dashed rgba(22,21,17,.35);display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:10px;color:rgba(22,21,17,.5);text-align:center">2×2 GRID<br>NEIGHBOR</div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2c — Pipeline strip 4x1 ============ -->
+<div class="dv-opt" id="2c">
+  <div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Pipeline strip — 4×1 · counts per stage, ready highlighted</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2c Widget pipeline strip 4x1">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:372px;border-radius:24px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;padding:11px 12px;display:flex;align-items:stretch;gap:8px;box-sizing:border-box">
+        <div style="flex:1;background:#FFF;border:2.5px solid #161511;border-radius:13px;padding:7px 11px;display:flex;align-items:center;gap:9px"><span style="font-size:20px;font-weight:700">1</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:#5F5B4C;letter-spacing:1px;line-height:1.3">LABEL<br>MADE</span></div>
+        <div style="flex:1;background:#FFF;border:2.5px solid #161511;border-radius:13px;padding:7px 11px;display:flex;align-items:center;gap:9px"><span style="font-size:20px;font-weight:700">2</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:#5F5B4C;letter-spacing:1px;line-height:1.3">IN<br>TRANSIT</span></div>
+        <div style="flex:1.15;background:#FFD400;border:2.5px solid #161511;border-radius:13px;box-shadow:2px 2px 0 #161511;padding:7px 11px;display:flex;align-items:center;gap:9px"><span style="font-size:20px;font-weight:700">1</span><span style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;line-height:1.3">READY<br>TO PICK</span></div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2d — Ready + code 4x2 ============ -->
+<div class="dv-opt" id="2d">
+  <div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Ready + code — 4×2 · status list with pickup code, no buttons</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2d Widget ready plus code 4x2">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:372px;border-radius:28px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box">
+        <div style="background:#FFD400;border:2.5px solid #161511;border-radius:14px;box-shadow:2px 2px 0 #161511;padding:11px 13px;display:flex;align-items:center;gap:12px">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">TechNova Store</span>
+            <span style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.5px">READY · WAW-04N · 2 DAYS LEFT</span>
+          </div>
+          <div style="border:2.5px solid #161511;border-radius:10px;background:#FDFAEF;padding:5px 10px;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;letter-spacing:1.5px;flex:none">ABC DEF</div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:14px;padding:10px 13px;display:flex;align-items:center;gap:12px">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Marta Nowak</span>
+            <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#5F5B4C;letter-spacing:.5px">IN TRANSIT · ARRIVES TUE</span>
+          </div>
+          <div style="display:flex;gap:4px;flex:none">
+            <div style="width:16px;height:7px;border:2px solid #161511;border-radius:4px;background:#FFD400"></div>
+            <div style="width:16px;height:7px;border:2px solid #161511;border-radius:4px;background:#FFD400"></div>
+            <div style="width:16px;height:7px;border:2px solid #161511;border-radius:4px;background:#FFF"></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 3px">
+          <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#5F5B4C;letter-spacing:1px">+2 MORE INBOUND</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#5F5B4C;letter-spacing:1px">UPDATED 11:58</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Paczkofast — Android home-screen widget propositions</span></div>
+<div class="dv-opts">
+
+<!-- ============ 1a — Next pickup 4x2 ============ -->
+<div class="dv-opt" id="1a">
+  <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Next pickup — 4×2 · code + hold-free open shortcut</div>
+  <div class="dv-card" style="width:412px" data-screen-label="1a Widget next pickup 4x2">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:372px;border-radius:28px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;padding:16px 18px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:22px;height:22px;border-radius:7px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center"><div style="width:8px;height:8px;background:#161511;border-radius:2px;transform:rotate(45deg)"></div></div>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1.5px">READY FOR PICKUP</span>
+          </div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">2 DAYS LEFT</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:19px;font-weight:700;letter-spacing:-.3px">TechNova Store</span>
+            <span style="font-size:13px;color:#5F5B4C">Locker WAW-04N · 350 m</span>
+          </div>
+          <div style="border:2.5px solid #161511;border-radius:12px;background:#FFF;padding:7px 12px;font-family:'Space Mono',monospace;font-size:19px;font-weight:700;letter-spacing:2px">ABC DEF</div>
+        </div>
+        <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Open box</div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1b — Quick open 2x2 ============ -->
+<div class="dv-opt" id="1b">
+  <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Quick open — 2×2 · one giant tap target, badge for ready count</div>
+  <div class="dv-card" style="width:412px" data-screen-label="1b Widget quick open 2x2">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="display:flex;gap:20px;align-items:stretch">
+        <div style="width:176px;height:190px;border-radius:28px;background:#FFD400;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;box-sizing:border-box">
+          <span style="position:absolute;top:12px;right:12px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:#FF3B25;color:#FDFAEF;border:2px solid #161511;border-radius:9px;padding:2px 8px">1</span>
+          <div style="width:56px;height:46px;border:3.5px solid #161511;border-radius:9px;position:relative;background:#FFD400"><div style="position:absolute;left:-3.5px;right:-3.5px;top:12px;height:3.5px;background:#161511"></div><div style="position:absolute;left:18px;top:20px;width:11px;height:3.5px;background:#161511;border-radius:2px"></div></div>
+          <span style="font-size:17px;font-weight:700">Open box</span>
+        </div>
+        <div style="width:176px;height:190px;border-radius:28px;background:rgba(253,250,239,.35);border:2px dashed rgba(22,21,17,.35);display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:10px;color:rgba(22,21,17,.5);text-align:center">2×2 GRID<br>NEIGHBOR</div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1c — Parcel radar 4x1 ============ -->
+<div class="dv-opt" id="1c">
+  <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Parcel radar — 4×1 · glanceable strip of everything inbound</div>
+  <div class="dv-card" style="width:412px" data-screen-label="1c Widget parcel radar 4x1">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:372px;border-radius:24px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;padding:12px 16px;display:flex;align-items:center;gap:14px;box-sizing:border-box">
+        <div style="width:38px;height:38px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;flex:none"><div style="width:12px;height:12px;background:#161511;border-radius:3px;transform:rotate(45deg)"></div></div>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:15px;font-weight:700;letter-spacing:-.2px">1 ready · 2 on the way</span>
+          <div style="display:flex;gap:5px">
+            <div style="flex:1;height:8px;border:2px solid #161511;border-radius:5px;background:#FFD400"></div>
+            <div style="flex:1;height:8px;border:2px solid #161511;border-radius:5px;background:#FFF"></div>
+            <div style="flex:1;height:8px;border:2px solid #161511;border-radius:5px;background:#FFF"></div>
+          </div>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C;text-align:right;line-height:1.4;flex:none">NEXT<br><span style="color:#161511;font-weight:700">TUE</span></span>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1d — Tracking list 4x2 ============ -->
+<div class="dv-opt" id="1d">
+  <div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Tracking list — 4×2 · scrollable parcel list with statuses</div>
+  <div class="dv-card" style="width:412px" data-screen-label="1d Widget tracking list 4x2">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:372px;border-radius:28px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;padding:14px 16px;display:flex;flex-direction:column;gap:9px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px">
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1.5px">MY PARCELS</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">11:58</span>
+        </div>
+        <div style="background:#FFD400;border:2.5px solid #161511;border-radius:13px;padding:9px 12px;display:flex;align-items:center;gap:10px">
+          <div style="width:9px;height:9px;border-radius:50%;background:#161511;flex:none"></div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10px">READY · WAW-04N · 2 DAYS LEFT</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:1px 6px;background:#FDFAEF;flex:none">M</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:13px;padding:9px 12px;display:flex;align-items:center;gap:10px">
+          <div style="width:9px;height:9px;border-radius:50%;border:2px solid #161511;background:#FFF;flex:none;box-sizing:border-box"></div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Marta Nowak</span><span style="font-family:'Space Mono',monospace;font-size:10px;color:#5F5B4C">IN TRANSIT · ARRIVES TUE</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:1px 6px;flex:none">S</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:13px;padding:9px 12px;display:flex;align-items:center;gap:10px">
+          <div style="width:9px;height:9px;border-radius:50%;border:2px solid #161511;background:#FFF;flex:none;box-sizing:border-box"></div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">BookDepot EU</span><span style="font-family:'Space Mono',monospace;font-size:10px;color:#5F5B4C">LABEL CREATED</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:1px 6px;flex:none">L</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1e — Pickup code chip 2x1 ============ -->
+<div class="dv-opt" id="1e">
+  <div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Pickup code — 2×1 · smallest footprint, just the code</div>
+  <div class="dv-card" style="width:412px" data-screen-label="1e Widget pickup code 2x1">
+    <div style="background:#B9B4A3;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="display:flex;gap:20px">
+        <div style="width:176px;height:88px;border-radius:22px;background:#FDFAEF;border:3px solid #161511;box-shadow:4px 4px 0 #161511;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-sizing:border-box">
+          <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#5F5B4C;letter-spacing:1.5px">PICKUP CODE</span>
+          <span style="font-family:'Space Mono',monospace;font-size:24px;font-weight:700;letter-spacing:3px">ABC DEF</span>
+        </div>
+        <div style="width:176px;height:88px;border-radius:22px;background:rgba(253,250,239,.35);border:2px dashed rgba(22,21,17,.35);display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:10px;color:rgba(22,21,17,.5);text-align:center">2×1 GRID<br>NEIGHBOR</div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(253,250,239,.55)"></div>
+        <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:14px;height:14px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+</x-dc>
+</body>
+</html>

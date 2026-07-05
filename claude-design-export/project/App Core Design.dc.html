@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">Paczkofast — onboarding: welcome + unofficial disclaimer (style <a href="#1c" style="color:inherit">1c</a>)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 7a — Onboarding: welcome ============ -->
+<div class="dv-opt" id="7a">
+  <div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a>Onboarding 1 — welcome to the fast future</div>
+  <div class="dv-card" style="width:412px" data-screen-label="7a Onboarding welcome">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:58</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px">
+        <div style="display:flex;align-items:center">
+          <div style="width:120px;height:120px;border-radius:32px;background:#FFD400;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:grid;place-items:center">
+            <div style="width:38px;height:38px;background:#161511;border-radius:9px;transform:rotate(45deg)"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-left:20px">
+            <div style="width:40px;height:8px;background:#161511;border-radius:5px"></div>
+            <div style="width:68px;height:8px;background:#161511;border-radius:5px"></div>
+            <div style="width:40px;height:8px;background:#161511;border-radius:5px"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:36px">
+          <span style="font-size:34px;font-weight:700;letter-spacing:-1px;text-align:center;line-height:1.1">Welcome to the<br>fast future</span>
+          <span style="font-size:15px;color:#5F5B4C;text-align:center;line-height:1.5;max-width:280px">One tap to your parcel. No clutter, no digging through menus — the box you need is always right on top.</span>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:center;gap:7px">
+          <div style="width:24px;height:8px;border-radius:5px;background:#FFD400;border:2px solid #161511"></div>
+          <div style="width:8px;height:8px;border-radius:5px;background:#FFF;border:2px solid #161511"></div>
+        </div>
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">Continue</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 7b — Onboarding: disclaimer ============ -->
+<div class="dv-opt" id="7b">
+  <div class="dv-olabel"><a class="dv-oid" href="#7b">7b</a>Onboarding 2 — unofficial &amp; experimental disclaimer</div>
+  <div class="dv-card" style="width:412px" data-screen-label="7b Onboarding disclaimer">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:58</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px">
+        <div style="position:relative;width:130px;height:130px">
+          <div style="position:absolute;inset:0;border-radius:32px;background:#FFF;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:grid;place-items:center">
+            <div style="width:38px;height:38px;border:3.5px solid #161511;border-radius:9px;transform:rotate(45deg);background:#FDFAEF"></div>
+          </div>
+          <span style="position:absolute;left:50%;top:-14px;transform:translateX(-50%) rotate(-7deg);font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;background:#FFD400;border:2.5px solid #161511;border-radius:8px;padding:4px 12px;box-shadow:2px 2px 0 #161511;white-space:nowrap">UNOFFICIAL</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:36px">
+          <span style="font-size:34px;font-weight:700;letter-spacing:-1px;text-align:center;line-height:1.1">Fan-made,<br>experimental</span>
+          <span style="font-size:15px;color:#5F5B4C;text-align:center;line-height:1.5;max-width:290px">Paczkofast is an independent companion app. It is not affiliated with, endorsed by, or related to InPost or any locker operator — and things may occasionally break.</span>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:center;gap:7px">
+          <div style="width:8px;height:8px;border-radius:5px;background:#FFF;border:2px solid #161511"></div>
+          <div style="width:24px;height:8px;border-radius:5px;background:#FFD400;border:2px solid #161511"></div>
+        </div>
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">I understand — let's go</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t6">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Paczkofast — generic error screen for the open-locker flow (style <a href="#1c" style="color:inherit">1c</a>)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 6a — Error (reusable) ============ -->
+<div class="dv-opt" id="6a">
+  <div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Error — reusable: server error, locker failed to open, etc.</div>
+  <div class="dv-card" style="width:412px" data-screen-label="6a Open locker error">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:55</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Open box</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px">
+        <div style="width:150px;height:150px;border-radius:50%;background:#FF3B25;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px">
+          <div style="width:9px;height:52px;background:#161511;border-radius:5px"></div>
+          <div style="width:11px;height:11px;background:#161511;border-radius:50%"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:28px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:2px">ERROR LCK-502 · LOCKER WAW-04N</span>
+          <span style="font-size:28px;font-weight:700;letter-spacing:-.5px;text-align:center">The box didn't open</span>
+          <span style="font-size:14px;color:#5F5B4C;text-align:center;line-height:1.45;max-width:300px">Nothing happened on our end — your parcel is safe and your pickup code still works.</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:9px;align-self:stretch;margin-top:26px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:1px">WHAT YOU CAN DO</span>
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700">1</span><span style="font-size:14px;line-height:1.4">Try again — a second attempt usually works.</span></div>
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700">2</span><span style="font-size:14px;line-height:1.4">Use the code <span style="font-family:'Space Mono',monospace;font-weight:700">ABC DEF</span> on the locker screen.</span></div>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">Try again</div>
+        <div style="height:48px;border-radius:14px;background:#FFF;border:2.5px solid #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Contact support</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Paczkofast — open locker flow: nearby, opened, success (style <a href="#1c" style="color:inherit">1c</a>)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 5a — Open locker (nearby) ============ -->
+<div class="dv-opt" id="5a">
+  <div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Open locker — nearby, hold-to-open with progress above button</div>
+  <div class="dv-card" style="width:412px" data-screen-label="5a Open locker nearby">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:52</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Open box</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0 26px">
+        <div style="width:280px;height:280px;display:grid;place-items:center;position:relative">
+          <div style="position:absolute;inset:0;border:2.5px dashed #161511;border-radius:50%;opacity:.25"></div>
+          <div style="position:absolute;inset:42px;border:2.5px solid #161511;border-radius:50%;opacity:.5"></div>
+          <div style="width:126px;height:126px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:4px 4px 0 #161511;display:grid;place-items:center">
+            <div style="width:44px;height:36px;border:3.5px solid #161511;border-radius:8px;position:relative;background:#FFD400"><div style="position:absolute;left:-3.5px;right:-3.5px;top:9px;height:3.5px;background:#161511"></div><div style="position:absolute;left:14px;top:16px;width:9px;height:3.5px;background:#161511;border-radius:2px"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:26px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:2px">LOCKER WAW-04N</span>
+          <span style="font-size:28px;font-weight:700;letter-spacing:-.5px">You're 8 m away</span>
+          <span style="font-size:14px;color:#5F5B4C;text-align:center;line-height:1.4">TechNova Store · M · box will pop open below eye level</span>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">KEEP HOLDING…</span></div>
+          <div style="height:14px;border:2.5px solid #161511;border-radius:8px;background:#FFF;overflow:hidden"><div style="width:62%;height:100%;background:#FFD400;border-right:2.5px solid #161511"></div></div>
+        </div>
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:1px 1px 0 #161511;transform:translate(2px,2px);display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:700">
+          <div style="width:18px;height:18px;border:2.5px solid #161511;border-radius:50%;border-top-color:transparent;transform:rotate(120deg)"></div>
+          Hold to open
+        </div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5b — Locker opened (single) ============ -->
+<div class="dv-opt" id="5b">
+  <div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a>Locker opened — single parcel confirmation</div>
+  <div class="dv-card" style="width:412px" data-screen-label="5b Box open single">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:53</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="padding:10px 22px 4px"><span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Box open</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0 18px">
+        <div style="width:150px;height:150px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:4px 4px 0 #161511;display:grid;place-items:center">
+          <div style="position:relative;width:56px;height:66px">
+            <div style="position:absolute;inset:0;border:3.5px solid #161511;border-radius:9px;background:#FFF;box-sizing:border-box"></div>
+            <div style="position:absolute;left:3.5px;right:3.5px;top:17px;height:3.5px;background:#161511"></div>
+            <div style="position:absolute;left:3.5px;right:3.5px;bottom:17px;height:3.5px;background:#161511"></div>
+            <div style="position:absolute;right:8px;top:8px;width:7px;height:3.5px;background:#161511;border-radius:2px"></div>
+            <div style="position:absolute;right:8px;bottom:8px;width:7px;height:3.5px;background:#161511;border-radius:2px"></div>
+            <div style="position:absolute;left:3.5px;right:3.5px;top:20.5px;bottom:20.5px;background:#161511;opacity:.22"></div>
+            <div style="position:absolute;left:-1px;top:20.5px;width:15px;bottom:20.5px;border:3.5px solid #161511;background:#FFF;box-sizing:border-box;border-radius:3px 0 0 3px"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:26px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:2px">LOCKER WAW-04N · BOX A1</span>
+          <span style="font-size:28px;font-weight:700;letter-spacing:-.5px">The box is open</span>
+          <span style="font-size:14px;color:#5F5B4C;text-align:center;line-height:1.4">Take your parcel, then close the door firmly.</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px;align-self:stretch;margin-top:24px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">1234 5678 9012 3456 7890 1234</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px">
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">OK — I took it</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5c — Locker opened (multi) ============ -->
+<div class="dv-opt" id="5c">
+  <div class="dv-olabel"><a class="dv-oid" href="#5c">5c</a>Locker opened — 2 parcels, check-off list</div>
+  <div class="dv-card" style="width:412px" data-screen-label="5c Box open multi">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:53</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="padding:10px 22px 4px"><span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Box open</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0 18px">
+        <div style="width:126px;height:126px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:4px 4px 0 #161511;display:grid;place-items:center">
+          <div style="position:relative;width:48px;height:56px">
+            <div style="position:absolute;inset:0;border:3.5px solid #161511;border-radius:8px;background:#FFF;box-sizing:border-box"></div>
+            <div style="position:absolute;left:3.5px;right:3.5px;top:14px;height:3.5px;background:#161511"></div>
+            <div style="position:absolute;left:3.5px;right:3.5px;bottom:14px;height:3.5px;background:#161511"></div>
+            <div style="position:absolute;right:7px;top:6.5px;width:6px;height:3.5px;background:#161511;border-radius:2px"></div>
+            <div style="position:absolute;right:7px;bottom:6.5px;width:6px;height:3.5px;background:#161511;border-radius:2px"></div>
+            <div style="position:absolute;left:3.5px;right:3.5px;top:17.5px;bottom:17.5px;background:#161511;opacity:.22"></div>
+            <div style="position:absolute;left:-1px;top:17.5px;width:13px;bottom:17.5px;border:3.5px solid #161511;background:#FFF;box-sizing:border-box;border-radius:3px 0 0 3px"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:20px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:2px">LOCKER WAW-04N · BOX A1</span>
+          <span style="font-size:28px;font-weight:700;letter-spacing:-.5px">The box is open</span>
+          <span style="font-size:14px;color:#5F5B4C;text-align:center;line-height:1.4"><span style="font-weight:700;color:#161511">2 parcels</span> share this box — check off both before you close it.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-self:stretch;margin-top:22px">
+          <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:28px;height:28px;border-radius:9px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;flex:none"><div style="width:10px;height:6px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(-45deg);margin-top:-3px"></div></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">TAKEN</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+          </div>
+          <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:28px;height:28px;border-radius:9px;background:#FDFAEF;border:2.5px solid #161511;flex:none"></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Marta Nowak</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">STILL IN THE BOX?</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px;padding:0 2px"><span style="color:#5F5B4C">1 OF 2 CHECKED</span><span style="font-weight:700;color:#E01507">CHECK BOTH TO CLOSE</span></div>
+        <div style="height:56px;border-radius:14px;background:#FFF;border:2.5px solid #161511;display:grid;place-items:center;font-size:17px;font-weight:700;color:#5F5B4C;opacity:.55">I took both — close the box</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5d — Success (single) ============ -->
+<div class="dv-opt" id="5d">
+  <div class="dv-olabel"><a class="dv-oid" href="#5d">5d</a>Success — single parcel picked up</div>
+  <div class="dv-card" style="width:412px" data-screen-label="5d Success single">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:54</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px">
+        <div style="width:150px;height:150px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:grid;place-items:center">
+          <div style="width:52px;height:28px;border-left:7px solid #161511;border-bottom:7px solid #161511;transform:rotate(-45deg);margin-top:-14px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:28px">
+          <span style="font-size:32px;font-weight:700;letter-spacing:-.5px">Picked up!</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">BOX A1 CLOSED · TODAY 14:32</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px;align-self:stretch;margin-top:26px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">COLLECTED · WAW-04N</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px">
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">Back to my parcels</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5e — Success (multi) ============ -->
+<div class="dv-opt" id="5e">
+  <div class="dv-olabel"><a class="dv-oid" href="#5e">5e</a>Success — 2 parcels collected</div>
+  <div class="dv-card" style="width:412px" data-screen-label="5e Success multi">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:54</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px">
+        <div style="width:150px;height:150px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:grid;place-items:center;position:relative">
+          <div style="width:52px;height:28px;border-left:7px solid #161511;border-bottom:7px solid #161511;transform:rotate(-45deg);margin-top:-14px"></div>
+          <span style="position:absolute;top:-6px;right:-6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;background:#FFF;border:2.5px solid #161511;border-radius:9px;padding:3px 9px;box-shadow:2px 2px 0 #161511">×2</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:28px">
+          <span style="font-size:32px;font-weight:700;letter-spacing:-.5px">All picked up!</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">BOX A1 CLOSED · TODAY 14:32</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;overflow:hidden;display:flex;flex-direction:column;align-self:stretch;margin-top:26px">
+          <div style="padding:10px 16px 8px"><span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:1px">2 PARCELS COLLECTED</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px">
+            <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+            <span style="font-size:15px;font-weight:700;flex:1">TechNova Store</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+          </div>
+          <div style="height:2.5px;background:#161511"></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 16px">
+            <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+            <span style="font-size:15px;font-weight:700;flex:1">Marta Nowak</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 18px 14px">
+        <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">Back to my parcels</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Paczkofast — parcel details with rich locker data (based on <a href="#2a" style="color:inherit">2a</a>)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 4a — Parcel details: rich locker card ============ -->
+<div class="dv-opt" id="4a">
+  <div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>Locker photo, 24/7, point type, easy access, air sensor, receiver + parcel flags</div>
+  <div class="dv-card" style="width:412px" data-screen-label="4a Parcel details rich locker">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:1180px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:44</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Parcel details</span>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:3px 9px">READY TO PICKUP</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFF;border:2px solid #161511;border-radius:7px;padding:3px 9px">ECONOMY</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFF;border:2px solid #161511;border-radius:7px;padding:3px 9px;margin-left:auto">SIZE M</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">TechNova Store</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">1234 5678 9012 3456 7890 1234</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">PICK UP BY MON 6 JUL, 10:35</span><span style="font-weight:700;font-size:15px;letter-spacing:-.5px">46H</span></div>
+          <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:96%;height:100%;background:#FFD400"></div></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10px;color:#5F5B4C">END-OF-WEEK COLLECTION OK — SUNDAY INCLUDED</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:130px;height:130px;border:2.5px solid #161511;border-radius:10px;padding:9px;background:#FFF;position:relative">
+            <div style="position:absolute;inset:9px;background-image:repeating-conic-gradient(#161511 0% 25%,#FFF 0% 50%);background-size:12px 12px;opacity:.9"></div>
+            <div style="position:absolute;left:9px;top:9px;width:28px;height:28px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:9px;height:9px;background:#161511"></div></div>
+            <div style="position:absolute;right:9px;top:9px;width:28px;height:28px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:9px;height:9px;background:#161511"></div></div>
+            <div style="position:absolute;left:9px;bottom:9px;width:28px;height:28px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:9px;height:9px;background:#161511"></div></div>
+          </div>
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:10px;font-family:'Space Mono',monospace"><span style="font-size:22px;font-weight:700;letter-spacing:3px">ABC DEF</span></div>
+        </div>
+        <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700;flex:none">Open box remotely</div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;overflow:hidden;display:flex;flex-direction:column">
+          <div style="height:110px;border-bottom:2.5px solid #161511;position:relative;background:repeating-linear-gradient(-45deg,#F1EDDE 0 10px,#FDFAEF 10px 20px)">
+            <span style="position:absolute;left:12px;bottom:10px;font-family:'Space Mono',monospace;font-size:10px;color:#5F5B4C;background:#FFF;border:2px solid #161511;border-radius:6px;padding:2px 7px">LOCKER PHOTO — imageUrl</span>
+            <span style="position:absolute;right:12px;top:10px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:6px;padding:2px 7px">OPEN 24/7</span>
+          </div>
+          <div style="padding:13px 16px;display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;flex:1">LOCKER WAW-04N · W LOKALU USŁUGOWYM</span>
+              <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;border:2px solid #161511;border-radius:6px;padding:1px 6px">LOCKER</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px">
+              <span style="font-size:15px;font-weight:700">Demo Street 12, 00-000 Warsaw</span>
+              <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">MAZOWIECKIE · POLAND</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;background:#FDFAEF;border:2px solid #161511;border-radius:6px;padding:2px 7px">EASY ACCESS ZONE</span>
+              <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;background:#FDFAEF;border:2px solid #161511;border-radius:6px;padding:2px 7px">AIR SENSOR</span>
+            </div>
+            <div style="height:40px;border-radius:11px;background:#FFF;border:2.5px solid #161511;display:grid;place-items:center;font-size:14px;font-weight:700">Navigate</div>
+          </div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:50%;border:2.5px solid #161511;background:#FDFAEF;position:relative;flex:none"><div style="position:absolute;left:7px;top:4px;width:7px;height:7px;border:2.5px solid #161511;border-radius:50%;box-sizing:border-box"></div><div style="position:absolute;left:4px;top:12px;width:13px;height:8px;border:2.5px solid #161511;border-bottom:none;border-radius:7px 7px 0 0;box-sizing:border-box"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+            <span style="font-size:14px;font-weight:700">Alex Morgan · you</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">+48 *** *** ***</span>
+          </div>
+          <span style="font-family:'Space Mono',monospace;font-size:10px;color:#5F5B4C">RECEIVER</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:2px 4px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">TRACKING</span>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding-top:2px"><div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div><div style="width:2.5px;height:26px;background:#161511"></div><div style="width:14px;height:14px;background:#FFF;border:2px solid #161511;border-radius:3px"></div></div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:700">Ready for pickup</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">04.07.26 · 10:35</span></div>
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600;color:#5F5B4C">Out for delivery</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">04.07.26 · 06:12</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Paczkofast — parcel details, delivered state (based on <a href="#2a" style="color:inherit">2a</a>)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 3a — Parcel details: delivered ============ -->
+<div class="dv-opt" id="3a">
+  <div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Parcel details — delivered, codes collapsed, pickup duration</div>
+  <div class="dv-card" style="width:412px" data-screen-label="3a Parcel details delivered">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:41</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Parcel details</span>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#161511;color:#FFD400;border:2px solid #161511;border-radius:7px;padding:3px 9px">DELIVERED</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFF;border:2px solid #161511;border-radius:7px;padding:3px 9px;margin-left:auto">SIZE M</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">TechNova Store</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">1234 5678 9012 3456 7890 1234</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:34px;height:34px;border-radius:11px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;flex:none"><div style="width:11px;height:6px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(-45deg);margin-top:-3px"></div></div>
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:16px;font-weight:700">Picked up in 2d 10h</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">SAT 4 JUL · 11:02</span>
+          </div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border:2.5px solid #161511;border-radius:7px;position:relative;flex:none;background:#FDFAEF"><div style="position:absolute;left:4px;top:4px;width:6px;height:6px;border:2px solid #161511"></div><div style="position:absolute;right:4px;bottom:4px;width:6px;height:6px;background:#161511"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+            <span style="font-size:15px;font-weight:700">Pickup code &amp; QR</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">NO LONGER NEEDED</span>
+          </div>
+          <div style="width:8px;height:8px;border-right:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(45deg);margin-top:-4px"></div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">LOCKER WAW-04N · W LOKALU USŁUGOWYM</span>
+          <span style="font-size:15px;font-weight:700">Demo Street 12, 00-000 Warsaw</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:2px 4px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">TRACKING</span>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding-top:2px"><div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div><div style="width:2.5px;height:26px;background:#161511"></div><div style="width:14px;height:14px;background:#FFF;border:2px solid #161511;border-radius:3px"></div><div style="width:2.5px;height:26px;background:#161511"></div><div style="width:14px;height:14px;background:#FFF;border:2px solid #161511;border-radius:3px"></div></div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:700">Picked up</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">04.07.26 · 11:02</span></div>
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600;color:#5F5B4C">Ready for pickup</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">02.07.26 · 00:41</span></div>
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600;color:#5F5B4C">Out for delivery</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">01.07.26 · 20:15</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3b — Box details: delivered (multipackage) ============ -->
+<div class="dv-opt" id="3b">
+  <div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Box details — delivered, 2+ parcels, codes collapsed</div>
+  <div class="dv-card" style="width:412px" data-screen-label="3b Box details delivered">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:41</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Box details</span>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#161511;color:#FFD400;border:2px solid #161511;border-radius:7px;padding:3px 9px">DELIVERED</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFF;border:2px solid #161511;border-radius:7px;padding:3px 9px;margin-left:auto">ONE BOX · ×2</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">2 parcels</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">LOCKER WAW-04N · DEMO STREET 12</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:34px;height:34px;border-radius:11px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;flex:none"><div style="width:11px;height:6px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(-45deg);margin-top:-3px"></div></div>
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:16px;font-weight:700">Picked up in 1d 6h</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">SAT 4 JUL · 11:02 · BOTH PARCELS</span>
+          </div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;overflow:hidden;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 16px">
+            <div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative;flex:none"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">2345 6789 0123 4567 8901 2345</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+            <div style="width:8px;height:8px;border-right:2.5px solid #161511;border-top:2.5px solid #161511;transform:rotate(45deg)"></div>
+          </div>
+          <div style="height:2.5px;background:#161511"></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 16px">
+            <div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative;flex:none"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Marta Nowak</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">3456 7890 1234 5678 9012 3456</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+            <div style="width:8px;height:8px;border-right:2.5px solid #161511;border-top:2.5px solid #161511;transform:rotate(45deg)"></div>
+          </div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border:2.5px solid #161511;border-radius:7px;position:relative;flex:none;background:#FDFAEF"><div style="position:absolute;left:4px;top:4px;width:6px;height:6px;border:2px solid #161511"></div><div style="position:absolute;right:4px;bottom:4px;width:6px;height:6px;background:#161511"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+            <span style="font-size:15px;font-weight:700">Pickup code &amp; QR</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">NO LONGER NEEDED</span>
+          </div>
+          <div style="width:8px;height:8px;border-right:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(45deg);margin-top:-4px"></div>
+        </div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Paczkofast — detail screens, history, settings, login (style <a href="#1c" style="color:inherit">1c</a>)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 2a — Parcel details ============ -->
+<div class="dv-opt" id="2a">
+  <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Parcel details — QR, remote open, locker, tracking</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2a Parcel details">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:37</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Parcel details</span>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;align-items:center" data-comment-anchor="c98c9642dd-div">
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:3px 9px">READY TO PICKUP</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFF;border:2px solid #161511;border-radius:7px;padding:3px 9px;margin-left:auto">SIZE M</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">TechNova Store</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">1234 5678 9012 3456 7890 1234</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">PICK UP BY MON 6 JUL, 10:35</span><span style="font-weight:700;font-size:15px;letter-spacing:-.5px">46H</span></div>
+          <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:96%;height:100%;background:#FFD400"></div></div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:150px;height:150px;border:2.5px solid #161511;border-radius:10px;padding:10px;background:#FFF;position:relative">
+            <div style="position:absolute;inset:10px;background-image:repeating-conic-gradient(#161511 0% 25%,#FFF 0% 50%);background-size:13px 13px;opacity:.9"></div>
+            <div style="position:absolute;left:10px;top:10px;width:32px;height:32px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:11px;height:11px;background:#161511"></div></div>
+            <div style="position:absolute;right:10px;top:10px;width:32px;height:32px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:11px;height:11px;background:#161511"></div></div>
+            <div style="position:absolute;left:10px;bottom:10px;width:32px;height:32px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:11px;height:11px;background:#161511"></div></div>
+          </div>
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:10px;font-family:'Space Mono',monospace"><span style="font-size:22px;font-weight:700;letter-spacing:3px">ABC DEF</span></div>
+        </div>
+        <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700;flex:none">Open box remotely</div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">LOCKER WAW-04N · W LOKALU USŁUGOWYM</span>
+          <span style="font-size:15px;font-weight:700">Demo Street 12, 00-000 Warsaw</span>
+          <div style="height:40px;border-radius:11px;background:#FFF;border:2.5px solid #161511;display:grid;place-items:center;font-size:14px;font-weight:700">Navigate</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:2px 4px 0">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">TRACKING</span>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding-top:2px"><div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div><div style="width:2.5px;height:26px;background:#161511"></div><div style="width:14px;height:14px;background:#FFF;border:2px solid #161511;border-radius:3px"></div></div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:700">Ready for pickup</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">04.07.26 · 10:35</span></div>
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600;color:#5F5B4C">Out for delivery</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">04.07.26 · 06:12</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2b — Box details (multipackage) ============ -->
+<div class="dv-opt" id="2b">
+  <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Box details — 2+ parcels, one code</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2b Box details">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:37</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center" data-comment-anchor="cbd99654f3-div"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Box details</span>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;align-items:center" data-comment-anchor="f1c1d366f0-div">
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:3px 9px">READY TO PICKUP</span>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;background:#FFF;border:2px solid #161511;border-radius:7px;padding:3px 9px;margin-left:auto">ONE BOX · ×2</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">2 parcels</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">LOCKER WAW-04N · DEMO STREET 12</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;overflow:hidden;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 16px">
+            <div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative;flex:none"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">2345 6789 0123 4567 8901 2345</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+            <div style="width:8px;height:8px;border-right:2.5px solid #161511;border-top:2.5px solid #161511;transform:rotate(45deg)"></div>
+          </div>
+          <div style="height:2.5px;background:#161511"></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 16px">
+            <div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative;flex:none"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Marta Nowak</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">3456 7890 1234 5678 9012 3456</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+            <div style="width:8px;height:8px;border-right:2.5px solid #161511;border-top:2.5px solid #161511;transform:rotate(45deg)"></div>
+          </div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:170px;height:170px;border:2.5px solid #161511;border-radius:10px;padding:10px;background:#FFF;position:relative">
+            <div style="position:absolute;inset:10px;background-image:repeating-conic-gradient(#161511 0% 25%,#FFF 0% 50%);background-size:14px 14px;opacity:.9"></div>
+            <div style="position:absolute;left:10px;top:10px;width:36px;height:36px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:13px;height:13px;background:#161511"></div></div>
+            <div style="position:absolute;right:10px;top:10px;width:36px;height:36px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:13px;height:13px;background:#161511"></div></div>
+            <div style="position:absolute;left:10px;bottom:10px;width:36px;height:36px;background:#FFF;border:5px solid #161511;display:grid;place-items:center;box-sizing:border-box"><div style="width:13px;height:13px;background:#161511"></div></div>
+          </div>
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:10px;font-family:'Space Mono',monospace"><span style="font-size:24px;font-weight:700;letter-spacing:3px">796 233</span></div>
+        </div>
+        <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700;flex:none">One code opens the box</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2c — History ============ -->
+<div class="dv-opt" id="2c">
+  <div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>History — month groups, multibox entry</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2c History">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:37</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="padding:10px 22px 4px"><span style="font-size:26px;font-weight:700;letter-spacing:-.5px">History</span></div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;padding:0 4px">JULY</span>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">HomeGoods Co.</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP · WAW-04N</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">4 JUL</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Vintage Finds</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP · WAW-04N</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">2 JUL</span>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;padding:6px 4px 0">JUNE</span>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:11px;height:9px;border:2.5px solid #161511;border-radius:2px;position:relative"><div style="position:absolute;left:3px;top:-2.5px;width:2.5px;height:4px;background:#161511"></div></div></div>
+            <div style="display:flex;flex-direction:column;flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:15px;font-weight:700">2 parcels · one box</span><span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:6px;padding:1px 6px">×2</span></div><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP · WAW-04N</span></div>
+            <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">30 JUN</span>
+          </div>
+          <div style="border:2px solid #161511;border-radius:11px;background:#FDFAEF;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:13.5px;font-weight:600">Marta Nowak</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700">S</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:13.5px;font-weight:600">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700">S</span></div>
+          </div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Book Nook</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP · WAW-04N</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">30 JUN</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Fashion Hub</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP · WAW-04N</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">27 JUN</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">MegaMart</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">26 JUN</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">Craft Supply Co.</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">PICKED UP · WAW-04N</span></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">25 JUN</span>
+        </div>
+      </div>
+      <div style="border-top:2.5px solid #161511;background:#FFF;padding:10px 8px 6px;display:grid;grid-template-columns:1fr 1fr 1fr">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div></div>
+          <span style="font-size:12px;font-weight:500;color:#5F5B4C">Packages</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center"><div style="width:15px;height:15px;border:2.5px solid #161511;border-radius:50%;position:relative"><div style="position:absolute;left:5.5px;top:2.5px;width:2.5px;height:5px;background:#161511"></div><div style="position:absolute;left:5.5px;top:5.5px;width:5px;height:2.5px;background:#161511"></div></div></div>
+          <span style="font-size:12px;font-weight:700">History</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="display:flex;flex-direction:column;gap:3.5px"><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;left:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;right:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div></div></div>
+          <span style="font-size:12px;font-weight:500;color:#5F5B4C">Settings</span>
+        </div>
+      </div>
+      <div style="background:#FFF;display:grid;place-items:center;padding-bottom:8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2d — Settings ============ -->
+<div class="dv-opt" id="2d">
+  <div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Settings — theme, account, about</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2d Settings">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:38</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="padding:10px 22px 4px"><span style="font-size:26px;font-weight:700;letter-spacing:-.5px">Settings</span></div>
+      <div style="flex:1;overflow:hidden;padding:8px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;padding:0 4px">APPEARANCE</span>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:16px;font-weight:700">Theme</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;border:2.5px solid #161511;border-radius:12px;padding:5px;background:#FDFAEF">
+            <div style="height:36px;border-radius:8px;display:grid;place-items:center;font-size:13.5px;font-weight:600;color:#5F5B4C">System</div>
+            <div style="height:36px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;font-size:13.5px;font-weight:700">Light</div>
+            <div style="height:36px;border-radius:8px;display:grid;place-items:center;font-size:13.5px;font-weight:600;color:#5F5B4C">Dark</div>
+          </div>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;padding:6px 4px 0">ACCOUNT</span>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:16px;font-weight:700">Logged in</span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C">+48 *** *** ***</span>
+          </div>
+          <div style="height:2.5px;background:#161511"></div>
+          <div style="padding:16px;min-height:46px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between" data-comment-anchor="5595c703cb-div">
+            <span style="font-size:15px;font-weight:700;color:#E01507">Log out</span>
+            <div style="width:8px;height:8px;border-right:2.5px solid #E01507;border-top:2.5px solid #E01507;transform:rotate(45deg)"></div>
+          </div>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;padding:6px 4px 0">ABOUT</span>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;flex:none"><div style="width:15px;height:15px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+            <div style="display:flex;flex-direction:column"><span style="font-size:17px;font-weight:700">Paczkofast</span><span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">VERSION 1.0.0 (1)</span></div>
+          </div>
+          <span style="font-size:13px;color:#5F5B4C;line-height:1.45">Unofficial companion app. Not affiliated with or endorsed by the locker operator.</span>
+        </div>
+      </div>
+      <div style="border-top:2.5px solid #161511;background:#FFF;padding:10px 8px 6px;display:grid;grid-template-columns:1fr 1fr 1fr">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div></div>
+          <span style="font-size:12px;font-weight:500;color:#5F5B4C">Packages</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="width:15px;height:15px;border:2.5px solid #161511;border-radius:50%;position:relative"><div style="position:absolute;left:5.5px;top:2.5px;width:2.5px;height:5px;background:#161511"></div><div style="position:absolute;left:5.5px;top:5.5px;width:5px;height:2.5px;background:#161511"></div></div></div>
+          <span style="font-size:12px;font-weight:500;color:#5F5B4C">History</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center"><div style="display:flex;flex-direction:column;gap:3.5px"><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;left:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;right:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div></div></div>
+          <span style="font-size:12px;font-weight:700">Settings</span>
+        </div>
+      </div>
+      <div style="background:#FFF;display:grid;place-items:center;padding-bottom:8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2e — Login: phone ============ -->
+<div class="dv-opt" id="2e">
+  <div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Login — phone number entry</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2e Login phone">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:38</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="flex:1;padding:40px 26px 0;display:flex;flex-direction:column;gap:14px">
+        <div style="width:72px;height:72px;border-radius:22px;background:#FFD400;border:3px solid #161511;box-shadow:4px 4px 0 #161511;display:grid;place-items:center"><div style="width:26px;height:26px;background:#161511;border-radius:7px;transform:rotate(45deg)"></div></div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+          <span style="font-size:30px;font-weight:700;letter-spacing:-.5px;line-height:1.1">Paczkofast</span>
+          <span style="font-size:15px;color:#5F5B4C;line-height:1.4">Log in with the phone number your parcels are sent to. We'll text you a code.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C">PHONE NUMBER</span>
+          <div style="display:flex;gap:8px">
+            <div style="width:78px;height:56px;border:2.5px solid #161511;border-radius:14px;background:#FFF;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:16px;font-weight:700">+48</div>
+            <div style="flex:1;height:56px;border:2.5px solid #161511;border-radius:14px;background:#FFF;box-shadow:3px 3px 0 #161511;display:flex;align-items:center;padding:0 16px;font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:1px">500 100 2<span style="display:inline-block;width:2.5px;height:24px;background:#161511;margin-left:2px"></span></div>
+          </div>
+        </div>
+        <div style="height:52px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:16px;font-weight:700;margin-top:8px">Send code</div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2f — Login: OTP ============ -->
+<div class="dv-opt" id="2f">
+  <div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>Login — 6-digit code from SMS</div>
+  <div class="dv-card" style="width:412px" data-screen-label="2f Login OTP">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">11:38</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+        <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Enter code</span>
+      </div>
+      <div style="flex:1;padding:24px 26px 0;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:15px;color:#5F5B4C;line-height:1.4">We texted a 6-digit code to <span style="font-family:'Space Mono',monospace;font-weight:700;color:#161511">+48 *** *** ***</span></span>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px">
+          <div style="height:60px;border:2.5px solid #161511;border-radius:12px;background:#FFF;display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:24px;font-weight:700">4</div>
+          <div style="height:60px;border:2.5px solid #161511;border-radius:12px;background:#FFF;display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:24px;font-weight:700">7</div>
+          <div style="height:60px;border:2.5px solid #161511;border-radius:12px;background:#FFF;display:grid;place-items:center;font-family:'Space Mono',monospace;font-size:24px;font-weight:700">2</div>
+          <div style="height:60px;border:2.5px solid #161511;border-radius:12px;background:#FFD400;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center"><div style="width:2.5px;height:26px;background:#161511"></div></div>
+          <div style="height:60px;border:2.5px solid #161511;border-radius:12px;background:#FDFAEF;display:grid;place-items:center"></div>
+          <div style="height:60px;border:2.5px solid #161511;border-radius:12px;background:#FDFAEF;display:grid;place-items:center"></div>
+        </div>
+        <div style="height:52px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:16px;font-weight:700;margin-top:8px;opacity:.45">Verify</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11.5px;padding:0 2px">
+          <span style="color:#5F5B4C">RESEND IN 0:42</span>
+          <span style="font-weight:700;text-decoration:underline">CHANGE NUMBER</span>
+        </div>
+      </div>
+      <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Paczkofast — main screen (cartoon-lite, tuned)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 1c — Cartoon-lite (tuned) ============ -->
+<div class="dv-opt" id="1c">
+  <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Cartoon-lite — 4-stage transit tracker, saturated red, "Paczkofast"</div>
+  <div class="dv-card" style="width:412px" data-screen-label="1c Cartoon-lite">
+    <div style="background:#FDFAEF;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-direction:column;height:900px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 8px">
+        <span style="font-size:14px;font-weight:600">9:30</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:11px solid #161511;transform:rotate(180deg) scaleY(-1)"></div>
+          <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+          <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px 6px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:15px;height:15px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+          <span style="font-size:24px;font-weight:700;letter-spacing:-.5px">Paczkofast</span>
+        </div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <div style="position:relative;width:20px;height:20px"><div style="width:13px;height:13px;border:2.5px solid #161511;border-radius:50%"></div><div style="position:absolute;width:8px;height:2.5px;background:#161511;bottom:1px;right:-1px;transform:rotate(45deg);border-radius:2px"></div></div>
+        </div>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:10px 18px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px;padding:0 4px">
+          <div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div>
+          <span style="font-size:16px;font-weight:700">Ready for pickup</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="font-size:17px;font-weight:700">TechNova Store</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+          </div>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C;margin-top:-8px">WAW-04N · DEMO STREET 12</span>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">TIME LEFT</span><span style="font-weight:700;font-size:15px;letter-spacing:-.5px">1D 14H</span></div>
+            <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:68%;height:100%;background:#FFD400"></div></div>
+          </div>
+          <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Open locker</div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="font-size:17px;font-weight:700">Marta Nowak</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+          </div>
+          <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C;margin-top:-8px">WAW-04N · DEMO STREET 12</span>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">TIME LEFT</span><span style="font-weight:700;color:#E01507;font-size:15px;letter-spacing:-.5px">9H — HURRY!</span></div>
+            <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:19%;height:100%;background:#FF3B25"></div></div>
+          </div>
+          <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Open locker</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 4px 0">
+          <div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div>
+          <span style="font-size:16px;font-weight:700">On the way</span>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="font-size:16px;font-weight:700">BookHive</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">L</span>
+          </div>
+          <div style="display:flex;gap:5px">
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C"><span>OUT FOR DELIVERY · 3/4</span><span>TODAY</span></div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="font-size:16px;font-weight:700">GreenMarket</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">XS</span>
+          </div>
+          <div style="display:flex;gap:5px">
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C"><span>IN TRANSIT · 2/4</span><span>MON JUL 6</span></div>
+        </div>
+        <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="font-size:16px;font-weight:700">Studio Ceramika</span>
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+          </div>
+          <div style="display:flex;gap:5px">
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+            <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C"><span>SENT · 1/4</span><span>WED JUL 8</span></div>
+        </div>
+      </div>
+      <div style="border-top:2.5px solid #161511;background:#FFF;padding:10px 8px 6px;display:grid;grid-template-columns:1fr 1fr 1fr">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center"><div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div></div>
+          <span style="font-size:12px;font-weight:700">Packages</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="width:15px;height:15px;border:2.5px solid #161511;border-radius:50%;position:relative"><div style="position:absolute;left:5.5px;top:2.5px;width:2.5px;height:5px;background:#161511"></div><div style="position:absolute;left:5.5px;top:5.5px;width:5px;height:2.5px;background:#161511"></div></div></div>
+          <span style="font-size:12px;font-weight:500;color:#5F5B4C">History</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="display:flex;flex-direction:column;gap:3.5px"><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;left:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;right:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div></div></div>
+          <span style="font-size:12px;font-weight:500;color:#5F5B4C">Settings</span>
+        </div>
+      </div>
+      <div style="background:#FFF;display:grid;place-items:center;padding-bottom:8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+</x-dc>
+</body>
+</html>

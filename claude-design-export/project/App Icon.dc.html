@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9}
+</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;padding:48px;font-family:'Space Grotesk',sans-serif;color:#161511;display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+  <!-- Foreground layer artboard -->
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C;letter-spacing:1px">IC_LAUNCHER_FOREGROUND · 108×108 DP CANVAS @4X</span>
+    <div style="width:432px;height:432px;position:relative;border:2.5px solid #161511;border-radius:16px;overflow:hidden;background-image:repeating-conic-gradient(#E8E4D8 0% 25%,#FFF 0% 50%);background-size:24px 24px">
+      <div style="position:absolute;inset:0;display:grid;place-items:center">
+        <!-- foreground element: diamond + wind lines -->
+        <div style="display:flex;align-items:center">
+          <div style="width:100px;height:100px;background:#161511;border-radius:24px;transform:rotate(45deg)"></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:20px;margin-left:26px">
+            <div style="width:52px;height:14px;background:#161511;border-radius:8px"></div>
+            <div style="width:92px;height:14px;background:#161511;border-radius:8px"></div>
+            <div style="width:52px;height:14px;background:#161511;border-radius:8px"></div>
+          </div>
+        </div>
+      </div>
+      <!-- safe zone guide: 66/108 dp circle -->
+      <div style="position:absolute;left:50%;top:50%;width:264px;height:264px;transform:translate(-50%,-50%);border:2px dashed rgba(224,21,7,.6);border-radius:50%"></div>
+      <span style="position:absolute;left:12px;bottom:10px;font-family:'Space Mono',monospace;font-size:10.5px;color:#E01507;background:#FFF;border:2px solid #161511;border-radius:6px;padding:2px 8px">SAFE ZONE Ø66DP — KEEP ART INSIDE</span>
+    </div>
+    <span style="font-size:13px;color:#5F5B4C;max-width:432px;line-height:1.5">Transparent PNG / vector. Checkerboard and dashed circle are guides only — export the black artwork alone. Background layer is a solid color added in Android Studio.</span>
+  </div>
+
+  <!-- Assembled previews -->
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C;letter-spacing:1px">ASSEMBLED PREVIEWS</span>
+    <div style="display:flex;gap:20px;align-items:center">
+      <div style="width:120px;height:120px;border-radius:50%;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;overflow:hidden">
+        <div style="display:flex;align-items:center"><div style="width:36px;height:36px;background:#161511;border-radius:9px;transform:rotate(45deg);flex:none;margin-left:6px"></div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px;margin-left:13px"><div style="width:19px;height:5px;background:#161511;border-radius:3px"></div><div style="width:33px;height:5px;background:#161511;border-radius:3px"></div><div style="width:19px;height:5px;background:#161511;border-radius:3px"></div></div></div>
+      </div>
+      <div style="width:120px;height:120px;border-radius:34px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center;overflow:hidden">
+        <div style="display:flex;align-items:center"><div style="width:36px;height:36px;background:#161511;border-radius:9px;transform:rotate(45deg);flex:none;margin-left:6px"></div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px;margin-left:13px"><div style="width:19px;height:5px;background:#161511;border-radius:3px"></div><div style="width:33px;height:5px;background:#161511;border-radius:3px"></div><div style="width:19px;height:5px;background:#161511;border-radius:3px"></div></div></div>
+      </div>
+      <div style="width:64px;height:64px;border-radius:18px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;overflow:hidden">
+        <div style="display:flex;align-items:center"><div style="width:19px;height:19px;background:#161511;border-radius:5px;transform:rotate(45deg);flex:none;margin-left:3px"></div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:3.5px;margin-left:7px"><div style="width:10px;height:3px;background:#161511;border-radius:2px"></div><div style="width:17px;height:3px;background:#161511;border-radius:2px"></div><div style="width:10px;height:3px;background:#161511;border-radius:2px"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Color docs -->
+    <span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C;letter-spacing:1px;margin-top:16px">KEY COLORS</span>
+    <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;overflow:hidden;width:420px">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px">
+        <div style="width:44px;height:44px;border-radius:12px;background:#161511;border:2px solid #161511;flex:none"></div>
+        <div style="display:flex;flex-direction:column;flex:1"><span style="font-size:15px;font-weight:700">Ink — icon foreground</span><span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C">#161511 · ONLY COLOR IN FOREGROUND LAYER</span></div>
+      </div>
+      <div style="height:2.5px;background:#161511"></div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px">
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFD400;border:2px solid #161511;flex:none"></div>
+        <div style="display:flex;flex-direction:column;flex:1"><span style="font-size:15px;font-weight:700">Yellow — icon background</span><span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C">#FFD400 · SOLID BG LAYER IN ANDROID STUDIO</span></div>
+      </div>
+      <div style="height:2.5px;background:#161511"></div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px">
+        <div style="width:44px;height:44px;border-radius:12px;background:#FDFAEF;border:2px solid #161511;flex:none"></div>
+        <div style="display:flex;flex-direction:column;flex:1"><span style="font-size:15px;font-weight:700">Cream — app surface</span><span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C">#FDFAEF · NOT USED IN ICON</span></div>
+      </div>
+      <div style="height:2.5px;background:#161511"></div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px">
+        <div style="width:44px;height:44px;border-radius:12px;background:#FF3B25;border:2px solid #161511;flex:none"></div>
+        <div style="display:flex;flex-direction:column;flex:1"><span style="font-size:15px;font-weight:700">Red — alerts / errors</span><span style="font-family:'Space Mono',monospace;font-size:12px;color:#5F5B4C">#FF3B25 (FILL) · #E01507 (TEXT) · NOT USED IN ICON</span></div>
+      </div>
+    </div>
+    <div style="background:#FFF;border:2.5px solid #161511;border-radius:14px;padding:12px 16px;width:420px;box-sizing:border-box">
+      <span style="font-size:13px;line-height:1.5;color:#5F5B4C">Android Studio → Image Asset → Launcher Icons (Adaptive &amp; Legacy): foreground = this artwork (transparent), background = color <span style="font-family:'Space Mono',monospace;font-weight:700;color:#161511">#FFD400</span>. Monochrome layer can reuse the foreground as-is.</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:760}}"></script>
+</body>
+</html>

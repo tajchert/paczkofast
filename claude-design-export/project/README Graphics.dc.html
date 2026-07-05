@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:'Space Grotesk',sans-serif}
+</style>
+</helmet>
+
+<section id="t1" style="padding:40px 44px 60px;display:flex;flex-direction:column;gap:40px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:10px">
+  <a href="#t1" style="font:600 10px 'Space Mono',monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none">1</a>
+  <span style="font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a">Paczkofast — README graphics: hero banner, features, pickup flow</span>
+</div>
+
+<!-- ============ 1a — Hero banner 1280×640 ============ -->
+<div id="1a" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px;align-items:flex-start">
+  <div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#1a" style="font:600 10.5px 'Space Mono',monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none">1a</a>Hero banner — 1280×640</div>
+  <div data-screen-label="1a Hero banner" style="width:1280px;height:640px;background:#FFD400;border:3px solid #161511;border-radius:28px;position:relative;overflow:hidden;box-sizing:border-box;color:#161511">
+    <!-- faint diamond pattern corner -->
+    <div style="position:absolute;left:-70px;bottom:-70px;width:230px;height:230px;background:#161511;opacity:.07;border-radius:56px;transform:rotate(45deg)"></div>
+    <div style="position:absolute;left:400px;top:-90px;width:180px;height:180px;background:#161511;opacity:.06;border-radius:44px;transform:rotate(45deg)"></div>
+
+    <!-- Left content -->
+    <div style="position:absolute;left:72px;top:0;bottom:0;width:640px;display:flex;flex-direction:column;justify-content:center;gap:26px">
+      <div style="display:flex;align-items:center;gap:22px">
+        <div style="width:92px;height:92px;border-radius:26px;background:#FDFAEF;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:grid;place-items:center;flex:none">
+          <div style="display:flex;align-items:center"><div style="width:30px;height:30px;background:#161511;border-radius:8px;transform:rotate(45deg);flex:none"></div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:5.5px;margin-left:10px"><div style="width:15px;height:4px;background:#161511;border-radius:3px"></div><div style="width:26px;height:4px;background:#161511;border-radius:3px"></div><div style="width:15px;height:4px;background:#161511;border-radius:3px"></div></div></div>
+        </div>
+        <sc-if value="{{ showBadge }}" hint-placeholder-val="{{ true }}">
+          <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1px;background:#FDFAEF;border:2.5px solid #161511;border-radius:9px;padding:6px 14px;box-shadow:3px 3px 0 #161511;transform:rotate(-3deg)">UNOFFICIAL · FAN-MADE</span>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:92px;font-weight:700;letter-spacing:-4px;line-height:.95">Paczkofast</span>
+        <span style="font-size:22px;font-weight:500;line-height:1.45;max-width:520px">One tap to your parcel. A fast, no-clutter companion app for parcel lockers.</span>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1px;background:#FDFAEF;border:2.5px solid #161511;border-radius:10px;padding:9px 16px;box-shadow:2.5px 2.5px 0 #161511">HOLD-TO-OPEN</span>
+        <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1px;background:#FDFAEF;border:2.5px solid #161511;border-radius:10px;padding:9px 16px;box-shadow:2.5px 2.5px 0 #161511">LIVE TRACKING</span>
+        <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1px;background:#FDFAEF;border:2.5px solid #161511;border-radius:10px;padding:9px 16px;box-shadow:2.5px 2.5px 0 #161511">SMS LOGIN</span>
+      </div>
+    </div>
+
+    <!-- Phone mockup, cropped by banner bottom -->
+    <div style="position:absolute;right:90px;top:64px;transform:rotate(-4deg);width:357px;height:640px;border:3.5px solid #161511;border-radius:42px;background:#FDFAEF;box-shadow:9px 9px 0 #161511;overflow:hidden">
+      <div style="width:412px;height:900px;transform:scale(.85);transform-origin:top left;background:#FDFAEF;color:#161511;display:flex;flex-direction:column;box-sizing:border-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px 8px">
+          <span style="font-size:14px;font-weight:600">9:30</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+            <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 22px 6px">
+          <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:15px;height:15px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+          <span style="font-size:24px;font-weight:700;letter-spacing:-.5px">Paczkofast</span>
+        </div>
+        <div style="flex:1;overflow:hidden;padding:10px 18px 0;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px;padding:0 4px">
+            <div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div>
+            <span style="font-size:16px;font-weight:700">Ready for pickup</span>
+          </div>
+          <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span style="font-size:17px;font-weight:700">TechNova Store</span>
+              <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+            </div>
+            <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C;margin-top:-8px">WAW-04N · DEMO STREET 12</span>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">TIME LEFT</span><span style="font-weight:700;font-size:15px;letter-spacing:-.5px">1D 14H</span></div>
+              <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:68%;height:100%;background:#FFD400"></div></div>
+            </div>
+            <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Open locker</div>
+          </div>
+          <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span style="font-size:17px;font-weight:700">Marta Nowak</span>
+              <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:2px 7px">S</span>
+            </div>
+            <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C;margin-top:-8px">WAW-04N · DEMO STREET 12</span>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">TIME LEFT</span><span style="font-weight:700;color:#E01507;font-size:15px;letter-spacing:-.5px">9H — HURRY!</span></div>
+              <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:19%;height:100%;background:#FF3B25"></div></div>
+            </div>
+            <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Open locker</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 4px 0">
+            <div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div>
+            <span style="font-size:16px;font-weight:700">On the way</span>
+          </div>
+          <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span style="font-size:16px;font-weight:700">BookHive</span>
+              <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">L</span>
+            </div>
+            <div style="display:flex;gap:5px">
+              <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+              <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+              <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+              <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C"><span>OUT FOR DELIVERY · 3/4</span><span>TODAY</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1b — Feature strip 1280×470 ============ -->
+<div id="1b" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px;align-items:flex-start">
+  <div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#1b" style="font:600 10.5px 'Space Mono',monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none">1b</a>Feature strip — 1280×470</div>
+  <div data-screen-label="1b Feature strip" style="width:1280px;height:470px;background:#FDFAEF;border:3px solid #161511;border-radius:28px;box-sizing:border-box;padding:56px 60px;display:flex;flex-direction:column;gap:36px;color:#161511">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px">
+      <span style="font-size:44px;font-weight:700;letter-spacing:-1.5px">Built for the locker run</span>
+      <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;color:#5F5B4C">WHY PACZKOFAST</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;flex:1">
+      <div style="background:#FFF;border:2.5px solid #161511;border-radius:20px;box-shadow:4px 4px 0 #161511;padding:26px;display:flex;flex-direction:column;gap:14px">
+        <div style="width:64px;height:64px;border-radius:50%;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center">
+          <div style="width:30px;height:30px;border:3px solid #161511;border-radius:50%;display:grid;place-items:center"><div style="width:12px;height:12px;background:#161511;border-radius:50%"></div></div>
+        </div>
+        <span style="font-size:24px;font-weight:700;letter-spacing:-.5px">One hold to open</span>
+        <span style="font-size:15px;color:#5F5B4C;line-height:1.5;flex:1">Walk up, hold one big button, and the box pops open. No menus, no digging.</span>
+        <span style="font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:1px;color:#161511">WALK UP · HOLD · POP</span>
+      </div>
+      <div style="background:#FFF;border:2.5px solid #161511;border-radius:20px;box-shadow:4px 4px 0 #161511;padding:26px;display:flex;flex-direction:column;gap:14px">
+        <div style="width:64px;height:64px;border-radius:50%;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center">
+          <div style="display:flex;gap:3.5px"><div style="width:7px;height:22px;background:#161511;border-radius:3px"></div><div style="width:7px;height:22px;background:#161511;border-radius:3px"></div><div style="width:7px;height:22px;background:#161511;border-radius:3px"></div><div style="width:7px;height:22px;border:2.5px solid #161511;border-radius:3px;box-sizing:border-box;background:#FFF"></div></div>
+        </div>
+        <span style="font-size:24px;font-weight:700;letter-spacing:-.5px">Live transit stages</span>
+        <span style="font-size:15px;color:#5F5B4C;line-height:1.5;flex:1">Every parcel on a four-step tracker, with a pickup countdown once it lands in a box.</span>
+        <span style="font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:1px;color:#161511">SENT → TRANSIT → OUT → READY</span>
+      </div>
+      <div style="background:#FFF;border:2.5px solid #161511;border-radius:20px;box-shadow:4px 4px 0 #161511;padding:26px;display:flex;flex-direction:column;gap:14px">
+        <div style="width:64px;height:64px;border-radius:50%;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center">
+          <div style="position:relative;width:28px;height:28px"><div style="position:absolute;left:0;top:0;width:11px;height:11px;border:3px solid #161511;box-sizing:border-box"></div><div style="position:absolute;right:0;top:0;width:11px;height:11px;border:3px solid #161511;box-sizing:border-box"></div><div style="position:absolute;left:0;bottom:0;width:11px;height:11px;border:3px solid #161511;box-sizing:border-box"></div><div style="position:absolute;right:0;bottom:0;width:8px;height:8px;background:#161511"></div></div>
+        </div>
+        <span style="font-size:24px;font-weight:700;letter-spacing:-.5px">Codes always at hand</span>
+        <span style="font-size:15px;color:#5F5B4C;line-height:1.5;flex:1">QR and the 6-digit pickup code are one tap away — a fallback that works even offline.</span>
+        <span style="font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:1px;color:#161511">QR + 6-DIGIT FALLBACK</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1c — Pickup flow showcase 1280×830 ============ -->
+<div id="1c" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px;align-items:flex-start">
+  <div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#1c" style="font:600 10.5px 'Space Mono',monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none">1c</a>Pickup flow showcase — 1280×830, dark</div>
+  <div data-screen-label="1c Pickup flow showcase" style="width:1280px;height:830px;background:#161511;border-radius:28px;box-sizing:border-box;padding:52px 60px;display:flex;flex-direction:column;gap:34px;color:#FDFAEF">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px">
+      <span style="font-size:44px;font-weight:700;letter-spacing:-1.5px">Walk up. Hold. Done.</span>
+      <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;color:#FFD400">THE PICKUP FLOW</span>
+    </div>
+    <div style="display:flex;justify-content:center;gap:64px;flex:1">
+
+      <!-- Phone 1: main screen -->
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+        <div style="width:247.2px;height:540px;border:3px solid #161511;border-radius:34px;background:#FDFAEF;box-shadow:7px 7px 0 #FFD400;overflow:hidden;flex:none">
+          <div style="width:412px;height:900px;transform:scale(.6);transform-origin:top left;background:#FDFAEF;color:#161511;display:flex;flex-direction:column;box-sizing:border-box">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px 8px">
+              <span style="font-size:14px;font-weight:600">9:30</span>
+              <div style="display:flex;align-items:center;gap:5px">
+                <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+                <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 22px 6px">
+              <div style="width:44px;height:44px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;display:grid;place-items:center"><div style="width:15px;height:15px;background:#161511;border-radius:4px;transform:rotate(45deg)"></div></div>
+              <span style="font-size:24px;font-weight:700;letter-spacing:-.5px">Paczkofast</span>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:10px 18px 0;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:8px;padding:0 4px">
+                <div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div>
+                <span style="font-size:16px;font-weight:700">Ready for pickup</span>
+              </div>
+              <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                  <span style="font-size:17px;font-weight:700">TechNova Store</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:#FFD400;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+                </div>
+                <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C;margin-top:-8px">WAW-04N · DEMO STREET 12</span>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">TIME LEFT</span><span style="font-weight:700;font-size:15px;letter-spacing:-.5px">1D 14H</span></div>
+                  <div style="height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF;overflow:hidden"><div style="width:68%;height:100%;background:#FFD400"></div></div>
+                </div>
+                <div style="height:46px;border-radius:12px;background:#FFD400;border:2.5px solid #161511;box-shadow:2.5px 2.5px 0 #161511;display:grid;place-items:center;font-size:15px;font-weight:700">Open locker</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 4px 0">
+                <div style="width:14px;height:14px;background:#FFD400;border:2px solid #161511;border-radius:3px"></div>
+                <span style="font-size:16px;font-weight:700">On the way</span>
+              </div>
+              <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                  <span style="font-size:16px;font-weight:700">BookHive</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">L</span>
+                </div>
+                <div style="display:flex;gap:5px">
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C"><span>OUT FOR DELIVERY · 3/4</span><span>TODAY</span></div>
+              </div>
+              <div style="background:#FFF;border:2.5px solid #161511;border-radius:18px;box-shadow:3px 3px 0 #161511;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                  <span style="font-size:16px;font-weight:700">GreenMarket</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">XS</span>
+                </div>
+                <div style="display:flex;gap:5px">
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FFD400"></div>
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+                  <div style="flex:1;height:12px;border:2px solid #161511;border-radius:7px;background:#FDFAEF"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C"><span>IN TRANSIT · 2/4</span><span>MON JUL 6</span></div>
+              </div>
+            </div>
+            <div style="border-top:2.5px solid #161511;background:#FFF;padding:10px 8px 6px;display:grid;grid-template-columns:1fr 1fr 1fr">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:58px;height:30px;border-radius:10px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center"><div style="width:15px;height:13px;border:2.5px solid #161511;border-radius:3px;position:relative"><div style="position:absolute;left:4.5px;top:-2.5px;width:2.5px;height:6px;background:#161511"></div></div></div>
+                <span style="font-size:12px;font-weight:700">Packages</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="width:15px;height:15px;border:2.5px solid #161511;border-radius:50%;position:relative"><div style="position:absolute;left:5.5px;top:2.5px;width:2.5px;height:5px;background:#161511"></div><div style="position:absolute;left:5.5px;top:5.5px;width:5px;height:2.5px;background:#161511"></div></div></div>
+                <span style="font-size:12px;font-weight:500;color:#5F5B4C">History</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:58px;height:30px;border-radius:10px;display:grid;place-items:center"><div style="display:flex;flex-direction:column;gap:3.5px"><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;left:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div><div style="width:16px;height:2.5px;background:#161511;border-radius:2px;position:relative"><div style="position:absolute;right:2px;top:-2.5px;width:7px;height:7px;border-radius:50%;background:#FFF;border:2.5px solid #161511;box-sizing:border-box"></div></div></div></div>
+                <span style="font-size:12px;font-weight:500;color:#5F5B4C">Settings</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+          <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;color:#FFD400">01 · MY PARCELS</span>
+        </sc-if>
+      </div>
+
+      <!-- Phone 2: hold to open -->
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+        <div style="width:247.2px;height:540px;border:3px solid #161511;border-radius:34px;background:#FDFAEF;box-shadow:7px 7px 0 #FFD400;overflow:hidden;flex:none">
+          <div style="width:412px;height:900px;transform:scale(.6);transform-origin:top left;background:#FDFAEF;color:#161511;display:flex;flex-direction:column;box-sizing:border-box">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px 8px">
+              <span style="font-size:14px;font-weight:600">11:52</span>
+              <div style="display:flex;align-items:center;gap:5px">
+                <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+                <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 22px 4px">
+              <div style="width:34px;height:34px;border-radius:11px;background:#FFF;border:2.5px solid #161511;box-shadow:2px 2px 0 #161511;display:grid;place-items:center"><div style="width:10px;height:10px;border-left:3px solid #161511;border-bottom:3px solid #161511;transform:rotate(45deg);margin-left:4px"></div></div>
+              <span style="font-size:22px;font-weight:700;letter-spacing:-.5px">Open box</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0 26px">
+              <div style="width:280px;height:280px;display:grid;place-items:center;position:relative">
+                <div style="position:absolute;inset:0;border:2.5px dashed #161511;border-radius:50%;opacity:.25"></div>
+                <div style="position:absolute;inset:42px;border:2.5px solid #161511;border-radius:50%;opacity:.5"></div>
+                <div style="width:126px;height:126px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:4px 4px 0 #161511;display:grid;place-items:center">
+                  <div style="width:44px;height:36px;border:3.5px solid #161511;border-radius:8px;position:relative;background:#FFD400"><div style="position:absolute;left:-3.5px;right:-3.5px;top:9px;height:3.5px;background:#161511"></div><div style="position:absolute;left:14px;top:16px;width:9px;height:3.5px;background:#161511;border-radius:2px"></div></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:26px">
+                <span style="font-family:'Space Mono',monospace;font-size:11px;color:#5F5B4C;letter-spacing:2px">LOCKER WAW-04N</span>
+                <span style="font-size:28px;font-weight:700;letter-spacing:-.5px">You're 8 m away</span>
+                <span style="font-size:14px;color:#5F5B4C;text-align:center;line-height:1.4">TechNova Store · M · box will pop open below eye level</span>
+              </div>
+            </div>
+            <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;font-family:'Space Mono',monospace;font-size:11px"><span style="color:#5F5B4C">KEEP HOLDING…</span></div>
+                <div style="height:14px;border:2.5px solid #161511;border-radius:8px;background:#FFF;overflow:hidden"><div style="width:62%;height:100%;background:#FFD400;border-right:2.5px solid #161511"></div></div>
+              </div>
+              <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:1px 1px 0 #161511;transform:translate(2px,2px);display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:700">
+                <div style="width:18px;height:18px;border:2.5px solid #161511;border-radius:50%;border-top-color:transparent;transform:rotate(120deg)"></div>
+                Hold to open
+              </div>
+            </div>
+            <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+          </div>
+        </div>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+          <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;color:#FFD400">02 · HOLD TO OPEN</span>
+        </sc-if>
+      </div>
+
+      <!-- Phone 3: success -->
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+        <div style="width:247.2px;height:540px;border:3px solid #161511;border-radius:34px;background:#FDFAEF;box-shadow:7px 7px 0 #FFD400;overflow:hidden;flex:none">
+          <div style="width:412px;height:900px;transform:scale(.6);transform-origin:top left;background:#FDFAEF;color:#161511;display:flex;flex-direction:column;box-sizing:border-box">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px 8px">
+              <span style="font-size:14px;font-weight:600">11:54</span>
+              <div style="display:flex;align-items:center;gap:5px">
+                <div style="display:flex;align-items:flex-end;gap:1.5px"><div style="width:3px;height:4px;background:#161511;border-radius:1px"></div><div style="width:3px;height:7px;background:#161511;border-radius:1px"></div><div style="width:3px;height:10px;background:#161511;border-radius:1px"></div></div>
+                <div style="width:20px;height:11px;border-radius:3px;background:#161511"></div>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px">
+              <div style="width:150px;height:150px;border-radius:50%;background:#FFD400;border:3px solid #161511;box-shadow:5px 5px 0 #161511;display:grid;place-items:center">
+                <div style="width:52px;height:28px;border-left:7px solid #161511;border-bottom:7px solid #161511;transform:rotate(-45deg);margin-top:-14px"></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:28px">
+                <span style="font-size:32px;font-weight:700;letter-spacing:-.5px">Picked up!</span>
+                <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5F5B4C">BOX A1 CLOSED · TODAY 14:32</span>
+              </div>
+              <div style="background:#FFF;border:2.5px solid #161511;border-radius:16px;box-shadow:3px 3px 0 #161511;padding:13px 16px;display:flex;align-items:center;gap:12px;align-self:stretch;margin-top:26px">
+                <div style="width:26px;height:26px;border-radius:8px;background:#FFD400;border:2px solid #161511;display:grid;place-items:center;flex:none"><div style="width:8px;height:5px;border-left:2.5px solid #161511;border-bottom:2.5px solid #161511;transform:rotate(-45deg);margin-top:-2px"></div></div>
+                <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:700">TechNova Store</span><span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#5F5B4C">COLLECTED · WAW-04N</span></div>
+                <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;border:2px solid #161511;border-radius:7px;padding:2px 7px">M</span>
+              </div>
+            </div>
+            <div style="padding:0 18px 14px">
+              <div style="height:56px;border-radius:14px;background:#FFD400;border:2.5px solid #161511;box-shadow:3px 3px 0 #161511;display:grid;place-items:center;font-size:17px;font-weight:700">Back to my parcels</div>
+            </div>
+            <div style="background:#FDFAEF;display:grid;place-items:center;padding:6px 0 8px"><div style="width:108px;height:4px;border-radius:2px;background:rgba(22,21,17,.4)"></div></div>
+          </div>
+        </div>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+          <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;color:#FFD400">03 · PICKED UP</span>
+        </sc-if>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1420,&quot;height&quot;:2160},&quot;showUnofficialBadge&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero banner&quot;},&quot;showFlowLabels&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Flow showcase&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showBadge: this.props.showUnofficialBadge ?? true,
+      showLabels: this.props.showFlowLabels ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>
