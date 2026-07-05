@@ -39,4 +39,16 @@ subprojects {
             force("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.get()}")
         }
     }
+
+    // Tell the Compose compiler to treat core:model's immutable domain classes as
+    // stable in every Compose module, so composables taking them can skip
+    // recomposition (they live in a non-Compose module and would otherwise be
+    // inferred unstable). Applied wherever the Compose compiler plugin is present.
+    plugins.withId("org.jetbrains.kotlin.plugin.compose") {
+        extensions.configure<org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension> {
+            stabilityConfigurationFiles.add(
+                rootProject.layout.projectDirectory.file("compose_stability.conf"),
+            )
+        }
+    }
 }
