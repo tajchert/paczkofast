@@ -18,9 +18,20 @@ import java.util.Locale
  * snake_case statuses) into the strings and fractions the design shows.
  */
 
+/**
+ * "Pickup reminder sent" — the parcel is already in the locker awaiting
+ * collection and is near its expiry deadline, so it belongs in the
+ * ready-for-pickup section and is treated as last-hours urgent regardless of
+ * the exact remaining-time math. Matched by prefix to cover both the
+ * `pickup_reminder` and `pickup_reminder_sent` wire codes.
+ */
+internal val Parcel.isPickupReminder: Boolean
+    get() = status.startsWith("pickup_reminder", ignoreCase = true)
+
 internal val Parcel.isReadyForPickup: Boolean
     get() = statusGroup?.equals("ready", ignoreCase = true) == true ||
-        status.equals("ready_to_pickup", ignoreCase = true)
+        status.equals("ready_to_pickup", ignoreCase = true) ||
+        isPickupReminder
 
 /** "out_for_delivery" / "DELIVERED" → "Out for delivery" / "Delivered" */
 internal fun humanizeStatus(status: String): String =

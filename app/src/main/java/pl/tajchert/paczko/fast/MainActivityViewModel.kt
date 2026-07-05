@@ -91,13 +91,10 @@ class MainActivityViewModel @Inject constructor(
  * val darkTheme = uiState.shouldUseDarkTheme()
  * ```
  */
-fun MainActivityUiState.shouldUseDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
-    return when (this) {
-        is MainActivityUiState.Loading -> isSystemInDarkTheme
-        is MainActivityUiState.Success -> when (preferences.themeMode) {
-            ThemeMode.SYSTEM -> isSystemInDarkTheme
-            ThemeMode.LIGHT -> false
-            ThemeMode.DARK -> true
-        }
-    }
+fun MainActivityUiState.shouldUseDarkTheme(@Suppress("unused") isSystemInDarkTheme: Boolean): Boolean {
+    // Dark mode is temporarily disabled while the dark palette is unfinished.
+    // Force light everywhere, even for a persisted DARK preference or System on a
+    // dark device. To re-enable, restore the themeMode/isSystemInDarkTheme mapping
+    // and re-add the Dark option in SettingsScreen.
+    return false
 }

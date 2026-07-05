@@ -76,6 +76,22 @@ class ParcelStatusPartitionTest {
     }
 
     @Test
+    fun pickupReminderIsReadyForPickupAndActive() {
+        // "Pickup reminder sent" — parcel is in the locker near expiry. It must
+        // land in the ready-for-pickup section, never in history/picked-up.
+        listOf(
+            parcel("pickup_reminder"),
+            parcel("PICKUP_REMINDER"),
+            parcel("pickup_reminder_sent"),
+        ).forEach {
+            assertTrue("expected reminder: ${it.status}", it.isPickupReminder)
+            assertTrue("expected ready: ${it.status}", it.isReadyForPickup)
+            assertFalse("expected active: ${it.status}", it.isFinished)
+            assertFalse("expected not picked up: ${it.status}", it.isPickedUp)
+        }
+    }
+
+    @Test
     fun activeAndUnknownStatusesAreNotHistory() {
         listOf(
             parcel("READY_TO_PICKUP", "TO_PICKUP"),

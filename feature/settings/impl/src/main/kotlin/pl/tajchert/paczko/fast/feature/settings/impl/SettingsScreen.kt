@@ -109,8 +109,12 @@ private fun SettingsContent(
                     modifier = Modifier.padding(bottom = 12.dp),
                 )
                 SegmentedControl(
-                    options = ThemeMode.entries.map { it to themeModeLabel(it) },
-                    selected = themeMode,
+                    // Dark mode is temporarily hidden while its palette is
+                    // unfinished (see MainActivityViewModel.shouldUseDarkTheme).
+                    options = selectableThemeModes.map { it to themeModeLabel(it) },
+                    // A previously persisted DARK preference would have no matching
+                    // segment, so fall back to showing System as selected.
+                    selected = themeMode.takeIf { it in selectableThemeModes } ?: ThemeMode.SYSTEM,
                     onSelect = onThemeSelected,
                 )
             }
@@ -236,6 +240,10 @@ private fun SectionLabel(text: String) {
         modifier = Modifier.padding(start = 4.dp, top = 6.dp),
     )
 }
+
+// Theme modes offered in Settings. DARK is omitted while dark mode is disabled;
+// add it back here to restore the option.
+private val selectableThemeModes = listOf(ThemeMode.SYSTEM, ThemeMode.LIGHT)
 
 private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
     ThemeMode.SYSTEM -> "System"

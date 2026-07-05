@@ -75,6 +75,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.historyDateLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.historySortKey
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
 import pl.tajchert.paczko.fast.feature.parcels.impl.isFinished
+import pl.tajchert.paczko.fast.feature.parcels.impl.isPickupReminder
 import pl.tajchert.paczko.fast.feature.parcels.impl.isReadyForPickup
 import pl.tajchert.paczko.fast.feature.parcels.impl.CompartmentItem
 import pl.tajchert.paczko.fast.feature.parcels.impl.MultiPackageGroup
@@ -479,7 +480,7 @@ private fun MultiPackageGroupCard(
         deadlineText = countdown?.deadlineText,
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
-        urgent = countdown?.urgent == true,
+        urgent = countdown?.urgent == true || representative.isPickupReminder,
         onClick = onClick,
         onActionClick = onCollectClick,
         modifier = modifier,
@@ -500,7 +501,7 @@ private fun ExpandedReadyCard(
         deadlineText = countdown?.deadlineText,
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
-        urgent = countdown?.urgent == true,
+        urgent = countdown?.urgent == true || parcel.isPickupReminder,
         sizeLabel = parcelSizeLabel(parcel.parcelSize),
         qrContent = null,
         actionText = "Open box remotely".takeIf { parcel.canCollectRemotely },
@@ -522,7 +523,7 @@ private fun CollapsedReadyCard(
         subtitle = lockerLine(parcel),
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
-        urgent = countdown?.urgent == true,
+        urgent = countdown?.urgent == true || parcel.isPickupReminder,
         onClick = onClick,
         modifier = modifier,
     )
