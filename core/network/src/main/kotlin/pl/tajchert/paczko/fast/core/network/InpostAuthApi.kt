@@ -8,6 +8,11 @@ import pl.tajchert.paczko.fast.core.network.dto.SendSmsCodeRequestDto
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+/**
+ * Experimental integration for personal research/learning purposes only.
+ * Paczkofast is unofficial and is not affiliated with, endorsed by, or
+ * supported by the locker operator.
+ */
 interface InpostAuthApi {
     @POST("/v1/account")
     suspend fun requestSmsCode(@Body body: SendSmsCodeRequestDto)

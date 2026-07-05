@@ -20,6 +20,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
+/*
+ * Experimental integration for personal research/learning purposes only.
+ * Paczkofast is an unofficial companion app and is not affiliated with,
+ * endorsed by, or supported by the locker operator.
+ */
 private const val INPOST_BASE_URL = "https://api-inmobile-pl.easypack24.net/global/"
 
 @Qualifier
