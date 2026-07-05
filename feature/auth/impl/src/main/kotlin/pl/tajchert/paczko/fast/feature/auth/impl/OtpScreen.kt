@@ -26,6 +26,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -84,7 +89,11 @@ fun OtpScreen(
                     onValueChange = onCodeChange,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(focusRequester),
+                        .focusRequester(focusRequester)
+                        .semantics {
+                            contentDescription = "SMS code"
+                            stateDescription = "${state.codeDigits.length} of ${AuthViewModel.CODE_LENGTH} digits entered"
+                        },
                     enabled = !state.isLoading,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.NumberPassword,
@@ -226,14 +235,26 @@ private fun ResendChangeRow(
                 text = "RESEND CODE",
                 style = MonoLabel.copy(textDecoration = TextDecoration.Underline),
                 color = PaczkofastTheme.colors.textPrimary,
-                modifier = Modifier.clickable(onClick = onResend),
+                modifier = Modifier
+                    .clickable(
+                        role = Role.Button,
+                        onClickLabel = "Resend code",
+                        onClick = onResend,
+                    )
+                    .semantics { role = Role.Button },
             )
         }
         Text(
             text = "CHANGE NUMBER",
             style = MonoLabel.copy(textDecoration = TextDecoration.Underline),
             color = PaczkofastTheme.colors.textPrimary,
-            modifier = Modifier.clickable(onClick = onChangeNumber),
+            modifier = Modifier
+                .clickable(
+                    role = Role.Button,
+                    onClickLabel = "Change number",
+                    onClick = onChangeNumber,
+                )
+                .semantics { role = Role.Button },
         )
     }
 }

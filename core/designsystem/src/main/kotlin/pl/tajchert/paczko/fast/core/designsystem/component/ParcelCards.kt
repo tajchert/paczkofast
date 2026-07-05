@@ -52,6 +52,15 @@ fun ReadyParcelCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
+        onClickLabel = "Open parcel details",
+        accessibilityLabel = readyParcelAccessibilityLabel(
+            title = title,
+            subtitle = subtitle,
+            deadlineText = deadlineText,
+            timeLeftText = timeLeftText,
+            sizeLabel = sizeLabel,
+            urgent = urgent,
+        ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
@@ -92,6 +101,7 @@ fun ReadyParcelCard(
                     text = it,
                     onClick = onActionClick,
                     isLoading = actionInProgress,
+                    accessibilityLabel = it,
                 )
             }
         }
@@ -115,6 +125,15 @@ fun CollapsedReadyParcelCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
+        onClickLabel = "Open parcel details",
+        accessibilityLabel = readyParcelAccessibilityLabel(
+            title = title,
+            subtitle = subtitle,
+            deadlineText = null,
+            timeLeftText = timeLeftText,
+            sizeLabel = null,
+            urgent = urgent,
+        ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -186,6 +205,14 @@ fun TransitParcelCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
+        onClickLabel = "Open parcel details",
+        accessibilityLabel = transitParcelAccessibilityLabel(
+            title = title,
+            statusText = statusText,
+            sizeLabel = sizeLabel,
+            completedSegments = completedSegments,
+            totalSegments = totalSegments,
+        ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
@@ -210,6 +237,36 @@ fun TransitParcelCard(
         }
     }
 }
+
+private fun readyParcelAccessibilityLabel(
+    title: String,
+    subtitle: String,
+    deadlineText: String?,
+    timeLeftText: String?,
+    sizeLabel: String?,
+    urgent: Boolean,
+): String = buildList {
+    add(title)
+    add("Ready for pickup")
+    add(subtitle)
+    sizeLabel?.let { add("Size $it") }
+    deadlineText?.let { add(it) }
+    timeLeftText?.let { add(it) }
+    if (urgent) add("Urgent")
+}.joinToString(", ")
+
+private fun transitParcelAccessibilityLabel(
+    title: String,
+    statusText: String,
+    sizeLabel: String?,
+    completedSegments: Int,
+    totalSegments: Int,
+): String = buildList {
+    add(title)
+    add(statusText)
+    sizeLabel?.let { add("Size $it") }
+    add("${completedSegments.coerceIn(0, totalSegments)} of $totalSegments delivery steps complete")
+}.joinToString(", ")
 
 /**
  * Deadline line + countdown + progress bar shared by ready cards and the

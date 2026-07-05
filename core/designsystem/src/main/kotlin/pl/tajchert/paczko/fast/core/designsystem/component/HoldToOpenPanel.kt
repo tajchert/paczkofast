@@ -39,6 +39,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -96,7 +101,15 @@ fun HoldToOpenPanel(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                stateDescription = if (enabled) {
+                    "Ready to open"
+                } else {
+                    "Disabled"
+                }
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
@@ -158,7 +171,12 @@ private fun DistanceRing(
     val trackColor = PaczkofastTheme.colors.trackBackground
     val accent = PaczkofastTheme.colors.accent
     Box(
-        modifier = Modifier.size(216.dp),
+        modifier = Modifier
+            .size(216.dp)
+            .semantics {
+                contentDescription = "$distanceText, $caption"
+                progressBarRangeInfo = ProgressBarRangeInfo(progress.coerceIn(0f, 1f), 0f..1f)
+            },
         contentAlignment = Alignment.Center,
     ) {
         Canvas(modifier = Modifier.size(216.dp)) {
@@ -241,6 +259,14 @@ private fun HoldBar(
                             currentOnPressChange(false)
                         },
                     )
+                }
+                .semantics {
+                    contentDescription = "Hold to open"
+                    stateDescription = when {
+                        !enabled -> "Disabled"
+                        holding -> "Keep holding"
+                        else -> "Press and hold to open"
+                    }
                 },
             shape = RoundedCornerShape(14.dp),
             fill = PaczkofastTheme.colors.accent,
@@ -277,7 +303,13 @@ private fun HoldBar(
 @Composable
 private fun HoldProgressBar(progress: Float) {
     val clamped = progress.coerceIn(0f, 1f)
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(
+        modifier = Modifier.semantics {
+            progressBarRangeInfo = ProgressBarRangeInfo(clamped, 0f..1f)
+            stateDescription = "${(clamped * 100).toInt()} percent"
+        },
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
         Text(
             text = "Keep holding…".uppercase(),
             style = MonoLabel,

@@ -57,6 +57,15 @@ fun MultiPackageCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
+        onClickLabel = "Open shared box details",
+        accessibilityLabel = multiPackageAccessibilityLabel(
+            title = title,
+            subtitle = subtitle,
+            members = members,
+            deadlineText = deadlineText,
+            timeLeftText = timeLeftText,
+            urgent = urgent,
+        ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
@@ -111,10 +120,31 @@ fun MultiPackageCard(
                 text = "Open box · ${members.size} parcels",
                 onClick = onActionClick,
                 isLoading = actionInProgress,
+                accessibilityLabel = "Open box with ${members.size} parcels",
             )
         }
     }
 }
+
+private fun multiPackageAccessibilityLabel(
+    title: String,
+    subtitle: String,
+    members: List<MultiPackageMember>,
+    deadlineText: String?,
+    timeLeftText: String?,
+    urgent: Boolean,
+): String = buildList {
+    add("${members.size} parcels in one box")
+    add(title)
+    add(subtitle)
+    val memberSummary = members.joinToString { member ->
+        listOfNotNull(member.title, member.sizeLabel?.let { "size $it" }).joinToString(", ")
+    }
+    if (memberSummary.isNotBlank()) add(memberSummary)
+    deadlineText?.let { add(it) }
+    timeLeftText?.let { add(it) }
+    if (urgent) add("Urgent")
+}.joinToString(", ")
 
 /** Small yellow mono "×N" pill used on multi-package cards/rows. */
 @Composable

@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
@@ -39,7 +41,8 @@ fun SizeBadge(
         modifier = modifier
             .clip(SizeBadgeShape)
             .background(fill)
-            .border(width = 2.dp, color = borderColor, shape = SizeBadgeShape),
+            .border(width = 2.dp, color = borderColor, shape = SizeBadgeShape)
+            .semantics { contentDescription = "Size ${size.uppercase()}" },
     ) {
         Text(
             text = size.uppercase(),

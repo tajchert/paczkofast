@@ -25,6 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -144,7 +147,11 @@ private fun SettingsContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showLogoutDialog = true }
+                        .clickable(
+                            role = Role.Button,
+                            onClickLabel = "Log out",
+                        ) { showLogoutDialog = true }
+                        .semantics { role = Role.Button }
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

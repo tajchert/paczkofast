@@ -27,6 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -117,8 +120,11 @@ fun HeaderIconButton(
                 interactionSource = interactionSource,
                 indication = null,
                 enabled = enabled,
+                role = Role.Button,
+                onClickLabel = contentDescription,
                 onClick = onClick,
-            ),
+            )
+            .semantics { role = Role.Button },
         shape = CircleShape,
         fill = PaczkofastTheme.colors.headerIconBackground,
         borderColor = PaczkofastTheme.colors.borderStrong,

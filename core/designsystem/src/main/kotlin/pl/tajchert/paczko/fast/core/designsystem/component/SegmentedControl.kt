@@ -2,7 +2,6 @@ package pl.tajchert.paczko.fast.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -41,6 +46,7 @@ fun <T> SegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .selectableGroup()
             .clip(RoundedCornerShape(12.dp))
             .background(PaczkofastTheme.colors.background)
             .border(2.5.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(12.dp))
@@ -76,11 +82,17 @@ private fun RowScope.SegmentedItem(
                     Modifier
                 },
             )
-            .clickable(
+            .selectable(
+                selected = selected,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
+                role = Role.RadioButton,
                 onClick = onClick,
-            ),
+            )
+            .semantics {
+                contentDescription = label
+                stateDescription = if (selected) "Selected" else "Not selected"
+            },
         contentAlignment = Alignment.Center,
     ) {
         Text(

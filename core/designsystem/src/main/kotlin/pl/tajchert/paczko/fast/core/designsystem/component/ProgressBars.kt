@@ -18,6 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
@@ -48,7 +52,17 @@ fun DeadlineProgressBar(
     value: String? = null,
 ) {
     val fillColor = if (urgent) PaczkofastTheme.colors.alertFill else PaczkofastTheme.colors.accent
-    Column(modifier = modifier.fillMaxWidth()) {
+    val clampedProgress = progress.coerceIn(0f, 1f)
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                progressBarRangeInfo = ProgressBarRangeInfo(clampedProgress, 0f..1f)
+                stateDescription = listOfNotNull(label, value).joinToString(", ").ifBlank {
+                    "${(clampedProgress * 100).toInt()} percent remaining"
+                }
+            },
+    ) {
         if (label != null || value != null) {
             Row(
                 modifier = Modifier
@@ -79,11 +93,11 @@ fun DeadlineProgressBar(
                 .height(BarHeight)
                 .clip(BarShape)
                 .background(PaczkofastTheme.colors.trackBackground)
-                .border(BarBorderWidth, PaczkofastTheme.colors.borderStrong, BarShape),
+                    .border(BarBorderWidth, PaczkofastTheme.colors.borderStrong, BarShape),
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(progress.coerceIn(0f, 1f))
+                    .fillMaxWidth(clampedProgress)
                     .fillMaxHeight()
                     .clip(BarShape)
                     .background(fillColor),
@@ -112,13 +126,29 @@ fun SegmentedProgressBar(
     statusLabel: String? = null,
     etaLabel: String? = null,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    val clampedCompleted = completedSegments.coerceIn(0, totalSegments)
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                progressBarRangeInfo = ProgressBarRangeInfo(
+                    current = clampedCompleted.toFloat(),
+                    range = 0f..totalSegments.toFloat(),
+                    steps = (totalSegments - 1).coerceAtLeast(0),
+                )
+                stateDescription = listOfNotNull(
+                    statusLabel,
+                    etaLabel,
+                    "$clampedCompleted of $totalSegments steps complete",
+                ).joinToString(", ")
+            },
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             repeat(totalSegments) { index ->
-                val filled = index < completedSegments
+                val filled = index < clampedCompleted
                 val color = if (filled) {
                     PaczkofastTheme.colors.accent
                 } else {

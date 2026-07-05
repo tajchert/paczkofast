@@ -14,6 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -44,6 +48,8 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 fun PaczkofastCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    onClickLabel: String? = null,
+    accessibilityLabel: String? = null,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -58,8 +64,20 @@ fun PaczkofastCard(
                     Modifier.clickable(
                         interactionSource = interactionSource,
                         indication = null,
+                        role = Role.Button,
+                        onClickLabel = onClickLabel,
                         onClick = onClick,
                     )
+                } else {
+                    Modifier
+                },
+            )
+            .then(
+                if (accessibilityLabel != null) {
+                    Modifier.semantics(mergeDescendants = true) {
+                        contentDescription = accessibilityLabel
+                        if (onClick != null) role = Role.Button
+                    }
                 } else {
                     Modifier
                 },
@@ -86,6 +104,8 @@ fun PaczkofastCard(
 fun PaczkofastElevatedCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    onClickLabel: String? = null,
+    accessibilityLabel: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -99,8 +119,20 @@ fun PaczkofastElevatedCard(
                     Modifier.clickable(
                         interactionSource = interactionSource,
                         indication = null,
+                        role = Role.Button,
+                        onClickLabel = onClickLabel,
                         onClick = onClick,
                     )
+                } else {
+                    Modifier
+                },
+            )
+            .then(
+                if (accessibilityLabel != null) {
+                    Modifier.semantics(mergeDescendants = true) {
+                        contentDescription = accessibilityLabel
+                        if (onClick != null) role = Role.Button
+                    }
                 } else {
                     Modifier
                 },

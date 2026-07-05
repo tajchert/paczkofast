@@ -82,6 +82,8 @@ fun HistoryParcelCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
+        onClickLabel = "Open parcel details",
+        accessibilityLabel = "$title, $outcomeLine, $dateText",
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

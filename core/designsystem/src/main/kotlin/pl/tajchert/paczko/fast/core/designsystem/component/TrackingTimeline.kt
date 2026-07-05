@@ -23,6 +23,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +74,21 @@ private fun TimelineRow(
     isLast: Boolean,
 ) {
     Row(
-        modifier = Modifier.height(IntrinsicSize.Min),
+        modifier = Modifier
+            .height(IntrinsicSize.Min)
+            .semantics(mergeDescendants = true) {
+                contentDescription = buildList {
+                    add(event.label)
+                    event.time?.let { add(it) }
+                    add(
+                        when {
+                            event.isCurrent -> "Current status"
+                            event.isUpcoming -> "Upcoming"
+                            else -> "Completed"
+                        },
+                    )
+                }.joinToString(", ")
+            },
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(

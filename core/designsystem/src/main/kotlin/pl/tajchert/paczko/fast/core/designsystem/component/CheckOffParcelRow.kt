@@ -3,7 +3,6 @@ package pl.tajchert.paczko.fast.core.designsystem.component
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +24,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.selection.toggleable
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -54,11 +58,17 @@ fun CheckOffParcelRow(
     NeoSurface(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(
+            .toggleable(
+                value = checked,
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onToggle,
-            ),
+                role = Role.Checkbox,
+                onValueChange = { onToggle() },
+            )
+            .semantics(mergeDescendants = true) {
+                contentDescription = "$sender, size $size"
+                stateDescription = if (checked) "Taken" else "Still in the box"
+            },
         shape = CheckOffParcelRowShape,
         fill = colors.cardSurface,
         borderColor = colors.borderStrong,

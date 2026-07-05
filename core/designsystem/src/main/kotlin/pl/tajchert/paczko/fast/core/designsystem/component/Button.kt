@@ -18,6 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
@@ -56,6 +60,7 @@ fun PaczkofastButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     text: String,
+    accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
@@ -71,8 +76,10 @@ fun PaczkofastButton(
                 indication = null,
                 enabled = isEnabled,
                 role = Role.Button,
+                onClickLabel = accessibilityLabel,
                 onClick = onClick,
-            ),
+            )
+            .then(Modifier.loadingSemantics(isLoading, accessibilityLabel)),
         shape = RoundedCornerShape(14.dp),
         fill = if (isEnabled) colors.accent else colors.accentDisabled,
         borderColor = colors.borderStrong,
@@ -109,6 +116,7 @@ fun PaczkofastOutlinedButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     text: String,
+    accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
@@ -124,8 +132,10 @@ fun PaczkofastOutlinedButton(
                 indication = null,
                 enabled = isEnabled,
                 role = Role.Button,
+                onClickLabel = accessibilityLabel,
                 onClick = onClick,
-            ),
+            )
+            .then(Modifier.loadingSemantics(isLoading, accessibilityLabel)),
         shape = RoundedCornerShape(14.dp),
         fill = colors.cardSurface,
         borderColor = colors.outlineButtonBorder,
@@ -161,11 +171,18 @@ fun PaczkofastTextButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     text: String,
+    accessibilityLabel: String = text,
 ) {
     Box(
         modifier = modifier
             .heightIn(min = 48.dp)
-            .clickable(enabled = enabled, onClick = onClick)
+            .clickable(
+                enabled = enabled,
+                role = Role.Button,
+                onClickLabel = accessibilityLabel,
+                onClick = onClick,
+            )
+            .semantics { role = Role.Button }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -177,6 +194,19 @@ fun PaczkofastTextButton(
             },
         )
     }
+}
+
+private fun Modifier.loadingSemantics(
+    isLoading: Boolean,
+    accessibilityLabel: String,
+): Modifier = if (isLoading) {
+    semantics {
+        role = Role.Button
+        contentDescription = accessibilityLabel
+        stateDescription = "Loading"
+    }
+} else {
+    semantics { role = Role.Button }
 }
 
 /**

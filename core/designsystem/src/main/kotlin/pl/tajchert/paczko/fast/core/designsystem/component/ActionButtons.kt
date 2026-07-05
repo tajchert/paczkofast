@@ -35,6 +35,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -52,6 +57,7 @@ fun PrimaryActionButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
@@ -66,8 +72,11 @@ fun PrimaryActionButton(
                 interactionSource = interactionSource,
                 indication = null,
                 enabled = isEnabled,
+                role = Role.Button,
+                onClickLabel = accessibilityLabel,
                 onClick = onClick,
-            ),
+            )
+            .then(Modifier.actionLoadingSemantics(isLoading, accessibilityLabel)),
         shape = ActionButtonShape,
         fill = if (isEnabled) colors.accent else colors.accentDisabled,
         borderColor = colors.borderStrong,
@@ -103,6 +112,7 @@ fun OutlinedActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
@@ -116,8 +126,11 @@ fun OutlinedActionButton(
                 interactionSource = interactionSource,
                 indication = null,
                 enabled = enabled,
+                role = Role.Button,
+                onClickLabel = accessibilityLabel,
                 onClick = onClick,
-            ),
+            )
+            .semantics { role = Role.Button },
         shape = ActionButtonShape,
         fill = colors.cardSurface,
         borderColor = colors.borderStrong,
@@ -145,6 +158,7 @@ fun HoldToConfirmButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     holdDurationMillis: Int = 1200,
+    accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
     val controller = remember(holdDurationMillis) { HoldProgress(holdDurationMillis.toLong()) }
@@ -191,6 +205,14 @@ fun HoldToConfirmButton(
                         pressed = false
                     },
                 )
+            }
+            .semantics {
+                contentDescription = accessibilityLabel
+                stateDescription = if (enabled) {
+                    "Press and hold to confirm"
+                } else {
+                    "Disabled"
+                }
             },
     ) {
         Row(
@@ -218,6 +240,19 @@ fun HoldToConfirmButton(
             )
         }
     }
+}
+
+private fun Modifier.actionLoadingSemantics(
+    isLoading: Boolean,
+    accessibilityLabel: String,
+): Modifier = if (isLoading) {
+    semantics {
+        role = Role.Button
+        contentDescription = accessibilityLabel
+        stateDescription = "Loading"
+    }
+} else {
+    semantics { role = Role.Button }
 }
 
 @PaczkofastPreviews

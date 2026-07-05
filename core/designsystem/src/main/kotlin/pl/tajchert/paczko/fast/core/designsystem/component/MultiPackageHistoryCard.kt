@@ -44,6 +44,16 @@ fun MultiPackageHistoryCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
+        onClickLabel = "Open shared box details",
+        accessibilityLabel = buildList {
+            add("$count parcels in one box")
+            add(outcomeLine)
+            add(dateText)
+            val memberSummary = members.joinToString { member ->
+                listOfNotNull(member.title, member.sizeLabel?.let { "size $it" }).joinToString(", ")
+            }
+            if (memberSummary.isNotBlank()) add(memberSummary)
+        }.joinToString(", "),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(11.dp)) {
             Row(
