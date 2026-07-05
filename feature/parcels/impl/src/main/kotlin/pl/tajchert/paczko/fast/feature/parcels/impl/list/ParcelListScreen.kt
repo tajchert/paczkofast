@@ -30,10 +30,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -93,6 +90,8 @@ import java.time.YearMonth
  */
 @Composable
 fun ParcelListScreen(
+    selectedTab: BottomNavDestination,
+    onSelectTab: (BottomNavDestination) -> Unit,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
@@ -103,6 +102,8 @@ fun ParcelListScreen(
 
     ParcelListContent(
         uiState = uiState,
+        selectedTab = selectedTab,
+        onSelectTab = onSelectTab,
         onParcelClick = onParcelClick,
         onOpenBox = onOpenBox,
         onCollectClick = onCollectClick,
@@ -116,6 +117,8 @@ fun ParcelListScreen(
 @Composable
 private fun ParcelListContent(
     uiState: ParcelListUiState,
+    selectedTab: BottomNavDestination,
+    onSelectTab: (BottomNavDestination) -> Unit,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
@@ -124,7 +127,6 @@ private fun ParcelListContent(
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedTab by rememberSaveable { mutableStateOf(BottomNavDestination.Parcels) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Surface refresh failures as a self-dismissing snackbar, but only when we
@@ -157,7 +159,7 @@ private fun ParcelListContent(
                     if (destination == BottomNavDestination.Settings) {
                         onOpenSettings()
                     } else {
-                        selectedTab = destination
+                        onSelectTab(destination)
                     }
                 },
             )
@@ -611,6 +613,8 @@ private fun ParcelListContentPreview(
     PaczkofastTheme {
         ParcelListContent(
             uiState = uiState,
+            selectedTab = BottomNavDestination.Parcels,
+            onSelectTab = {},
             onParcelClick = {},
             onOpenBox = {},
             onCollectClick = {},

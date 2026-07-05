@@ -1,6 +1,10 @@
 package pl.tajchert.paczko.fast.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
@@ -10,6 +14,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import pl.tajchert.paczko.fast.BuildConfig
+import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
 import pl.tajchert.paczko.fast.feature.auth.api.AuthRoute
 import pl.tajchert.paczko.fast.feature.auth.impl.navigation.authEntries
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelListRoute
@@ -67,6 +72,11 @@ fun PaczkofastNavHost(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey> = rememberNavBackStack(startDestination),
 ) {
+    // Which bottom-nav tab the parcel-list shell shows. Hoisted above the back
+    // stack (not kept inside ParcelListScreen) so returning from the Settings
+    // route can select the requested tab instead of whatever tab was last shown.
+    var parcelTab by rememberSaveable { mutableStateOf(BottomNavDestination.Parcels) }
+
     NavDisplay(
         backStack = backStack,
         modifier = modifier,
@@ -93,16 +103,25 @@ fun PaczkofastNavHost(
             )
 
             parcelEntries(
+                selectedTab = { parcelTab },
+                onSelectTab = { parcelTab = it },
                 onNavigate = { key -> backStack.add(key) },
                 onBack = { backStack.popEntry() },
                 onOpenSettings = { backStack.add(SettingsRoute) },
             )
 
             settingsEntries(
-                // Settings sits on top of the parcel list; returning to either
-                // tab just pops back to it (its own tab state is preserved).
-                onOpenParcels = { backStack.popEntry() },
-                onOpenHistory = { backStack.popEntry() },
+                // Settings sits on top of the parcel list; returning selects the
+                // requested tab before popping back so the list shows it (rather
+                // than whatever tab was last active).
+                onOpenParcels = {
+                    parcelTab = BottomNavDestination.Parcels
+                    backStack.popEntry()
+                },
+                onOpenHistory = {
+                    parcelTab = BottomNavDestination.History
+                    backStack.popEntry()
+                },
                 onLoggedOut = {
                     backStack.clear()
                     backStack.add(AuthRoute)
