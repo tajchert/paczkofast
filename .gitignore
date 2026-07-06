@@ -37,3 +37,6 @@ google-services.json
 # Local design artifacts may contain real parcel/account data.
 paczkofast-app-design/
 package-tracking-app-design/
+
+# Claude Code local worktrees and session state
+.claude/
