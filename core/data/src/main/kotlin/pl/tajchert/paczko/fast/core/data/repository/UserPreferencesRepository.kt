@@ -2,6 +2,7 @@ package pl.tajchert.paczko.fast.core.data.repository
 
 import pl.tajchert.paczko.fast.core.datastore.UserPreferencesDataSource
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +38,8 @@ interface UserPreferencesRepository {
     suspend fun setHasSeenOnboarding(seen: Boolean)
 
     suspend fun setLockerOpenMode(mode: LockerOpenMode)
+
+    suspend fun setParcelListOpenButtonMode(mode: ParcelListOpenButtonMode)
 }
 
 /**
@@ -58,5 +61,9 @@ class DefaultUserPreferencesRepository @Inject constructor(
 
     override suspend fun setLockerOpenMode(mode: LockerOpenMode) {
         dataSource.setLockerOpenMode(mode)
+    }
+
+    override suspend fun setParcelListOpenButtonMode(mode: ParcelListOpenButtonMode) {
+        dataSource.setParcelListOpenButtonMode(mode)
     }
 }

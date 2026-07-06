@@ -4,4 +4,5 @@ data class UserPreferences(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val hasSeenOnboarding: Boolean = false,
     val lockerOpenMode: LockerOpenMode = LockerOpenMode.HOLD,
+    val parcelListOpenButtonMode: ParcelListOpenButtonMode = ParcelListOpenButtonMode.FIRST,
 )

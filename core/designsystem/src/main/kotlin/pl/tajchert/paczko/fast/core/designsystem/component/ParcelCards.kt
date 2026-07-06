@@ -124,6 +124,9 @@ fun CollapsedReadyParcelCard(
     timeLeftText: String? = null,
     progress: Float? = null,
     urgent: Boolean = false,
+    actionText: String? = null,
+    onActionClick: () -> Unit = {},
+    actionInProgress: Boolean = false,
 ) {
     val openDetails = stringResource(R.string.open_parcel_details)
     PaczkofastCard(
@@ -139,54 +142,64 @@ fun CollapsedReadyParcelCard(
             urgent = urgent,
         ),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = PaczkofastTheme.colors.textPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = subtitle.uppercase(),
-                    style = MonoLabelLarge,
-                    color = PaczkofastTheme.colors.monoLabel,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            if (timeLeftText != null || progress != null) {
-                val countdownColor = if (urgent) {
-                    PaczkofastTheme.colors.alertText
-                } else {
-                    PaczkofastTheme.colors.textPrimary
-                }
                 Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(3.dp),
                 ) {
-                    timeLeftText?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.5.sp),
-                            color = countdownColor,
-                        )
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = PaczkofastTheme.colors.textPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = subtitle.uppercase(),
+                        style = MonoLabelLarge,
+                        color = PaczkofastTheme.colors.monoLabel,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (timeLeftText != null || progress != null) {
+                    val countdownColor = if (urgent) {
+                        PaczkofastTheme.colors.alertText
+                    } else {
+                        PaczkofastTheme.colors.textPrimary
                     }
-                    progress?.let {
-                        DeadlineProgressBar(
-                            progress = it,
-                            urgent = urgent,
-                            modifier = Modifier.width(56.dp),
-                        )
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        timeLeftText?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.5.sp),
+                                color = countdownColor,
+                            )
+                        }
+                        progress?.let {
+                            DeadlineProgressBar(
+                                progress = it,
+                                urgent = urgent,
+                                modifier = Modifier.width(56.dp),
+                            )
+                        }
                     }
                 }
+            }
+            actionText?.let {
+                PrimaryActionButton(
+                    text = it,
+                    onClick = onActionClick,
+                    isLoading = actionInProgress,
+                    accessibilityLabel = it,
+                )
             }
         }
     }

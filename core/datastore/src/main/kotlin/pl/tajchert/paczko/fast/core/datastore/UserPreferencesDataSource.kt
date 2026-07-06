@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pl.tajchert.paczko.fast.core.datastore.di.UserPreferencesDataStore
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import javax.inject.Inject
@@ -68,10 +69,14 @@ class UserPreferencesDataSource @Inject constructor(
         val lockerOpenMode = preferences[LOCKER_OPEN_MODE]
             ?.let { runCatching { LockerOpenMode.valueOf(it) }.getOrNull() }
             ?: LockerOpenMode.HOLD
+        val parcelListOpenButtonMode = preferences[PARCEL_LIST_OPEN_BUTTON_MODE]
+            ?.let { runCatching { ParcelListOpenButtonMode.valueOf(it) }.getOrNull() }
+            ?: ParcelListOpenButtonMode.FIRST
         UserPreferences(
             themeMode = themeMode,
             hasSeenOnboarding = hasSeenOnboarding,
             lockerOpenMode = lockerOpenMode,
+            parcelListOpenButtonMode = parcelListOpenButtonMode,
         )
     }
 
@@ -109,6 +114,15 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Set the parcel-list open button visibility preference.
+     */
+    suspend fun setParcelListOpenButtonMode(mode: ParcelListOpenButtonMode) {
+        dataStore.edit { preferences ->
+            preferences[PARCEL_LIST_OPEN_BUTTON_MODE] = mode.name
+        }
+    }
+
     companion object {
         /**
          * Preference keys.
@@ -121,5 +135,6 @@ class UserPreferencesDataSource @Inject constructor(
         private val THEME_MODE = stringPreferencesKey("theme_mode")
         private val HAS_SEEN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding")
         private val LOCKER_OPEN_MODE = stringPreferencesKey("locker_open_mode")
+        private val PARCEL_LIST_OPEN_BUTTON_MODE = stringPreferencesKey("parcel_list_open_button_mode")
     }
 }

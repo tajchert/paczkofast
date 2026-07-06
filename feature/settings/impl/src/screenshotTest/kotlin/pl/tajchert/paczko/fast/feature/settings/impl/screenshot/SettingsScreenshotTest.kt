@@ -5,6 +5,7 @@ import com.android.tools.screenshot.PreviewTest
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.feature.settings.impl.SettingsContent
 
@@ -25,10 +26,12 @@ private fun SettingsScreenshot() {
         SettingsContent(
             themeMode = ThemeMode.DARK,
             lockerOpenMode = LockerOpenMode.HOLD,
+            parcelListOpenButtonMode = ParcelListOpenButtonMode.FIRST,
             phoneNumber = "+48 000 000 000",
             appVersion = "1.0.0 (1)",
             onThemeSelected = {},
             onOpenModeSelected = {},
+            onParcelListOpenButtonModeSelected = {},
             onLogout = {},
             onOpenParcels = {},
             onOpenHistory = {},

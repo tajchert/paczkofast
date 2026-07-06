@@ -54,6 +54,7 @@ fun MultiPackageCard(
     timeLeftText: String? = null,
     progress: Float? = null,
     urgent: Boolean = false,
+    showAction: Boolean = true,
     actionInProgress: Boolean = false,
 ) {
     val colors = PaczkofastTheme.colors
@@ -124,12 +125,14 @@ fun MultiPackageCard(
                 )
             }
 
-            PrimaryActionButton(
-                text = pluralStringResource(R.plurals.open_box_parcels, count, count),
-                onClick = onActionClick,
-                isLoading = actionInProgress,
-                accessibilityLabel = pluralStringResource(R.plurals.open_box_with_parcels, count, count),
-            )
+            if (showAction) {
+                PrimaryActionButton(
+                    text = pluralStringResource(R.plurals.open_box_parcels, count, count),
+                    onClick = onActionClick,
+                    isLoading = actionInProgress,
+                    accessibilityLabel = pluralStringResource(R.plurals.open_box_with_parcels, count, count),
+                )
+            }
         }
     }
 }

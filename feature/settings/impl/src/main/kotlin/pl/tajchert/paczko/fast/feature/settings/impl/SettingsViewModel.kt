@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 
 @HiltViewModel
@@ -28,6 +29,7 @@ class SettingsViewModel @Inject constructor(
             themeMode = preferences.themeMode,
             phoneNumber = phoneNumber,
             lockerOpenMode = preferences.lockerOpenMode,
+            parcelListOpenButtonMode = preferences.parcelListOpenButtonMode,
         )
     }
         .stateIn(
@@ -48,6 +50,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setParcelListOpenButtonMode(mode: ParcelListOpenButtonMode) {
+        viewModelScope.launch {
+            userPreferencesRepository.setParcelListOpenButtonMode(mode)
+        }
+    }
+
     fun logout(onDone: () -> Unit) {
         viewModelScope.launch {
             authRepository.logout()
@@ -60,4 +68,5 @@ data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val phoneNumber: String? = null,
     val lockerOpenMode: LockerOpenMode = LockerOpenMode.HOLD,
+    val parcelListOpenButtonMode: ParcelListOpenButtonMode = ParcelListOpenButtonMode.FIRST,
 )

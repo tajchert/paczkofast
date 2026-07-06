@@ -10,6 +10,7 @@ import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.domain.ObserveAuthSessionUseCase
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import pl.tajchert.paczko.fast.core.model.auth.AuthSession
@@ -107,6 +108,8 @@ private class FakeUserPreferencesRepository(
     override suspend fun setHasSeenOnboarding(seen: Boolean) = Unit
 
     override suspend fun setLockerOpenMode(mode: LockerOpenMode) = Unit
+
+    override suspend fun setParcelListOpenButtonMode(mode: ParcelListOpenButtonMode) = Unit
 }
 
 private class FakeAuthRepository(

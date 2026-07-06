@@ -3,6 +3,7 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.list
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 
 /**
@@ -18,4 +19,5 @@ data class ParcelListUiState(
     val errorMessage: String? = null,
     /** First load with no cached parcels yet — show a full-screen spinner. */
     val isLoading: Boolean = false,
+    val openButtonMode: ParcelListOpenButtonMode = ParcelListOpenButtonMode.FIRST,
 )

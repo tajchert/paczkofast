@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pl.tajchert.paczko.fast.core.common.result.Result
 import pl.tajchert.paczko.fast.core.common.result.asResult
+import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.domain.ObserveParcelsUseCase
 import pl.tajchert.paczko.fast.core.domain.RefreshParcelsUseCase
 import javax.inject.Inject
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class ParcelListViewModel @Inject constructor(
     observeParcels: ObserveParcelsUseCase,
     private val refreshParcels: RefreshParcelsUseCase,
+    userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     private val refreshState = MutableStateFlow(RefreshState())
@@ -34,17 +36,20 @@ class ParcelListViewModel @Inject constructor(
     val uiState: StateFlow<ParcelListUiState> = combine(
         observeParcels().asResult(),
         refreshState,
-    ) { parcelsResult, refreshState ->
+        userPreferencesRepository.userPreferences,
+    ) { parcelsResult, refreshState, preferences ->
         when (parcelsResult) {
             is Result.Loading -> ParcelListUiState(
                 isRefreshing = refreshState.isRefreshing,
                 errorMessage = refreshState.errorMessage,
                 isLoading = true,
+                openButtonMode = preferences.parcelListOpenButtonMode,
             )
             is Result.Success -> ParcelListUiState(
                 parcels = parcelsResult.data.toImmutableList(),
                 isRefreshing = refreshState.isRefreshing,
                 errorMessage = refreshState.errorMessage,
+                openButtonMode = preferences.parcelListOpenButtonMode,
                 // First load: cache is empty and we're still fetching, no error yet.
                 isLoading = parcelsResult.data.isEmpty() &&
                     refreshState.isRefreshing &&
@@ -53,6 +58,7 @@ class ParcelListViewModel @Inject constructor(
             is Result.Error -> ParcelListUiState(
                 isRefreshing = refreshState.isRefreshing,
                 errorMessage = parcelsResult.exception.message ?: "Nie udało się wczytać paczek",
+                openButtonMode = preferences.parcelListOpenButtonMode,
             )
         }
     }.stateIn(

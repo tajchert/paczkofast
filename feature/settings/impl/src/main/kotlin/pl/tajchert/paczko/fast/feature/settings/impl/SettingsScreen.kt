@@ -42,6 +42,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.SegmentedControl
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 
 @Composable
@@ -56,10 +57,12 @@ fun SettingsScreen(
     SettingsContent(
         themeMode = uiState.themeMode,
         lockerOpenMode = uiState.lockerOpenMode,
+        parcelListOpenButtonMode = uiState.parcelListOpenButtonMode,
         phoneNumber = uiState.phoneNumber,
         appVersion = appVersion,
         onThemeSelected = viewModel::setThemeMode,
         onOpenModeSelected = viewModel::setLockerOpenMode,
+        onParcelListOpenButtonModeSelected = viewModel::setParcelListOpenButtonMode,
         onLogout = { viewModel.logout(onLoggedOut) },
         onOpenParcels = onOpenParcels,
         onOpenHistory = onOpenHistory,
@@ -70,10 +73,12 @@ fun SettingsScreen(
 internal fun SettingsContent(
     themeMode: ThemeMode,
     lockerOpenMode: LockerOpenMode,
+    parcelListOpenButtonMode: ParcelListOpenButtonMode,
     phoneNumber: String?,
     appVersion: String,
     onThemeSelected: (ThemeMode) -> Unit,
     onOpenModeSelected: (LockerOpenMode) -> Unit,
+    onParcelListOpenButtonModeSelected: (ParcelListOpenButtonMode) -> Unit,
     onLogout: () -> Unit,
     onOpenParcels: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -139,6 +144,26 @@ internal fun SettingsContent(
                     options = LockerOpenMode.entries.map { it to lockerOpenModeLabel(it) },
                     selected = lockerOpenMode,
                     onSelect = onOpenModeSelected,
+                )
+            }
+
+            PaczkofastCard {
+                Text(
+                    text = stringResource(R.string.parcel_list_open_buttons),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = PaczkofastTheme.colors.textPrimary,
+                    modifier = Modifier.padding(bottom = 4.dp),
+                )
+                Text(
+                    text = stringResource(R.string.parcel_list_open_buttons_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = PaczkofastTheme.colors.textFaint,
+                    modifier = Modifier.padding(bottom = 12.dp),
+                )
+                SegmentedControl(
+                    options = ParcelListOpenButtonMode.entries.map { it to parcelListOpenButtonModeLabel(it) },
+                    selected = parcelListOpenButtonMode,
+                    onSelect = onParcelListOpenButtonModeSelected,
                 )
             }
 
@@ -277,6 +302,13 @@ private fun lockerOpenModeLabel(mode: LockerOpenMode): String = when (mode) {
     LockerOpenMode.NEARBY -> stringResource(R.string.open_mode_nearby)
 }
 
+@Composable
+private fun parcelListOpenButtonModeLabel(mode: ParcelListOpenButtonMode): String = when (mode) {
+    ParcelListOpenButtonMode.FIRST -> stringResource(R.string.parcel_list_open_buttons_first)
+    ParcelListOpenButtonMode.ALL -> stringResource(R.string.parcel_list_open_buttons_all)
+    ParcelListOpenButtonMode.NONE -> stringResource(R.string.parcel_list_open_buttons_none)
+}
+
 @PaczkofastPreviews
 @Composable
 private fun SettingsContentPreview() {
@@ -284,10 +316,12 @@ private fun SettingsContentPreview() {
         SettingsContent(
             themeMode = ThemeMode.LIGHT,
             lockerOpenMode = LockerOpenMode.HOLD,
+            parcelListOpenButtonMode = ParcelListOpenButtonMode.FIRST,
             phoneNumber = "+48 500 100 200",
             appVersion = "1.0.0 (1)",
             onThemeSelected = {},
             onOpenModeSelected = {},
+            onParcelListOpenButtonModeSelected = {},
             onLogout = {},
             onOpenParcels = {},
             onOpenHistory = {},

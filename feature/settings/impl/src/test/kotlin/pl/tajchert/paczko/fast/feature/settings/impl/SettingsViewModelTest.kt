@@ -9,6 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.auth.AuthSession
 import pl.tajchert.paczko.fast.core.model.auth.PhoneNumber
@@ -81,6 +82,35 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         assertEquals(LockerOpenMode.HOLD, viewModel.uiState.value.lockerOpenMode)
+    }
+
+    @Test
+    fun setParcelListOpenButtonModeWritesPreference() = runTest {
+        val prefs = FakeUserPreferencesRepository()
+        val viewModel = SettingsViewModel(prefs, FakeAuthRepository())
+
+        viewModel.setParcelListOpenButtonMode(ParcelListOpenButtonMode.ALL)
+        advanceUntilIdle()
+
+        assertEquals(ParcelListOpenButtonMode.ALL, prefs.currentPreferences.parcelListOpenButtonMode)
+    }
+
+    @Test
+    fun uiStateReflectsStoredParcelListOpenButtonMode() = runTest {
+        val prefs = FakeUserPreferencesRepository()
+        val viewModel = SettingsViewModel(prefs, FakeAuthRepository())
+        prefs.setParcelListOpenButtonMode(ParcelListOpenButtonMode.NONE)
+        advanceUntilIdle()
+
+        assertEquals(ParcelListOpenButtonMode.NONE, viewModel.uiState.value.parcelListOpenButtonMode)
+    }
+
+    @Test
+    fun defaultParcelListOpenButtonModeIsFirst() = runTest {
+        val viewModel = SettingsViewModel(FakeUserPreferencesRepository(), FakeAuthRepository())
+        advanceUntilIdle()
+
+        assertEquals(ParcelListOpenButtonMode.FIRST, viewModel.uiState.value.parcelListOpenButtonMode)
     }
 }
 

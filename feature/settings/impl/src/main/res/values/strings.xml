@@ -6,6 +6,8 @@
     <string name="unlock_method">Otwieranie</string>
     <string name="how_you_open_lockers">Jak otwierasz skrytki</string>
     <string name="how_you_confirm_opening">Sposób potwierdzania otwarcia.</string>
+    <string name="parcel_list_open_buttons">Przyciski na liście paczek</string>
+    <string name="parcel_list_open_buttons_description">Które gotowe paczki mają skrót</string>
     <string name="account">Konto</string>
     <string name="logged_in">Zalogowano</string>
     <string name="logout">Wyloguj</string>
@@ -20,4 +22,7 @@
     <string name="theme_dark">Ciemny</string>
     <string name="open_mode_hold">Przytrzymaj</string>
     <string name="open_mode_nearby">Przy automacie</string>
+    <string name="parcel_list_open_buttons_first">Pierwsza</string>
+    <string name="parcel_list_open_buttons_all">Wszystkie</string>
+    <string name="parcel_list_open_buttons_none">Brak</string>
 </resources>

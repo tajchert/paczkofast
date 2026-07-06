@@ -64,6 +64,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.neoBorderedFill
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
@@ -244,6 +245,7 @@ internal fun ParcelListContent(
                         if (activeParcels.isNotEmpty()) {
                             ParcelSections(
                                 parcels = activeParcels,
+                                openButtonMode = uiState.openButtonMode,
                                 onParcelClick = onParcelClick,
                                 onOpenBox = onOpenBox,
                                 onCollectClick = onCollectClick,
@@ -267,6 +269,7 @@ internal fun ParcelListContent(
 @Composable
 private fun ParcelSections(
     parcels: ImmutableList<Parcel>,
+    openButtonMode: ParcelListOpenButtonMode,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
     onCollectClick: (shipmentNumber: String) -> Unit,
@@ -291,13 +294,21 @@ private fun ParcelSections(
             }
             // Expand the first standalone parcel (deadline + action); collapse the rest.
             var expandedSingleUsed = false
+            var firstOpenButtonUsed = false
             readyItems.forEach { readyItem ->
                 when (readyItem) {
                     is CompartmentItem.Multi -> {
                         val group = readyItem.group
+                        val decision = decideOpenButtonVisibility(
+                            mode = openButtonMode,
+                            canCollect = group.representative.canCollectRemotely,
+                            firstButtonAlreadyUsed = firstOpenButtonUsed,
+                        )
+                        firstOpenButtonUsed = decision.usedFirstButton
                         item(key = "multi-${group.uuid}") {
                             MultiPackageGroupCard(
                                 group = group,
+                                showOpenButton = decision.show,
                                 onClick = { onOpenBox(group.representative.shipmentNumber) },
                                 onCollectClick = { onCollectClick(group.representative.shipmentNumber) },
                                 modifier = Modifier.animateItem(),
@@ -309,10 +320,17 @@ private fun ParcelSections(
                         val parcel = readyItem.parcel
                         val expand = !expandedSingleUsed
                         expandedSingleUsed = true
+                        val decision = decideOpenButtonVisibility(
+                            mode = openButtonMode,
+                            canCollect = parcel.canCollectRemotely,
+                            firstButtonAlreadyUsed = firstOpenButtonUsed,
+                        )
+                        firstOpenButtonUsed = decision.usedFirstButton
                         item(key = parcel.shipmentNumber) {
                             if (expand) {
                                 ExpandedReadyCard(
                                     parcel = parcel,
+                                    showOpenButton = decision.show,
                                     onClick = { onParcelClick(parcel.shipmentNumber) },
                                     onCollectClick = { onCollectClick(parcel.shipmentNumber) },
                                     modifier = Modifier.animateItem(),
@@ -320,6 +338,8 @@ private fun ParcelSections(
                             } else {
                                 CollapsedReadyCard(
                                     parcel = parcel,
+                                    showOpenButton = decision.show,
+                                    onCollectClick = { onCollectClick(parcel.shipmentNumber) },
                                     onClick = { onParcelClick(parcel.shipmentNumber) },
                                     modifier = Modifier.animateItem(),
                                 )
@@ -483,6 +503,7 @@ private fun ListSectionHeader(
 @Composable
 private fun MultiPackageGroupCard(
     group: MultiPackageGroup,
+    showOpenButton: Boolean,
     onClick: () -> Unit,
     onCollectClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -502,6 +523,7 @@ private fun MultiPackageGroupCard(
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
         urgent = countdown?.urgent == true || representative.isPickupReminder,
+        showAction = showOpenButton,
         onClick = onClick,
         onActionClick = onCollectClick,
         modifier = modifier,
@@ -511,6 +533,7 @@ private fun MultiPackageGroupCard(
 @Composable
 private fun ExpandedReadyCard(
     parcel: Parcel,
+    showOpenButton: Boolean,
     onClick: () -> Unit,
     onCollectClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -526,7 +549,7 @@ private fun ExpandedReadyCard(
         urgent = countdown?.urgent == true || parcel.isPickupReminder,
         sizeLabel = parcelSizeLabel(parcel.parcelSize),
         qrContent = null,
-        actionText = actionText.takeIf { parcel.canCollectRemotely },
+        actionText = actionText.takeIf { showOpenButton && parcel.canCollectRemotely },
         onActionClick = onCollectClick,
         onClick = onClick,
         modifier = modifier,
@@ -536,16 +559,21 @@ private fun ExpandedReadyCard(
 @Composable
 private fun CollapsedReadyCard(
     parcel: Parcel,
+    showOpenButton: Boolean,
+    onCollectClick: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val countdown = pickupCountdown(parcel)
+    val actionText = stringResource(R.string.open_box_remotely)
     CollapsedReadyParcelCard(
         title = parcelTitle(parcel),
         subtitle = lockerLine(parcel),
         timeLeftText = countdown?.timeLeftText,
         progress = countdown?.progress,
         urgent = countdown?.urgent == true || parcel.isPickupReminder,
+        actionText = actionText.takeIf { showOpenButton && parcel.canCollectRemotely },
+        onActionClick = onCollectClick,
         onClick = onClick,
         modifier = modifier,
     )

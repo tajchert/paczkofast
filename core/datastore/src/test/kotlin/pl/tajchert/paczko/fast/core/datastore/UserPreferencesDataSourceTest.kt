@@ -4,10 +4,12 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import java.io.File
 
 class UserPreferencesDataSourceTest {
@@ -43,5 +45,21 @@ class UserPreferencesDataSourceTest {
         val preferences = dataSource.userPreferences.first()
 
         assertTrue(preferences.hasSeenOnboarding)
+    }
+
+    @Test
+    fun parcelListOpenButtonMode_defaultsToFirst() = runTest {
+        val preferences = dataSource.userPreferences.first()
+
+        assertEquals(ParcelListOpenButtonMode.FIRST, preferences.parcelListOpenButtonMode)
+    }
+
+    @Test
+    fun parcelListOpenButtonMode_emitsStoredValueAfterSet() = runTest {
+        dataSource.setParcelListOpenButtonMode(ParcelListOpenButtonMode.ALL)
+
+        val preferences = dataSource.userPreferences.first()
+
+        assertEquals(ParcelListOpenButtonMode.ALL, preferences.parcelListOpenButtonMode)
     }
 }

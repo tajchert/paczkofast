@@ -12,9 +12,11 @@ import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
 import pl.tajchert.paczko.fast.core.domain.ObserveParcelsUseCase
 import pl.tajchert.paczko.fast.core.domain.RefreshParcelsUseCase
+import pl.tajchert.paczko.fast.core.model.ParcelListOpenButtonMode
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.core.testing.repository.FakeUserPreferencesRepository
 import pl.tajchert.paczko.fast.core.testing.util.MainDispatcherRule
 
 class ParcelListViewModelTest {
@@ -31,6 +33,7 @@ class ParcelListViewModelTest {
         val viewModel = ParcelListViewModel(
             observeParcels = ObserveParcelsUseCase(repository),
             refreshParcels = RefreshParcelsUseCase(repository),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         assertEquals(false, viewModel.uiState.value.isRefreshing)
@@ -46,6 +49,7 @@ class ParcelListViewModelTest {
         val viewModel = ParcelListViewModel(
             observeParcels = ObserveParcelsUseCase(repository),
             refreshParcels = RefreshParcelsUseCase(repository),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
         // init did one refresh; an explicit pull-to-refresh does another.
         viewModel.refresh()
@@ -63,6 +67,7 @@ class ParcelListViewModelTest {
         val viewModel = ParcelListViewModel(
             observeParcels = ObserveParcelsUseCase(repository),
             refreshParcels = RefreshParcelsUseCase(repository),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         repository.awaitRefreshStarted()
@@ -85,11 +90,30 @@ class ParcelListViewModelTest {
         val viewModel = ParcelListViewModel(
             observeParcels = ObserveParcelsUseCase(repository),
             refreshParcels = RefreshParcelsUseCase(repository),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         assertEquals(false, viewModel.uiState.value.isRefreshing)
         assertEquals(listOf("123"), viewModel.uiState.value.parcels.map { it.shipmentNumber })
         assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+    }
+
+    @Test
+    fun uiStateReflectsParcelListOpenButtonModePreference() = runTest {
+        val repository = FakeParcelRepository(
+            parcels = listOf(parcel("123")),
+        )
+        val prefs = FakeUserPreferencesRepository()
+        val viewModel = ParcelListViewModel(
+            observeParcels = ObserveParcelsUseCase(repository),
+            refreshParcels = RefreshParcelsUseCase(repository),
+            userPreferencesRepository = prefs,
+        )
+
+        prefs.setParcelListOpenButtonMode(ParcelListOpenButtonMode.NONE)
+        advanceUntilIdle()
+
+        assertEquals(ParcelListOpenButtonMode.NONE, viewModel.uiState.value.openButtonMode)
     }
 }
 
