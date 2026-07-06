@@ -32,6 +32,9 @@ rootProject.name = "Paczkofast"
 // Application module - entry point
 include(":app")
 
+// Baseline profile generator (com.android.test module targeting :app)
+include(":baselineprofile")
+
 // -----------------------------------------------------------------------------
 // Core modules - shared infrastructure used across features
 // -----------------------------------------------------------------------------

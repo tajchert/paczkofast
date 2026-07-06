@@ -9,6 +9,8 @@ plugins {
     // Android plugins - applied to modules as needed
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.androidx.baselineprofile) apply false
 
     // Kotlin plugins
     // Note: kotlin-android is NOT applied - AGP 9 ships built-in Kotlin support

@@ -26,6 +26,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 android {
@@ -53,6 +54,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Debug-signed so release (and the baseline-profile plugin's derived
+            // benchmarkRelease/nonMinifiedRelease variants) can be installed on a
+            // device to record profiles. Replace with a real release keystore
+            // before publishing.
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isDebuggable = true
@@ -118,6 +124,11 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // Baseline profile: installs the bundled profile at app install time, and
+    // wires the generator module that records it.
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(projects.baselineprofile)
 
     // Testing
     testImplementation(projects.core.testing)
