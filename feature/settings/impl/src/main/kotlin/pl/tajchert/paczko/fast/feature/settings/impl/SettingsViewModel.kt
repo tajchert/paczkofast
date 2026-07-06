@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 
 @HiltViewModel
@@ -23,7 +24,11 @@ class SettingsViewModel @Inject constructor(
         userPreferencesRepository.userPreferences,
         authRepository.observePhoneNumber(),
     ) { preferences, phoneNumber ->
-        SettingsUiState(themeMode = preferences.themeMode, phoneNumber = phoneNumber)
+        SettingsUiState(
+            themeMode = preferences.themeMode,
+            phoneNumber = phoneNumber,
+            lockerOpenMode = preferences.lockerOpenMode,
+        )
     }
         .stateIn(
             scope = viewModelScope,
@@ -34,6 +39,12 @@ class SettingsViewModel @Inject constructor(
     fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
             userPreferencesRepository.setThemeMode(themeMode)
+        }
+    }
+
+    fun setLockerOpenMode(mode: LockerOpenMode) {
+        viewModelScope.launch {
+            userPreferencesRepository.setLockerOpenMode(mode)
         }
     }
 
@@ -48,4 +59,5 @@ class SettingsViewModel @Inject constructor(
 data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val phoneNumber: String? = null,
+    val lockerOpenMode: LockerOpenMode = LockerOpenMode.HOLD,
 )

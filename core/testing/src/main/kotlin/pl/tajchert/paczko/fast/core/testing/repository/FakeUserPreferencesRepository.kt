@@ -1,6 +1,7 @@
 package pl.tajchert.paczko.fast.core.testing.repository
 
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.channels.BufferOverflow
@@ -53,5 +54,10 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
     override suspend fun setHasSeenOnboarding(seen: Boolean) {
         val current = currentPreferences
         preferencesFlow.tryEmit(current.copy(hasSeenOnboarding = seen))
+    }
+
+    override suspend fun setLockerOpenMode(mode: LockerOpenMode) {
+        val current = currentPreferences
+        preferencesFlow.tryEmit(current.copy(lockerOpenMode = mode))
     }
 }

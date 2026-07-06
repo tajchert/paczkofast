@@ -9,6 +9,7 @@ import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
 import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.domain.ObserveAuthSessionUseCase
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import pl.tajchert.paczko.fast.core.model.auth.AuthSession
@@ -104,6 +105,8 @@ private class FakeUserPreferencesRepository(
     override suspend fun setThemeMode(themeMode: ThemeMode) = Unit
 
     override suspend fun setHasSeenOnboarding(seen: Boolean) = Unit
+
+    override suspend fun setLockerOpenMode(mode: LockerOpenMode) = Unit
 }
 
 private class FakeAuthRepository(
