@@ -163,7 +163,7 @@ internal fun transitCompletedSegments(status: String): Int = when (status.lowerc
  *
  * @param progress Fraction of the pickup window still remaining (1f = just
  *   stored, 0f = expired).
- * @param urgent Less than [URGENT_THRESHOLD_HOURS] hours left.
+ * @param urgent Less than [URGENT_THRESHOLD_HOURS] hours left, or a pickup reminder status.
  */
 internal data class PickupCountdown(
     val deadlineText: String,
@@ -200,12 +200,14 @@ internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): Pick
         remaining.toHours() < 72 -> "${remaining.toHours()} h"
         else -> "${remaining.toDays()} d"
     }
+    val urgent = remaining.toHours() < URGENT_THRESHOLD_HOURS || parcel.isPickupReminder
+    val displayCountdownText = if (urgent) "$countdownText — Hurry!" else countdownText
     return PickupCountdown(
         deadlineText = "Pick up by " + DEADLINE_FORMAT.format(expiry.atZone(ZoneId.systemDefault())),
-        timeLeftText = "$countdownText left",
-        countdownText = countdownText,
+        timeLeftText = if (urgent) displayCountdownText else "$countdownText left",
+        countdownText = displayCountdownText,
         progress = progress,
-        urgent = remaining.toHours() < URGENT_THRESHOLD_HOURS,
+        urgent = urgent,
     )
 }
 

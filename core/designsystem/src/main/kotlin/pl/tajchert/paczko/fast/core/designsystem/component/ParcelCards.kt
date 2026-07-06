@@ -311,7 +311,7 @@ private fun ParcelCardsPreview() {
                 title = "Example Sender sp. z o.o.",
                 subtitle = "WAW01A · Example street 12",
                 deadlineText = "Time left",
-                timeLeftText = "9 h — hurry!",
+                timeLeftText = "9 h — Hurry!",
                 progress = 0.06f,
                 urgent = true,
                 sizeLabel = "S",
