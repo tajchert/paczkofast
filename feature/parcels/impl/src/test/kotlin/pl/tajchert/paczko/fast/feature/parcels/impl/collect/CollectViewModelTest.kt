@@ -2,6 +2,7 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.collect
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -264,6 +265,9 @@ class CollectViewModelTest {
                 gate.await()
                 return GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0)
             }
+
+            override fun locationUpdates(): Flow<GeoPoint> =
+                kotlinx.coroutines.flow.emptyFlow()
         }
         val viewModel = CollectViewModel(
             collectParcel = CollectParcelUseCase(
@@ -341,8 +345,10 @@ private class FakeCollectRepository(
 
 private class FakeLocationProvider(
     private val location: GeoPoint = GeoPoint(latitude = 52.1, longitude = 21.0, accuracy = 12.0),
+    private val updates: List<GeoPoint> = listOf(location),
 ) : LocationProvider {
     override suspend fun currentLocation(): GeoPoint = location
+    override fun locationUpdates(): Flow<GeoPoint> = updates.asFlow()
 }
 
 private fun parcel(
