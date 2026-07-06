@@ -60,5 +60,4 @@ dependencies {
 
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.compose.ui.tooling)
-    screenshotTestImplementation(projects.core.demo)
 }

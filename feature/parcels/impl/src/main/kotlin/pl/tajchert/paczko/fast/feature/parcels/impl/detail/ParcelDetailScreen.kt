@@ -94,7 +94,7 @@ fun ParcelDetailScreen(
 }
 
 @Composable
-private fun ParcelDetailContent(
+internal fun ParcelDetailContent(
     uiState: ParcelDetailUiState,
     onBack: () -> Unit,
     onCollect: () -> Unit,

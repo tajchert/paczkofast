@@ -117,7 +117,7 @@ private val CollectState.isFinishing: Boolean
     get() = this is CollectState.ConfirmingClosed || this is CollectState.Claiming
 
 @Composable
-private fun CollectContent(
+internal fun CollectContent(
     shipmentNumber: String,
     uiState: CollectUiState,
     onConfirmed: () -> Unit,

@@ -86,7 +86,7 @@ fun MultiPackageDetailScreen(
 }
 
 @Composable
-private fun MultiPackageDetailContent(
+internal fun MultiPackageDetailContent(
     uiState: MultiPackageDetailUiState,
     onBack: () -> Unit,
     onOpenParcel: (String) -> Unit,
