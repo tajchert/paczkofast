@@ -5,6 +5,20 @@
 
 # Paczkofast
 
+<p align="center">
+  <a href="https://github.com/tajchert/paczkofast/releases/latest">
+    <img alt="Latest release" src="https://img.shields.io/github/v/release/tajchert/paczkofast?label=release">
+  </a>
+  <a href="https://github.com/tajchert/paczkofast/actions/workflows/release.yml">
+    <img alt="Release workflow" src="https://github.com/tajchert/paczkofast/actions/workflows/release.yml/badge.svg">
+  </a>
+  <a href="https://github.com/tajchert/paczkofast/releases">
+    <img alt="GitHub release downloads" src="https://img.shields.io/github/downloads/tajchert/paczkofast/total?label=downloads">
+  </a>
+  <img alt="Android 14+" src="https://img.shields.io/badge/Android-14%2B-3DDC84">
+  <img alt="Kotlin 2.4" src="https://img.shields.io/badge/Kotlin-2.4-7F52FF">
+</p>
+
 Paczkofast is a small native Android app for checking tracked parcels and
 opening a pickup locker with as little friction as possible.
 
@@ -34,7 +48,7 @@ privacy.
 ## Install
 
 Signed release APKs are published on the
-[GitHub Releases](https://github.com/tajchert/inpost-fast-app/releases) page.
+[GitHub Releases](https://github.com/tajchert/paczkofast/releases) page.
 Download the latest `paczkofast-<version>.apk` for the real app, or
 `paczkofast-demo-<version>.apk` to try the fully offline demo with mock parcels
 and locker flows. Sideload it on Android, and verify the download with the
