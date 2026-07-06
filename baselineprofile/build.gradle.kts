@@ -24,6 +24,7 @@ android {
         minSdk = 28
         targetSdk = libs.versions.targetSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy("mode", "prod")
     }
 
     compileOptions {

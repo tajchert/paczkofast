@@ -25,9 +25,10 @@ Recommended environment:
 Common commands:
 
 ```bash
-# Build/debug compile
-./gradlew :app:compileDebugKotlin
-./gradlew :app:assembleDebug
+# Build/debug compile (prod is the real app; demo is the offline showcase)
+./gradlew :app:compileProdDebugKotlin
+./gradlew :app:assembleProdDebug
+./gradlew :app:assembleDemoDebug   # offline demo build
 
 # Unit tests
 ./gradlew test
@@ -38,7 +39,7 @@ Common commands:
 
 # Android lint. There is no custom ktlint/detekt config at the time of writing.
 ./gradlew lint
-./gradlew :app:lintDebug
+./gradlew :app:lintProdDebug
 
 # Database/android tests, requires emulator/device
 ./gradlew :core:database:connectedDebugAndroidTest
@@ -47,10 +48,13 @@ Common commands:
 ./gradlew clean
 ```
 
+Demo mode: install the demoDebug variant (fully offline, mock parcels + locker
+scenarios) to showcase flows or generate screenshots without a real account.
+
 Before pushing a meaningful change, run at least:
 
 ```bash
-./gradlew :app:compileDebugKotlin test
+./gradlew :app:compileProdDebugKotlin test
 ```
 
 For collect/open-locker changes, also run:
