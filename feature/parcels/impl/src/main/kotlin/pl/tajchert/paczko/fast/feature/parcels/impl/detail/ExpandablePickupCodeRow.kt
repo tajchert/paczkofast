@@ -55,19 +55,24 @@ internal fun ExpandablePickupCodeRow(
     initiallyExpanded: Boolean = false,
 ) {
     val colors = PaczkofastTheme.colors
-    var expanded by rememberSaveable(initiallyExpanded) { mutableStateOf(initiallyExpanded) }
+    var expanded by rememberSaveable { mutableStateOf(initiallyExpanded) }
     val chevronRotation by animateFloatAsState(
         targetValue = if (expanded) 90f else 0f,
         label = "pickupCodeChevron",
     )
-    val stateLabel = stringResource(
+    // onClickLabel describes the action (double-tap does "show"/"hide");
+    // stateDescription describes the current state ("expanded"/"collapsed").
+    val clickLabel = stringResource(
         if (expanded) R.string.hide_pickup_code else R.string.show_pickup_code,
+    )
+    val stateLabel = stringResource(
+        if (expanded) R.string.pickup_code_expanded else R.string.pickup_code_collapsed,
     )
 
     PaczkofastCard(
         modifier = modifier.semantics { stateDescription = stateLabel },
         onClick = { expanded = !expanded },
-        onClickLabel = stateLabel,
+        onClickLabel = clickLabel,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
