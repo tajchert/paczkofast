@@ -1148,6 +1148,18 @@ When changing collect, update both:
 - `core/domain/src/test/.../CollectParcelUseCaseTest.kt`
 - `feature/parcels/impl/src/test/.../collect/CollectViewModelTest.kt`
 
+## Performance
+
+Performance methodology and a dated, append-only results log live in
+`docs/PERFORMANCE.md`. It covers cold-startup Macrobenchmark numbers, the
+baseline profile, Compose recomposition/stability checks, and QR generation.
+
+When a change could affect startup, a hot screen, list rendering, image/QR work,
+or bumps a dependency or the Compose compiler: re-run the relevant measurement
+from `docs/PERFORMANCE.md` and **append a row** (never edit past rows). Baseline
+profile lives in `:app` + the `:baselineprofile` generator module; regenerate it
+after meaningful startup-path changes with `./gradlew :app:generateBaselineProfile`.
+
 ## Compose And UI Patterns
 
 General rules:
