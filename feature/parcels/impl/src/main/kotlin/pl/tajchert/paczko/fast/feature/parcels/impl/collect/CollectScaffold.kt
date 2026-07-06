@@ -1,6 +1,8 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.collect
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -67,6 +69,8 @@ fun CollectScaffold(
             text = header,
             style = MonoLabel,
             color = colors.monoLabel,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -81,6 +85,8 @@ fun CollectScaffold(
             style = MaterialTheme.typography.displaySmall,
             color = colors.textPrimary,
             textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 22.dp),
         )
         // Reserved single-line slot: whether the subline is present or absent, nothing below
@@ -104,11 +110,15 @@ fun CollectScaffold(
             }
         }
         // --- Flexible middle: detail lives here and absorbs the slack, so it can never
-        // push the fixed hero above it or the fixed action zone below it. ---
+        // push the fixed hero above it or the fixed action zone below it. The slot itself
+        // stays weight(1f) (fixed footprint); only its CONTENT scrolls, so a tall detail
+        // (multi-package checklist / wrapping ErrorDetail at large font scale) scrolls
+        // instead of clipping — the hero/header/subline above and action zone below don't move.
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(top = 14.dp),
             contentAlignment = Alignment.TopCenter,
         ) {

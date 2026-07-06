@@ -189,9 +189,21 @@ private fun CollectContent(
         containerColor = PaczkofastTheme.colors.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            if (state !is CollectState.Completed && collectedButUnconfirmed == null) {
-                DetailTopBar(title = if (state.isBoxOpen) "Box open" else "Open box", onBack = onBack)
-            }
+            // Always render the top bar so its height is reserved in every collect state —
+            // otherwise the box-open → success/box-already-open transition (which used to hide
+            // it) would collapse the Scaffold content padding and shift the whole CollectScaffold
+            // (header/hero/action) upward. On the terminal states the back CONTROL is suppressed
+            // (success's affordance is the "Back to my parcels" button), but the bar HEIGHT stays.
+            val terminal = state is CollectState.Completed || collectedButUnconfirmed != null
+            DetailTopBar(
+                title = when {
+                    terminal -> ""
+                    state.isBoxOpen -> "Box open"
+                    else -> "Open box"
+                },
+                onBack = onBack,
+                showBackButton = !terminal,
+            )
         },
     ) { paddingValues ->
         Box(

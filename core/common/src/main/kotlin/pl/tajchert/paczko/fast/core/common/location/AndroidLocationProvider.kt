@@ -51,7 +51,16 @@ class AndroidLocationProvider @Inject constructor(
                         cont.resume(location.toGeoPoint())
                     }
                 }
-                .addOnFailureListener { cont.resumeWithException(it) }
+                .addOnFailureListener {
+                    // Permission can be revoked between hasPermission() and the fused call (TOCTOU);
+                    // keep the user-facing message clean and consistent with the pre-check.
+                    val error = if (it is SecurityException) {
+                        IllegalStateException("Location permission is required", it)
+                    } else {
+                        it
+                    }
+                    cont.resumeWithException(error)
+                }
         }
     }
 
@@ -59,19 +68,25 @@ class AndroidLocationProvider @Inject constructor(
     override fun locationUpdates(): Flow<GeoPoint> = callbackFlow {
         if (!hasPermission()) { close(); return@callbackFlow }
 
-        client.lastLocation.addOnSuccessListener { last ->
-            if (last != null) trySend(last.toGeoPoint())
-        }
-
-        val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1_000L)
-            .setMinUpdateIntervalMillis(500L)
-            .build()
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { trySend(it.toGeoPoint()) }
             }
         }
-        client.requestLocationUpdates(request, callback, context.mainLooper)
+        try {
+            client.lastLocation.addOnSuccessListener { last ->
+                if (last != null) trySend(last.toGeoPoint())
+            }
+
+            val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1_000L)
+                .setMinUpdateIntervalMillis(500L)
+                .build()
+            client.requestLocationUpdates(request, callback, context.mainLooper)
+        } catch (e: SecurityException) {
+            // Permission revoked between hasPermission() and the fused call (TOCTOU).
+            close(IllegalStateException("Location permission is required", e))
+            return@callbackFlow
+        }
         awaitClose { client.removeLocationUpdates(callback) }
     }
 
