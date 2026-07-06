@@ -159,9 +159,38 @@ To create or update them:
    cleanly on mobile from the high-res source. Always include descriptive alt
    text.
 
+To change **only the logo lockup** in the hero banner (frame `1a`), do not
+re-render the whole frame: headless Chrome renders `Space Grotesk` with
+different metrics than the committed PNG (serif fallback and a different line
+wrap). Instead composite the new glyph onto the existing
+`docs/readme/hero-banner.png` — clear the cream logo tile with a *rounded* rect
+(a flat rect breaks its corners), then paste the glyph centred. If you must
+re-render a full frame, the frame div relies on the global
+`font-family:'Space Grotesk'` set in the file's `<helmet>` — copy it into your
+standalone wrapper or text falls back to serif.
+
 Keep these images free of live data — the design frames use fake demo values
 (`TechNova Store`, `WAW-04N`, `DEMO STREET 12`), consistent with the privacy
 rules below. Do not screenshot the real app for the README.
+
+## App Icon
+
+The launcher icon is an **adaptive vector**, and should stay vector-only:
+`mipmap-anydpi-v26/ic_launcher.xml` points `<foreground>`/`<monochrome>` at
+`@drawable/ic_launcher_foreground` over `@color/ic_launcher_background`
+(`#FFD400`). minSdk is 34, so the legacy density `mipmap-*/*.webp` are never used
+at runtime. Android Studio's *Image Asset* generator silently repoints those XMLs
+to `@mipmap` raster and re-adds the webps — **revert that** and keep `@drawable`.
+`ic_launcher-playstore.png` (512²) is the only raster that matters (Play Store
+listing); regenerate it when the glyph changes.
+
+The glyph (ink `#161511` diamond + three staggered "wind lines") is defined by
+`claude-design-export/project/App Icon.dc.html`. Do **not** hand-derive the dp
+coordinates from its CSS — the rotated rounded-square vertex math is error-prone.
+Render the design element with headless Chrome and pixel-measure the gaps, then
+match those numbers in the vector. `docs/icon/` holds the transparent foreground
+export (`ic_launcher_foreground_1024.png`) and an assembled preview
+(`ic_launcher_1024.png`).
 
 ## Tech Stack
 
