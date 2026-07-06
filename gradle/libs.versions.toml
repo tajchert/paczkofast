@@ -86,6 +86,9 @@ profileinstaller = "1.4.1"
 turbine = "1.2.1"
 robolectric = "4.16.1"
 
+# Compose Preview Screenshot Testing (alpha)
+screenshot = "0.0.1-alpha15"
+
 # =============================================================================
 # LIBRARIES
 # =============================================================================
@@ -186,6 +189,7 @@ androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstall
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "testRunner" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+screenshot-validation-api = { module = "com.android.tools.screenshot:screenshot-validation-api", version.ref = "screenshot" }
 
 # -----------------------------------------------------------------------------
 # Build-logic dependencies (for convention plugins if used)
@@ -276,3 +280,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxBenchmark" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }

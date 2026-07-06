@@ -26,6 +26,9 @@ plugins {
 
     // Data persistence
     alias(libs.plugins.room) apply false
+
+    // Compose Preview Screenshot Testing (alpha)
+    alias(libs.plugins.screenshot) apply false
 }
 
 // Clean task to delete build directories

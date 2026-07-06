@@ -118,7 +118,7 @@ fun ParcelListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ParcelListContent(
+internal fun ParcelListContent(
     uiState: ParcelListUiState,
     selectedTab: BottomNavDestination,
     onSelectTab: (BottomNavDestination) -> Unit,
