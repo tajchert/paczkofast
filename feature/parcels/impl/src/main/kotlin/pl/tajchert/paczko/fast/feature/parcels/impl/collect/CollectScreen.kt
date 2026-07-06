@@ -115,6 +115,10 @@ private val CollectState.isBoxOpen: Boolean
         this is CollectState.ConfirmingClosed ||
         this is CollectState.Claiming
 
+/** True once the box has closed and we're confirming/claiming — drives "Finishing up…". */
+private val CollectState.isFinishing: Boolean
+    get() = this is CollectState.ConfirmingClosed || this is CollectState.Claiming
+
 /**
  * Drives the fixed [CollectScaffold] from the pure [collectScreenModel] mapping. Every
  * state renders the same three zones (header / 216.dp hero / bottom action) so switching
@@ -167,10 +171,15 @@ private fun CollectContent(
     val showSummary = state is CollectState.Completed || collectedButUnconfirmed != null
     val detail: (@Composable () -> Unit)? = when {
         state.isBoxOpen -> {
-            { BoxOpenDetail(members = uiState.members) }
+            { BoxOpenDetail(members = uiState.members, finishing = state.isFinishing) }
         }
         showSummary -> {
             { CollectedSummary(members = uiState.members) }
+        }
+        // Plain failure (box never opened): wrap the full message in the variable-height
+        // detail slot rather than the clipping single-line subline.
+        state is CollectState.Failed -> {
+            { ErrorDetail(message = state.message) }
         }
         else -> null
     }
@@ -253,61 +262,118 @@ private fun CollectContent(
  * affordance only, there is no manual "close" action to wire up.
  */
 @Composable
-private fun BoxOpenDetail(members: ImmutableList<CollectMember>) {
+private fun BoxOpenDetail(members: ImmutableList<CollectMember>, finishing: Boolean) {
     val colors = PaczkofastTheme.colors
     val checked = remember(members) { mutableStateListOf<String>() }
     val allChecked = members.isNotEmpty() && checked.size == members.size
     val count = members.size
 
-    if (count > 1) {
-        Column(
+    // Safety guidance above the card/checklist: once the door closes we're confirming, so
+    // switch to "Finishing up…"; otherwise remind the user how to close the compartment.
+    val guidance = when {
+        finishing -> "Finishing up…"
+        count > 1 -> "$count parcels share this box — check off both before you close it."
+        else -> "Close the door firmly — it locks automatically"
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Text(
+            text = guidance,
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            members.forEach { member ->
-                val isChecked = member.shipmentNumber in checked
-                CheckOffParcelRow(
-                    sender = member.title,
-                    size = member.sizeLabel ?: "—",
-                    checked = isChecked,
-                    onToggle = {
-                        if (isChecked) checked.remove(member.shipmentNumber)
-                        else checked.add(member.shipmentNumber)
+        )
+        if (count > 1) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                members.forEach { member ->
+                    val isChecked = member.shipmentNumber in checked
+                    CheckOffParcelRow(
+                        sender = member.title,
+                        size = member.sizeLabel ?: "—",
+                        checked = isChecked,
+                        onToggle = {
+                            if (isChecked) checked.remove(member.shipmentNumber)
+                            else checked.add(member.shipmentNumber)
+                        },
+                    )
+                }
+                Text(
+                    text = if (allChecked) {
+                        "${members.size} of ${members.size} checked".uppercase()
+                    } else {
+                        "${checked.size} of ${members.size} checked — check both to close".uppercase()
                     },
+                    style = MonoLabel,
+                    color = if (allChecked) colors.monoLabel else colors.alertText,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                 )
             }
-            Text(
-                text = if (allChecked) {
-                    "${members.size} of ${members.size} checked".uppercase()
-                } else {
-                    "${checked.size} of ${members.size} checked — check both to close".uppercase()
-                },
-                style = MonoLabel,
-                color = if (allChecked) colors.monoLabel else colors.alertText,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
-            )
-        }
-    } else {
-        members.firstOrNull()?.let { member ->
-            PaczkofastCard {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        text = member.title,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                        ),
-                        color = colors.textPrimary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f),
-                    )
-                    member.sizeLabel?.let { SizeBadge(size = it) }
+        } else {
+            members.firstOrNull()?.let { member ->
+                PaczkofastCard {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Text(
+                            text = member.title,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            color = colors.textPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
+                        )
+                        member.sizeLabel?.let { SizeBadge(size = it) }
+                    }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * Error detail — the full failure message (wrapping, centered) followed by a "What you can
+ * do" tip card. Rendered in the variable-height detail slot so the whole sentence is visible
+ * instead of clipping in the fixed single-line subline.
+ */
+@Composable
+private fun ErrorDetail(message: String) {
+    val colors = PaczkofastTheme.colors
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        PaczkofastCard {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = "What you can do".uppercase(),
+                    style = MonoLabel,
+                    color = colors.monoLabel,
+                )
+                Text(
+                    text = "Try again — a second attempt usually works.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.textPrimary,
+                )
             }
         }
     }
@@ -532,6 +598,18 @@ private fun BoxOpenMultiPreview() {
 
 @PaczkofastPreviews
 @Composable
+private fun BoxOpenFinishingPreview() {
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.ConfirmingClosed(sessionUuid = "PREVIEW"),
+            lockerName = "WAW01A",
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
+}
+
+@PaczkofastPreviews
+@Composable
 private fun SuccessSinglePreview() {
     CollectPreview(
         CollectUiState(
@@ -560,7 +638,9 @@ private fun ErrorPreview() {
     CollectPreview(
         CollectUiState(
             state = CollectState.Failed(
-                message = "Nothing happened on our end — your parcel is safe and your pickup code still works.",
+                message = "Nothing happened on our end — your parcel is safe and your pickup " +
+                    "code still works. The compartment stayed shut, so no one else can reach " +
+                    "your delivery. Give it another go, or use the code on the locker keypad.",
                 canRetryFromValidation = false,
             ),
             lockerName = "WAW01A",

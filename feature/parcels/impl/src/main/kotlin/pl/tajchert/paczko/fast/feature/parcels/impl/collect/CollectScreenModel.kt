@@ -88,7 +88,9 @@ fun collectScreenModel(state: CollectState, uiState: CollectUiState): CollectScr
             header = (locker?.let { "Error · Locker $it" } ?: "Error").uppercase(),
             hero = CollectHero.Error,
             headline = "The box didn't open",
-            subline = state.message,
+            // The full-sentence message is rendered in the variable-height detail slot
+            // (ErrorDetail) so it can wrap; the fixed single-line subline would clip it.
+            subline = null,
             action = CollectAction.RetrySupport,
             openEnabled = false,
             showOverrideHold = false,
