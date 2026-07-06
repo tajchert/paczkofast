@@ -147,6 +147,7 @@ fun HoldToOpenPanel(
 class HoldToOpenState internal constructor(
     val progress: Float,
     val isHolding: Boolean,
+    val isEnabled: Boolean,
     val pressModifier: Modifier,
 )
 
@@ -195,6 +196,7 @@ fun rememberHoldToOpenState(
     return HoldToOpenState(
         progress = fill.value,
         isHolding = pressed && enabled,
+        isEnabled = enabled,
         pressModifier = pressModifier,
     )
 }
@@ -290,6 +292,7 @@ fun HoldBar(
                 .semantics {
                     contentDescription = label
                     stateDescription = when {
+                        !state.isEnabled -> "Disabled"
                         holding -> "Keep holding"
                         else -> "Press and hold to open"
                     }
@@ -396,6 +399,7 @@ private fun HoldBarHoldingPreview() {
             state = HoldToOpenState(
                 progress = 0.6f,
                 isHolding = true,
+                isEnabled = true,
                 pressModifier = Modifier,
             ),
             modifier = Modifier.padding(20.dp),
@@ -411,6 +415,7 @@ private fun HoldBarIdlePreview() {
             state = HoldToOpenState(
                 progress = 0f,
                 isHolding = false,
+                isEnabled = true,
                 pressModifier = Modifier,
             ),
             modifier = Modifier.padding(20.dp),
