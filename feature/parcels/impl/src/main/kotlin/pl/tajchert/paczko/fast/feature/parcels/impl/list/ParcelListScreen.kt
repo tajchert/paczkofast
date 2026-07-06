@@ -59,6 +59,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPullRefreshIndicator
 import pl.tajchert.paczko.fast.core.designsystem.component.ReadyParcelCard
 import pl.tajchert.paczko.fast.core.designsystem.component.TransitParcelCard
+import pl.tajchert.paczko.fast.core.designsystem.component.neoBorderedFill
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
@@ -276,7 +277,7 @@ private fun ParcelSections(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (ready.isNotEmpty()) {
@@ -365,7 +366,7 @@ private fun HistoryList(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         months.forEach { (month, monthItems) ->
@@ -461,8 +462,13 @@ private fun ListSectionHeader(
         Box(
             modifier = Modifier
                 .size(14.dp)
-                .background(PaczkofastTheme.colors.accent, RoundedCornerShape(3.dp))
-                .border(2.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(3.dp)),
+                // Yellow bullet: ink border + inset fill (no light rim/outline on dark).
+                .neoBorderedFill(
+                    RoundedCornerShape(3.dp),
+                    PaczkofastTheme.colors.accent,
+                    PaczkofastTheme.colors.accentBorder,
+                    2.dp,
+                ),
         )
         Text(
             text = text,

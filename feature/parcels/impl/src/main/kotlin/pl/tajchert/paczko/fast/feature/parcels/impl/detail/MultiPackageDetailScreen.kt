@@ -275,7 +275,7 @@ private fun PickedUpSummaryCard(
                 modifier = Modifier
                     .size(34.dp)
                     .background(colors.accent, RoundedCornerShape(11.dp))
-                    .border(2.5.dp, colors.borderStrong, RoundedCornerShape(11.dp)),
+                    .border(2.5.dp, colors.accentBorder, RoundedCornerShape(11.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

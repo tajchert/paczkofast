@@ -1,10 +1,10 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.screenshot
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.android.tools.screenshot.PreviewTest
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
@@ -82,7 +82,7 @@ private class ParcelDetailScreenshotPreviewProvider : PreviewParameterProvider<P
 }
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun ParcelDetailScreenshot(
     @PreviewParameter(ParcelDetailScreenshotPreviewProvider::class) uiState: ParcelDetailUiState,

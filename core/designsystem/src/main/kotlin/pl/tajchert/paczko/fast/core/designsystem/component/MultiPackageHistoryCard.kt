@@ -65,7 +65,7 @@ fun MultiPackageHistoryCard(
                         .size(30.dp)
                         .clip(HistoryTileShape)
                         .background(colors.accent)
-                        .border(2.dp, colors.borderStrong, HistoryTileShape),
+                        .border(2.dp, colors.accentBorder, HistoryTileShape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(

@@ -33,20 +33,23 @@ private val ActionZoneHeight = 200.dp
 /**
  * Fixed three-zone collect layout with structurally anchored positions:
  *
- *  - **Header** sits at the very top (fixed single line).
- *  - **Hero** (216.dp cross-fade box) is top-anchored at a fixed offset below the header —
+ *  - **Hero** (216.dp cross-fade box) is top-anchored at a fixed offset below the top bar —
  *    it is *not* centered in a flexible region, so its absolute Y (and center) is identical
  *    in every state.
- *  - **Headline** renders directly under the hero (so it moves only with the hero, which is
- *    fixed). **Subline** keeps a reserved fixed-height, single-line slot.
+ *  - **Caption** ([header]) is a mono line directly under the hero (the locker/box label,
+ *    design 5a). It keeps a reserved fixed-height slot so present/blank never shifts.
+ *  - **Headline** renders under the caption. **Subline** keeps a reserved fixed-height,
+ *    single-line slot.
  *  - **Detail** renders in a flexible `weight(1f)` region that absorbs all remaining space
  *    between the fixed top block and the fixed-height action zone. A detail appearing or
  *    growing therefore never moves the hero above it nor the action baseline below it.
  *  - **Action** sits in a fixed-height, bottom-aligned zone at the very bottom.
  *
- * Net guarantee: header, hero center, and the primary-action baseline have identical Y
+ * Net guarantee: hero center, caption, and the primary-action baseline have identical Y
  * across idle → holding → opening → box open → success → error, and when the subline or
  * detail appears or the distance updates.
+ *
+ * @param header Mono caption rendered *under* the hero (e.g. "LOCKER WAW01A").
  */
 @Composable
 fun CollectScaffold(
@@ -64,21 +67,29 @@ fun CollectScaffold(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // --- Fixed top block: header → fixed gap → hero → headline → reserved subline. ---
-        Text(
-            text = header,
-            style = MonoLabel,
-            color = colors.monoLabel,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-        )
-        Spacer(modifier = Modifier.height(12.dp))
+        // --- Fixed top block: small gap → hero → caption → headline → reserved subline. ---
+        Spacer(modifier = Modifier.height(8.dp))
         Box(
             modifier = Modifier.size(216.dp),
             contentAlignment = Alignment.Center,
         ) {
             Crossfade(targetState = heroKey, label = "collect-hero") { _ -> hero() }
+        }
+        // Reserved caption slot under the hero (design order: ring → LOCKER label → headline).
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .padding(top = 20.dp),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            Text(
+                text = header,
+                style = MonoLabel,
+                color = colors.monoLabel,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
         Text(
             text = headline,
@@ -87,7 +98,7 @@ fun CollectScaffold(
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 22.dp),
+            modifier = Modifier.padding(top = 4.dp),
         )
         // Reserved single-line slot: whether the subline is present or absent, nothing below
         // it in the top block shifts.

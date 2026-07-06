@@ -30,21 +30,25 @@ enum class StatusChipStyle {
     Neutral,
 }
 
-private data class StatusChipColors(val fill: Color, val content: Color)
+private data class StatusChipColors(val fill: Color, val content: Color, val border: Color)
 
 @Composable
 private fun colorsFor(style: StatusChipStyle): StatusChipColors = when (style) {
+    // Yellow fill keeps an ink border in both themes (see PaczkofastColors.accentBorder).
     StatusChipStyle.Accent -> StatusChipColors(
         fill = PaczkofastTheme.colors.accent,
         content = PaczkofastTheme.colors.onAccent,
+        border = PaczkofastTheme.colors.accentBorder,
     )
     StatusChipStyle.Ink -> StatusChipColors(
         fill = PaczkofastTheme.colors.borderStrong,
         content = PaczkofastTheme.colors.accent,
+        border = PaczkofastTheme.colors.borderStrong,
     )
     StatusChipStyle.Neutral -> StatusChipColors(
         fill = PaczkofastTheme.colors.cardSurface,
         content = PaczkofastTheme.colors.textPrimary,
+        border = PaczkofastTheme.colors.borderStrong,
     )
 }
 
@@ -62,9 +66,7 @@ fun StatusChip(
     val colors = colorsFor(style)
     Box(
         modifier = modifier
-            .clip(StatusChipShape)
-            .background(colors.fill)
-            .border(width = 2.dp, color = PaczkofastTheme.colors.borderStrong, shape = StatusChipShape),
+            .neoBorderedFill(StatusChipShape, colors.fill, colors.border, 2.dp),
     ) {
         Text(
             text = text.uppercase(),

@@ -69,17 +69,22 @@ private fun RowScope.SegmentedItem(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
+    val segmentShape = RoundedCornerShape(8.dp)
     Box(
         modifier = Modifier
             .weight(1f)
             .height(36.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (selected) PaczkofastTheme.colors.accent else Color.Transparent)
             .then(
                 if (selected) {
-                    Modifier.border(2.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(8.dp))
+                    // Yellow selected pill: ink border + inset fill (no light rim on dark).
+                    Modifier.neoBorderedFill(
+                        shape = segmentShape,
+                        fill = PaczkofastTheme.colors.accent,
+                        borderColor = PaczkofastTheme.colors.accentBorder,
+                        borderWidth = 2.dp,
+                    )
                 } else {
-                    Modifier
+                    Modifier.clip(segmentShape)
                 },
             )
             .selectable(
@@ -100,7 +105,8 @@ private fun RowScope.SegmentedItem(
             fontSize = 13.5.sp,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
             color = if (selected) {
-                PaczkofastTheme.colors.textPrimary
+                // Selected pill is filled yellow → ink text (not the light primary text).
+                PaczkofastTheme.colors.onAccent
             } else {
                 PaczkofastTheme.colors.textMuted
             },

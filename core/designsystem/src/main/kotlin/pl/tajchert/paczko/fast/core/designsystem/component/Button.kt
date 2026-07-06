@@ -82,7 +82,7 @@ fun PaczkofastButton(
             .then(Modifier.loadingSemantics(isLoading, accessibilityLabel)),
         shape = RoundedCornerShape(14.dp),
         fill = if (isEnabled) colors.accent else colors.accentDisabled,
-        borderColor = colors.borderStrong,
+        borderColor = colors.accentBorder,
         shadow = isEnabled,
         shadowOffset = 3.dp,
         pressed = pressed && isEnabled,

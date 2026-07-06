@@ -1,9 +1,9 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.screenshot
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
 import kotlinx.collections.immutable.persistentListOf
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 import pl.tajchert.paczko.fast.feature.parcels.impl.collect.CollectContent
@@ -42,63 +42,63 @@ private fun collectPreview(state: CollectState) {
 }
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectIdle() = collectPreview(CollectState.Idle)
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectValidating() = collectPreview(CollectState.Validating)
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectOpening() = collectPreview(CollectState.Opening("demo"))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectWaitingOpened() = collectPreview(CollectState.WaitingForOpened("demo"))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectOpened() = collectPreview(CollectState.Opened("demo"))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectWaitingClosed() = collectPreview(CollectState.WaitingForClosed("demo"))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectConfirmingClosed() = collectPreview(CollectState.ConfirmingClosed("demo"))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectClaiming() = collectPreview(CollectState.Claiming("demo"))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectCompleted() = collectPreview(CollectState.Completed)
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectCanceled() = collectPreview(CollectState.Canceled)
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectFailedHard() =
     collectPreview(CollectState.Failed(message = "boxMachineNotFound", canRetryFromValidation = false))
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun CollectFailedSoft() =
     collectPreview(

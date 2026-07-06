@@ -5,7 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Multipreview rendering a component in both brand palettes:
- * dark ("Black Amber", the default) and light ("warm paper").
+ * dark (cool near-black) and light (warm paper).
  *
  * Combine with [PaczkofastTheme][pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme],
  * which follows the preview's night mode automatically:
@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
     name = "Dark",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
-    backgroundColor = 0xFF161511,
+    backgroundColor = 0xFF0E0E10,
 )
 @Preview(
     name = "Light",

@@ -32,7 +32,7 @@ fun collectScreenModel(state: CollectState, uiState: CollectUiState): CollectScr
             LockerOpenMode.HOLD -> CollectScreenModel(
                 header = lockerHeader(locker),
                 hero = CollectHero.Distance,
-                headline = "Hold to open",
+                headline = holdHeadline(uiState),
                 subline = collectSubline(uiState.members.size),
                 action = CollectAction.HoldOnly,
                 openEnabled = false,
@@ -114,6 +114,13 @@ private fun transitionalHeadline(state: CollectState): String = when (state) {
     is CollectState.WaitingForOpened -> "Waiting for the door to open"
     else -> ""
 }
+
+/**
+ * HOLD-mode headline (design 5a): the distance leads ("You're 8 m away") now that the ring
+ * shows a padlock instead of the distance. Falls back to the action instruction when no fix.
+ */
+private fun holdHeadline(uiState: CollectUiState): String =
+    uiState.distanceMeters?.let { "You're $it m away" } ?: "Hold to open"
 
 private fun nearbySubline(uiState: CollectUiState): String? = when {
     uiState.nearbyReady -> "You're at the locker — tap to open"

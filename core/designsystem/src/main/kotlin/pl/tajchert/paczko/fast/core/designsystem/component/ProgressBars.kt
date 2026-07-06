@@ -154,13 +154,20 @@ fun SegmentedProgressBar(
                 } else {
                     PaczkofastTheme.colors.trackBackground
                 }
+                // Filled (yellow) segments keep an ink border in both themes; empty
+                // segments use the neutral border that inverts to light on dark.
+                val segmentBorder = if (filled) {
+                    PaczkofastTheme.colors.accentBorder
+                } else {
+                    PaczkofastTheme.colors.borderStrong
+                }
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(BarHeight)
                         .clip(BarShape)
                         .background(color)
-                        .border(BarBorderWidth, PaczkofastTheme.colors.borderStrong, BarShape),
+                        .border(BarBorderWidth, segmentBorder, BarShape),
                 )
             }
         }

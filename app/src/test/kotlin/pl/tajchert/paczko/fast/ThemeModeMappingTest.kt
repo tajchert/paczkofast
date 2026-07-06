@@ -13,13 +13,9 @@ class ThemeModeMappingTest {
         initialRoute = ParcelListRoute,
     )
 
-    // Dark mode is temporarily disabled: every mode resolves to light regardless
-    // of the system setting. When dark mode is re-enabled, restore the
-    // per-mode expectations here.
-
     @Test
-    fun systemModeIsNeverDarkWhileDisabled() {
-        assertEquals(false, success(ThemeMode.SYSTEM).shouldUseDarkTheme(isSystemInDarkTheme = true))
+    fun systemModeFollowsSystemSetting() {
+        assertEquals(true, success(ThemeMode.SYSTEM).shouldUseDarkTheme(isSystemInDarkTheme = true))
         assertEquals(false, success(ThemeMode.SYSTEM).shouldUseDarkTheme(isSystemInDarkTheme = false))
     }
 
@@ -29,12 +25,13 @@ class ThemeModeMappingTest {
     }
 
     @Test
-    fun darkModePreferenceStillResolvesToLightWhileDisabled() {
-        assertEquals(false, success(ThemeMode.DARK).shouldUseDarkTheme(isSystemInDarkTheme = true))
+    fun darkModeIsAlwaysDark() {
+        assertEquals(true, success(ThemeMode.DARK).shouldUseDarkTheme(isSystemInDarkTheme = false))
     }
 
     @Test
-    fun loadingIsNeverDarkWhileDisabled() {
-        assertEquals(false, MainActivityUiState.Loading.shouldUseDarkTheme(isSystemInDarkTheme = true))
+    fun loadingFollowsSystemSetting() {
+        assertEquals(true, MainActivityUiState.Loading.shouldUseDarkTheme(isSystemInDarkTheme = true))
+        assertEquals(false, MainActivityUiState.Loading.shouldUseDarkTheme(isSystemInDarkTheme = false))
     }
 }

@@ -97,13 +97,14 @@ private fun RowScope.BottomNavItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val iconTint = PaczkofastTheme.colors.textPrimary
+    // Selected tab sits on a yellow pill → ink icon; unselected icons are line-art
+    // in the primary (light-on-dark) color.
+    val iconTint = if (isSelected) PaczkofastTheme.colors.onAccent else PaczkofastTheme.colors.textPrimary
     val labelColor = if (isSelected) {
         PaczkofastTheme.colors.textPrimary
     } else {
         PaczkofastTheme.colors.textMuted
     }
-    val pillFill = if (isSelected) PaczkofastTheme.colors.accent else Color.Transparent
     val knobFill = if (isSelected) PaczkofastTheme.colors.accent else PaczkofastTheme.colors.navBackground
 
     Column(
@@ -127,13 +128,17 @@ private fun RowScope.BottomNavItem(
         Box(
             modifier = Modifier
                 .size(NavPillSize)
-                .clip(NavPillShape)
-                .background(pillFill)
                 .then(
                     if (isSelected) {
-                        Modifier.border(2.dp, PaczkofastTheme.colors.borderStrong, NavPillShape)
+                        // Yellow selected pill: ink border + inset fill (no light rim on dark).
+                        Modifier.neoBorderedFill(
+                            shape = NavPillShape,
+                            fill = PaczkofastTheme.colors.accent,
+                            borderColor = PaczkofastTheme.colors.accentBorder,
+                            borderWidth = 2.dp,
+                        )
                     } else {
-                        Modifier
+                        Modifier.clip(NavPillShape)
                     },
                 ),
             contentAlignment = Alignment.Center,

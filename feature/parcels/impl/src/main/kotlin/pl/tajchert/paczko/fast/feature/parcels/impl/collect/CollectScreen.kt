@@ -38,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,8 +52,10 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import pl.tajchert.paczko.fast.core.designsystem.component.CheckOffParcelRow
 import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
-import pl.tajchert.paczko.fast.core.designsystem.component.DistanceRing
+import pl.tajchert.paczko.fast.core.designsystem.component.HeroBlobSize
 import pl.tajchert.paczko.fast.core.designsystem.component.HoldBar
+import pl.tajchert.paczko.fast.core.designsystem.component.HoldRing
+import pl.tajchert.paczko.fast.core.designsystem.component.hardShadow
 import pl.tajchert.paczko.fast.core.designsystem.component.OutlinedActionButton
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastCard
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
@@ -196,11 +199,7 @@ internal fun CollectContent(
             // (success's affordance is the "Back to my parcels" button), but the bar HEIGHT stays.
             val terminal = state is CollectState.Completed || collectedButUnconfirmed != null
             DetailTopBar(
-                title = when {
-                    terminal -> ""
-                    state.isBoxOpen -> "Box open"
-                    else -> "Open box"
-                },
+                title = if (terminal) "" else "Open box",
                 onBack = onBack,
                 showBackButton = !terminal,
             )
@@ -216,11 +215,8 @@ internal fun CollectContent(
                 header = model.header,
                 hero = {
                     when (model.hero) {
-                        CollectHero.Distance -> DistanceRing(
-                            progress = holdState.progress,
-                            distanceText = uiState.distanceMeters?.let { "$it m" } ?: "—",
-                            caption = uiState.lockerName?.let { "to locker $it" } ?: "to the locker",
-                        )
+                        // The hold fills the concentric ring; the distance moved to the headline.
+                        CollectHero.Distance -> HoldRing(progress = holdState.progress)
                         CollectHero.OpenBox -> OpenBoxBlob()
                         CollectHero.Check -> CheckBlob(count = uiState.members.size)
                         CollectHero.Error -> ErrorBlob()
@@ -391,22 +387,39 @@ private fun ErrorDetail(message: String) {
     }
 }
 
+/**
+ * Circular neo-brutalist hero blob, sized to the [HoldRing]'s central core so the
+ * icon appears to stay put while the ring recedes on success. Yellow/red fills keep
+ * an ink border + theme-following hard shadow.
+ */
+@Composable
+private fun HeroBlob(
+    fill: Color,
+    modifier: Modifier = Modifier,
+    glyph: @Composable () -> Unit,
+) {
+    val colors = PaczkofastTheme.colors
+    Box(
+        modifier = modifier
+            .size(HeroBlobSize)
+            .hardShadow(4.dp, 4.dp, colors.hardShadow, CircleShape)
+            .background(fill, CircleShape)
+            .border(3.dp, colors.accentBorder, CircleShape),
+        contentAlignment = Alignment.Center,
+        content = { glyph() },
+    )
+}
+
 /** Yellow open-box "blob": circular neo-brutalist surface with an ink glyph. */
 @Composable
 private fun OpenBoxBlob(modifier: Modifier = Modifier) {
     val colors = PaczkofastTheme.colors
-    Box(
-        modifier = modifier
-            .size(150.dp)
-            .background(colors.accent, CircleShape)
-            .border(3.dp, colors.borderStrong, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
+    HeroBlob(fill = colors.accent, modifier = modifier) {
         Icon(
             imageVector = Icons.Outlined.Inventory2,
             contentDescription = null,
-            tint = colors.borderStrong,
-            modifier = Modifier.size(52.dp),
+            tint = colors.onAccent,
+            modifier = Modifier.size(44.dp),
         )
     }
 }
@@ -454,18 +467,12 @@ private fun CollectedSummary(members: ImmutableList<CollectMember>) {
 private fun CheckBlob(count: Int, modifier: Modifier = Modifier) {
     val colors = PaczkofastTheme.colors
     Box(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .background(colors.accent, CircleShape)
-                .border(3.dp, colors.borderStrong, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
+        HeroBlob(fill = colors.accent) {
             Icon(
                 imageVector = Icons.Rounded.Check,
                 contentDescription = null,
-                tint = colors.borderStrong,
-                modifier = Modifier.size(56.dp),
+                tint = colors.onAccent,
+                modifier = Modifier.size(48.dp),
             )
         }
         if (count > 1) {
@@ -490,18 +497,12 @@ private fun CheckBlob(count: Int, modifier: Modifier = Modifier) {
 @Composable
 private fun ErrorBlob(modifier: Modifier = Modifier) {
     val colors = PaczkofastTheme.colors
-    Box(
-        modifier = modifier
-            .size(150.dp)
-            .background(colors.alertFill, CircleShape)
-            .border(3.dp, colors.borderStrong, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
+    HeroBlob(fill = colors.alertFill, modifier = modifier) {
         Icon(
             imageVector = Icons.Rounded.PriorityHigh,
             contentDescription = null,
-            tint = colors.borderStrong,
-            modifier = Modifier.size(48.dp),
+            tint = colors.onAccent,
+            modifier = Modifier.size(44.dp),
         )
     }
 }

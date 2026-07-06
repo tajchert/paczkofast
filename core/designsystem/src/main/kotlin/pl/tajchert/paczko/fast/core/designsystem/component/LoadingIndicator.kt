@@ -57,7 +57,7 @@ fun PaczkofastLoadingIndicator(
                 modifier = Modifier.size(52.dp),
                 shape = RoundedCornerShape(16.dp),
                 fill = PaczkofastTheme.colors.accent,
-                borderColor = PaczkofastTheme.colors.borderStrong,
+                borderColor = PaczkofastTheme.colors.accentBorder,
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier

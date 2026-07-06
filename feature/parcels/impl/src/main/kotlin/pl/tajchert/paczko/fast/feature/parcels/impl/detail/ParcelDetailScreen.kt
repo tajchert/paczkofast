@@ -167,7 +167,7 @@ private fun ParcelDetailBody(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Status chip row + shipment identity
@@ -301,7 +301,7 @@ private fun PickedUpSummaryCard(
                 modifier = Modifier
                     .size(34.dp)
                     .background(colors.accent, RoundedCornerShape(11.dp))
-                    .border(2.5.dp, colors.borderStrong, RoundedCornerShape(11.dp)),
+                    .border(2.5.dp, colors.accentBorder, RoundedCornerShape(11.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

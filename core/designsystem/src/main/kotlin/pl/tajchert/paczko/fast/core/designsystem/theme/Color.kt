@@ -7,9 +7,12 @@ import androidx.compose.ui.graphics.Color
 /**
  * Color palette for the Paczkofast app design system.
  *
- * Two fixed brand palettes from the "Black Amber" design direction:
- * - Dark (default): near-black warm surfaces with amber accent
- * - Light: warm paper surfaces with the same amber accent
+ * Two fixed brand palettes, aligned to the "App Core Design" mocks:
+ * - Dark: cool near-black surfaces (#0E0E10 / #1B1B1F) with warm off-white
+ *   foreground (#F2F0E6) and the yellow accent. Neo-brutalist borders/shadows
+ *   invert to light on dark, but yellow fills keep an ink border (see
+ *   [PaczkofastColors.accentBorder]).
+ * - Light: warm paper surfaces with an ink foreground and the same yellow accent.
  *
  * Raw colors below should NOT be used directly in composables. Use either
  * `MaterialTheme.colorScheme` (for Material components) or the app-specific
@@ -79,11 +82,12 @@ internal val InkMutedNb = Color(0xFF5F5B4C)
 internal val AlertFill = Color(0xFFFF3B25)
 internal val AlertText = Color(0xFFE01507)
 
-// Neo-brutalist — dark
-internal val NightBg = Color(0xFF161511)
-internal val NightCard = Color(0xFF242019)
-internal val Sand2 = Color(0xFFF5F0E4)
-internal val SandMuted2 = Color(0xFFB7AF9C)
+// Neo-brutalist — dark ("cool near-black", aligned to "App Core Design Dark")
+internal val NightBg = Color(0xFF0E0E10) // screen background + empty progress track
+internal val NightCard = Color(0xFF1B1B1F) // cards, nav, badges, elevated rows
+internal val NightRingTrack = Color(0xFF2A2A30) // hold-to-open ring, unfilled band
+internal val Sand2 = Color(0xFFF2F0E6) // primary text, borders, hard shadows
+internal val SandMuted2 = Color(0xFFA5A296) // secondary/muted text
 internal val AlertDark = Color(0xFFFF6B58)
 
 // Error palette (kept from Material defaults)
@@ -115,6 +119,12 @@ data class PaczkofastColors(
     val onAccentDisabled: Color,
     /** Amber used as text/icon on the current background (darker in light mode). */
     val accentText: Color,
+    /**
+     * Border drawn around saturated fills — accent (yellow) buttons/chips/badges
+     * and alert (red) blobs. Stays ink in both light and dark so a yellow sticker
+     * keeps its hard outline even when neutral borders invert to light on dark.
+     */
+    val accentBorder: Color,
     /** Urgent "time running out" highlight. */
     val urgent: Color,
     /** Screen background. */
@@ -141,6 +151,8 @@ data class PaczkofastColors(
     val trackActive: Color,
     /** Completed-but-not-current track segments. */
     val trackDone: Color,
+    /** Unfilled band of the circular hold-to-open progress ring. */
+    val ringTrack: Color,
     /** Neutral count badge background. */
     val badgeBackground: Color,
     /** Neutral count badge content. */
@@ -199,19 +211,21 @@ internal val DarkPaczkofastColors = PaczkofastColors(
     accentDisabled = YellowDisabledDark,
     onAccentDisabled = OnYellowDisabledDark,
     accentText = Yellow,
+    accentBorder = Ink,
     urgent = AlertDark,
     background = NightBg,
     textPrimary = Sand2,
     textSecondary = SandMuted2,
     textMuted = SandMuted2,
-    textFaint = InkMutedNb,
+    textFaint = SandMuted2,
     cardSurface = NightCard,
     cardBorder = Sand2,
     cardSurfaceSubtle = NightCard,
     cardBorderSubtle = Sand2,
     trackBackground = NightBg,
     trackActive = Yellow,
-    trackDone = Cream,
+    trackDone = Sand2,
+    ringTrack = NightRingTrack,
     badgeBackground = NightCard,
     badgeContent = Sand2,
     sizeBadgeBorder = Sand2,
@@ -221,7 +235,7 @@ internal val DarkPaczkofastColors = PaczkofastColors(
     statusChipBackground = Yellow,
     statusChipContent = Ink,
     qrPanelBackground = CardWhite,
-    qrPanelBorder = Sand2,
+    qrPanelBorder = Ink,
     qrInk = QrInk,
     qrLabel = QrLabel,
     outlineButtonBorder = Sand2,
@@ -234,7 +248,7 @@ internal val DarkPaczkofastColors = PaczkofastColors(
     infoBorder = Sand2,
     hardShadow = Sand2,
     borderStrong = Sand2,
-    alertFill = AlertDark,
+    alertFill = AlertFill,
     alertText = AlertDark,
     monoLabel = SandMuted2,
 )
@@ -245,6 +259,7 @@ internal val LightPaczkofastColors = PaczkofastColors(
     accentDisabled = YellowDisabledLight,
     onAccentDisabled = OnYellowDisabledLight,
     accentText = Ink,
+    accentBorder = Ink,
     urgent = AlertText,
     background = Cream,
     textPrimary = Ink,
@@ -258,6 +273,7 @@ internal val LightPaczkofastColors = PaczkofastColors(
     trackBackground = Cream,
     trackActive = Yellow,
     trackDone = Cream,
+    ringTrack = CardWhite,
     badgeBackground = CardWhite,
     badgeContent = Ink,
     sizeBadgeBorder = Ink,

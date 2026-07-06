@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
+import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.feature.auth.impl.AuthStep
 import pl.tajchert.paczko.fast.feature.auth.impl.AuthUiState
@@ -21,7 +21,7 @@ import pl.tajchert.paczko.fast.feature.auth.impl.WELCOME_PAGE
 import pl.tajchert.paczko.fast.feature.auth.impl.WelcomePage
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun PhoneLoginScreenshot() {
     PaczkofastTheme {
@@ -34,7 +34,7 @@ private fun PhoneLoginScreenshot() {
 }
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun OtpScreenshot() {
     PaczkofastTheme {
@@ -54,7 +54,7 @@ private fun OtpScreenshot() {
 }
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun OnboardingWelcomePageScreenshot() {
     PaczkofastTheme {
@@ -70,7 +70,7 @@ private fun OnboardingWelcomePageScreenshot() {
 }
 
 @PreviewTest
-@Preview(showBackground = true)
+@PaczkofastPreviews
 @Composable
 private fun OnboardingDisclaimerPageScreenshot() {
     PaczkofastTheme {

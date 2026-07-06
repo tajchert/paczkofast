@@ -78,7 +78,7 @@ fun PaczkofastEmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        EmptyStateTile(icon = icon, tint = PaczkofastTheme.colors.textPrimary)
+        EmptyStateTile(icon = icon, tint = PaczkofastTheme.colors.onAccent)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -169,7 +169,7 @@ private fun EmptyStateTile(icon: ImageVector, tint: Color) {
         modifier = Modifier.size(84.dp),
         shape = RoundedCornerShape(20.dp),
         fill = PaczkofastTheme.colors.accent,
-        borderColor = PaczkofastTheme.colors.borderStrong,
+        borderColor = PaczkofastTheme.colors.accentBorder,
     ) {
         Icon(
             imageVector = icon,

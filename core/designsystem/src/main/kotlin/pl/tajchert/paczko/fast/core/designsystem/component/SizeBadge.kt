@@ -34,14 +34,18 @@ fun SizeBadge(
     modifier: Modifier = Modifier,
     highlighted: Boolean = false,
 ) {
-    val borderColor = PaczkofastTheme.colors.sizeBadgeBorder
+    // Highlighted (yellow) badges keep an ink border even on dark (accentBorder);
+    // outline badges use the neutral, theme-inverting border.
+    val borderColor = if (highlighted) {
+        PaczkofastTheme.colors.accentBorder
+    } else {
+        PaczkofastTheme.colors.sizeBadgeBorder
+    }
     val fill = if (highlighted) PaczkofastTheme.colors.accent else Color.Transparent
     val content = if (highlighted) PaczkofastTheme.colors.onAccent else PaczkofastTheme.colors.sizeBadgeContent
     Box(
         modifier = modifier
-            .clip(SizeBadgeShape)
-            .background(fill)
-            .border(width = 2.dp, color = borderColor, shape = SizeBadgeShape)
+            .neoBorderedFill(SizeBadgeShape, fill, borderColor, 2.dp)
             .semantics { contentDescription = "Size ${size.uppercase()}" },
     ) {
         Text(

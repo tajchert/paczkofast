@@ -79,7 +79,7 @@ fun PrimaryActionButton(
             .then(Modifier.actionLoadingSemantics(isLoading, accessibilityLabel)),
         shape = ActionButtonShape,
         fill = if (isEnabled) colors.accent else colors.accentDisabled,
-        borderColor = colors.borderStrong,
+        borderColor = colors.accentBorder,
         shadow = isEnabled,
         pressed = pressed && isEnabled,
     ) {

@@ -115,10 +115,12 @@ private fun TimelineRow(
                     )
                     .border(
                         width = 2.dp,
+                        // Done/current nodes are yellow-filled → ink border in both themes;
+                        // upcoming (hollow) nodes trace the neutral rail color.
                         color = if (event.isUpcoming) {
                             PaczkofastTheme.colors.timelineRail
                         } else {
-                            PaczkofastTheme.colors.borderStrong
+                            PaczkofastTheme.colors.accentBorder
                         },
                         shape = NodeShape,
                     ),

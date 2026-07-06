@@ -8,17 +8,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,10 +34,6 @@ import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -45,20 +42,16 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
-import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
 
 /**
- * State + press handling for a hold-to-open interaction (design 5a/6d): tracks
+ * State + press handling for a hold-to-open interaction (design 5a): tracks
  * hold [progress] via [HoldProgress] and an [Animatable] fill, fires
  * [onConfirmed] exactly once when a completed hold is detected (with a haptic
  * tick), and animates back to zero when released early. Apply [pressModifier]
- * to whatever surface should be pressed and held (e.g. [HoldBar]).
+ * to whatever surface should be pressed and held (e.g. [HoldBar]); the same
+ * [progress] drives the [HoldRing] hero so the ring fills as the user holds.
  */
 @Stable
 class HoldToOpenState internal constructor(
@@ -118,75 +111,102 @@ fun rememberHoldToOpenState(
     )
 }
 
+/** Diameter of the collect hero. Also the [HoldRing] outer ring. */
+val HeroSize = 216.dp
+
+/**
+ * Diameter of the central yellow blob shared by the [HoldRing] (its lock core)
+ * and the terminal collect heroes (box / check / error), so the icon appears to
+ * stay put while the ring recedes on success ("sinks under the icon").
+ */
+val HeroBlobSize = 108.dp
+
+private val MiddleRingSize = 160.dp
+
+/**
+ * Concentric hold-to-open ring (design 5a): a thick outer band that fills yellow
+ * clockwise from the top as [progress] grows (the rest is [ringTrack]), a middle
+ * ring in the screen color, and a central yellow blob holding [glyph] (a padlock
+ * by default). Yellow surfaces keep an ink border in both themes; the hard shadow
+ * follows the theme foreground.
+ */
 @Composable
-fun DistanceRing(
+fun HoldRing(
     progress: Float,
-    distanceText: String,
-    caption: String,
     modifier: Modifier = Modifier,
+    glyph: @Composable () -> Unit = { HoldRingLockGlyph() },
 ) {
-    val trackColor = PaczkofastTheme.colors.trackBackground
-    val accent = PaczkofastTheme.colors.accent
+    val colors = PaczkofastTheme.colors
+    val clamped = progress.coerceIn(0f, 1f)
     Box(
         modifier = Modifier
-            .size(216.dp)
+            .size(HeroSize)
             .then(modifier)
             .semantics {
-                contentDescription = "$distanceText, $caption"
-                progressBarRangeInfo = ProgressBarRangeInfo(progress.coerceIn(0f, 1f), 0f..1f)
+                contentDescription = "Hold to open"
+                progressBarRangeInfo = ProgressBarRangeInfo(clamped, 0f..1f)
             },
         contentAlignment = Alignment.Center,
     ) {
-        Canvas(modifier = Modifier.size(216.dp)) {
-            val stroke = 6.dp.toPx()
-            val inset = stroke / 2f
-            val arcSize = Size(size.width - stroke, size.height - stroke)
-            val topLeft = Offset(inset, inset)
-            drawArc(
-                color = trackColor,
-                startAngle = -90f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = Stroke(width = stroke, cap = StrokeCap.Round),
-            )
-            if (progress > 0f) {
-                drawArc(
-                    color = accent,
-                    startAngle = -90f,
-                    sweepAngle = 360f * progress,
-                    useCenter = false,
-                    topLeft = topLeft,
-                    size = arcSize,
-                    style = Stroke(width = stroke, cap = StrokeCap.Round),
-                )
+        // Outer conic disc: a yellow pie up to `progress`, the remainder in the
+        // ring track. The middle ring below covers the center, leaving a band.
+        Box(
+            modifier = Modifier
+                .size(HeroSize)
+                .hardShadow(4.dp, 4.dp, colors.hardShadow, CircleShape)
+                .clip(CircleShape)
+                .border(3.dp, colors.accentBorder, CircleShape),
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawArc(color = colors.ringTrack, startAngle = -90f, sweepAngle = 360f, useCenter = true)
+                if (clamped > 0f) {
+                    drawArc(
+                        color = colors.accent,
+                        startAngle = -90f,
+                        sweepAngle = 360f * clamped,
+                        useCenter = true,
+                    )
+                }
             }
         }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+        // Middle ring in the screen color hides the pie center, leaving the band.
+        Box(
+            modifier = Modifier
+                .size(MiddleRingSize)
+                .clip(CircleShape)
+                .background(colors.background)
+                .border(3.dp, colors.borderStrong, CircleShape),
+        )
+        // Central yellow blob with the glyph.
+        Box(
+            modifier = Modifier
+                .size(HeroBlobSize)
+                .hardShadow(4.dp, 4.dp, colors.hardShadow, CircleShape)
+                .clip(CircleShape)
+                .background(colors.accent)
+                .border(3.dp, colors.accentBorder, CircleShape),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = distanceText,
-                style = MaterialTheme.typography.displaySmall.copy(
-                    fontFamily = SpaceGroteskFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 44.sp,
-                    lineHeight = 46.sp,
-                ),
-                color = PaczkofastTheme.colors.textPrimary,
-            )
-            Text(
-                text = caption.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
-                color = PaczkofastTheme.colors.textMuted,
-                textAlign = TextAlign.Center,
-            )
+            glyph()
         }
     }
 }
 
+@Composable
+private fun HoldRingLockGlyph() {
+    Icon(
+        imageVector = Icons.Rounded.Lock,
+        contentDescription = null,
+        tint = PaczkofastTheme.colors.onAccent,
+        modifier = Modifier.size(44.dp),
+    )
+}
+
+/**
+ * The yellow "Hold to open" action bar (design 5a). Press-and-hold via
+ * [HoldToOpenState.pressModifier]; the hold fills the [HoldRing] hero rather
+ * than a separate progress bar. Shows a spinner while holding.
+ */
 @Composable
 fun HoldBar(
     state: HoldToOpenState,
@@ -194,103 +214,50 @@ fun HoldBar(
     modifier: Modifier = Modifier,
 ) {
     val holding = state.isHolding
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        if (holding) {
-            HoldProgressBar(progress = state.progress)
-        }
-        NeoSurface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .then(state.pressModifier)
-                .semantics {
-                    contentDescription = label
-                    stateDescription = when {
-                        !state.isEnabled -> "Disabled"
-                        holding -> "Keep holding"
-                        else -> "Press and hold to open"
-                    }
-                },
-            shape = RoundedCornerShape(14.dp),
-            fill = PaczkofastTheme.colors.accent,
-            borderColor = PaczkofastTheme.colors.borderStrong,
-            pressed = holding,
-        ) {
-            Row(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (holding) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(18.dp),
-                        strokeWidth = 2.5.dp,
-                        color = PaczkofastTheme.colors.onAccent,
-                    )
+    NeoSurface(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .then(state.pressModifier)
+            .semantics {
+                contentDescription = label
+                stateDescription = when {
+                    !state.isEnabled -> "Disabled"
+                    holding -> "Keep holding"
+                    else -> "Press and hold to open"
                 }
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelLarge,
+            },
+        shape = RoundedCornerShape(14.dp),
+        fill = PaczkofastTheme.colors.accent,
+        borderColor = PaczkofastTheme.colors.accentBorder,
+        pressed = holding,
+    ) {
+        Row(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (holding) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.5.dp,
                     color = PaczkofastTheme.colors.onAccent,
                 )
             }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                color = PaczkofastTheme.colors.onAccent,
+            )
         }
     }
 }
 
-/**
- * "KEEP HOLDING…" mono caption above a thick bordered progress bar (design 5a):
- * the ink-outlined track fills with accent yellow up to [progress], with a
- * small ink divider marking the fill's leading edge.
- */
+@PaczkofastPreviews
 @Composable
-private fun HoldProgressBar(progress: Float) {
-    val clamped = progress.coerceIn(0f, 1f)
-    Column(
-        modifier = Modifier.semantics {
-            progressBarRangeInfo = ProgressBarRangeInfo(clamped, 0f..1f)
-            stateDescription = "${(clamped * 100).toInt()} percent"
-        },
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        Text(
-            text = "Keep holding…".uppercase(),
-            style = MonoLabel,
-            color = PaczkofastTheme.colors.monoLabel,
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(14.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(PaczkofastTheme.colors.trackBackground)
-                .border(2.5.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(8.dp)),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(clamped)
-                    .align(Alignment.CenterStart),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(PaczkofastTheme.colors.accent),
-                )
-                if (clamped > 0f) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .fillMaxHeight()
-                            .width(2.5.dp)
-                            .background(PaczkofastTheme.colors.borderStrong),
-                    )
-                }
-            }
-        }
+private fun HoldRingHalfPreview() {
+    PaczkofastTheme {
+        HoldRing(progress = 0.62f, modifier = Modifier.padding(20.dp))
     }
 }
 

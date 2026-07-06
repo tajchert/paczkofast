@@ -156,9 +156,7 @@ internal fun CountBadge(count: Int, modifier: Modifier = Modifier) {
         style = MonoLabel,
         color = colors.onAccent,
         modifier = modifier
-            .clip(shape)
-            .background(colors.accent)
-            .border(2.dp, colors.borderStrong, shape)
+            .neoBorderedFill(shape, colors.accent, colors.accentBorder, 2.dp)
             .padding(horizontal = 6.dp, vertical = 2.dp),
     )
 }

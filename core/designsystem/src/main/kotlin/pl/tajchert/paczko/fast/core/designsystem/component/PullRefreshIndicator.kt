@@ -74,7 +74,7 @@ fun PaczkofastPullRefreshIndicator(
             modifier = Modifier.size(40.dp),
             shape = RoundedCornerShape(13.dp),
             fill = PaczkofastTheme.colors.accent,
-            borderColor = PaczkofastTheme.colors.borderStrong,
+            borderColor = PaczkofastTheme.colors.accentBorder,
             shadowOffset = 3.dp,
         ) {
             Box(
@@ -83,7 +83,7 @@ fun PaczkofastPullRefreshIndicator(
                     .size(14.dp)
                     .rotate(diamondAngle)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(PaczkofastTheme.colors.borderStrong),
+                    .background(PaczkofastTheme.colors.onAccent),
             )
         }
     }

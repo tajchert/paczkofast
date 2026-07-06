@@ -186,7 +186,7 @@ private fun WelcomeLogoTile(modifier: Modifier = Modifier) {
         modifier = modifier.size(120.dp),
         shape = RoundedCornerShape(32.dp),
         fill = PaczkofastTheme.colors.accent,
-        borderColor = PaczkofastTheme.colors.borderStrong,
+        borderColor = PaczkofastTheme.colors.accentBorder,
         shadowOffset = 5.dp,
     ) {
         Box(
@@ -195,7 +195,7 @@ private fun WelcomeLogoTile(modifier: Modifier = Modifier) {
                 .size(38.dp)
                 .rotate(45f)
                 .clip(RoundedCornerShape(9.dp))
-                .background(PaczkofastTheme.colors.borderStrong),
+                .background(PaczkofastTheme.colors.onAccent),
         )
     }
 }
@@ -239,14 +239,14 @@ private fun UnofficialCardGraphic(modifier: Modifier = Modifier) {
                 .rotate(-7f),
             shape = RoundedCornerShape(8.dp),
             fill = PaczkofastTheme.colors.accent,
-            borderColor = PaczkofastTheme.colors.borderStrong,
+            borderColor = PaczkofastTheme.colors.accentBorder,
             borderWidth = 2.5.dp,
             shadowOffset = 2.dp,
         ) {
             Text(
                 text = "UNOFFICIAL",
                 style = MonoLabel,
-                color = PaczkofastTheme.colors.textPrimary,
+                color = PaczkofastTheme.colors.onAccent,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(horizontal = 12.dp, vertical = 4.dp),
@@ -302,7 +302,13 @@ private fun PageDotIndicator(
                 modifier = Modifier.size(width = lerp(8.dp, 24.dp, fraction), height = 8.dp),
                 shape = RoundedCornerShape(5.dp),
                 fill = lerp(inactive, accent, fraction),
-                borderColor = PaczkofastTheme.colors.borderStrong,
+                // Border tracks the fill: neutral (light-on-dark) when inactive,
+                // ink when the dot fills yellow — never a light outline on yellow.
+                borderColor = lerp(
+                    PaczkofastTheme.colors.borderStrong,
+                    PaczkofastTheme.colors.accentBorder,
+                    fraction,
+                ),
                 borderWidth = 2.dp,
                 shadow = false,
             ) {}

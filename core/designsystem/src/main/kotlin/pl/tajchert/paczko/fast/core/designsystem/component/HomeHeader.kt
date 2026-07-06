@@ -85,7 +85,9 @@ fun LogoMark(modifier: Modifier = Modifier) {
         modifier = modifier.size(44.dp),
         shape = RoundedCornerShape(14.dp),
         fill = PaczkofastTheme.colors.accent,
-        borderColor = PaczkofastTheme.colors.borderStrong,
+        // Yellow tile keeps an ink border + ink glyph in both themes, so it never
+        // grows a light outline on dark (see PaczkofastColors.accentBorder).
+        borderColor = PaczkofastTheme.colors.accentBorder,
         shadow = false,
     ) {
         Box(
@@ -94,7 +96,7 @@ fun LogoMark(modifier: Modifier = Modifier) {
                 .size(15.dp)
                 .rotate(45f)
                 .clip(RoundedCornerShape(4.dp))
-                .background(PaczkofastTheme.colors.borderStrong),
+                .background(PaczkofastTheme.colors.onAccent),
         )
     }
 }

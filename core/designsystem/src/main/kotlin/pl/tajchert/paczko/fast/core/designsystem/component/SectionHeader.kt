@@ -74,9 +74,7 @@ fun CountBadge(
         modifier = modifier
             .widthIn(min = 22.dp)
             .height(20.dp)
-            .clip(RoundedCornerShape(7.dp))
-            .background(background)
-            .border(2.dp, PaczkofastTheme.colors.borderStrong, RoundedCornerShape(7.dp)),
+            .neoBorderedFill(RoundedCornerShape(7.dp), background, PaczkofastTheme.colors.borderStrong, 2.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(

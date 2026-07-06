@@ -160,7 +160,7 @@ private fun LogoTile(modifier: Modifier = Modifier) {
         modifier = modifier.size(72.dp),
         shape = RoundedCornerShape(22.dp),
         fill = PaczkofastTheme.colors.accent,
-        borderColor = PaczkofastTheme.colors.borderStrong,
+        borderColor = PaczkofastTheme.colors.accentBorder,
         shadowOffset = 4.dp,
     ) {
         Box(
@@ -169,7 +169,7 @@ private fun LogoTile(modifier: Modifier = Modifier) {
                 .size(26.dp)
                 .rotate(45f)
                 .clip(RoundedCornerShape(7.dp))
-                .background(PaczkofastTheme.colors.borderStrong),
+                .background(PaczkofastTheme.colors.onAccent),
         )
     }
 }
