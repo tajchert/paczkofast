@@ -54,89 +54,6 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
 
 /**
- * The "armed" open-box panel (design 6d): a large ring wrapping a live distance
- * readout, a hold prompt, and a full-width hold-to-open bar at the bottom. The
- * ring fills in step with the hold — [onConfirmed] fires exactly once, only
- * after a completed hold; releasing early animates everything back to zero.
- *
- * @param distanceText Center readout, e.g. "8 m" (shows "—" when null).
- * @param lockerCaption Small caption under the distance, e.g. "to locker WAW01A".
- * @param subline Secondary line under the prompt, e.g. "Parcel · box pops open".
- */
-@Composable
-fun HoldToOpenPanel(
-    distanceText: String?,
-    lockerCaption: String,
-    subline: String?,
-    onConfirmed: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    holdDurationMillis: Int = 1200,
-) {
-    val hold = rememberHoldToOpenState(
-        holdDurationMillis = holdDurationMillis,
-        enabled = enabled,
-        onConfirmed = onConfirmed,
-    )
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .semantics {
-                stateDescription = if (enabled) {
-                    "Ready to open"
-                } else {
-                    "Disabled"
-                }
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            DistanceRing(
-                progress = hold.progress,
-                distanceText = distanceText ?: "—",
-                caption = lockerCaption,
-            )
-            Column(
-                modifier = Modifier.padding(top = 26.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text(
-                    text = if (hold.isHolding) "Keep holding…" else "Hold to open",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = PaczkofastTheme.colors.textPrimary,
-                    textAlign = TextAlign.Center,
-                )
-                subline?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = PaczkofastTheme.colors.textMuted,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        }
-
-        HoldBar(state = hold)
-        Text(
-            text = "Release to cancel — nothing opens until the ring completes",
-            style = MaterialTheme.typography.bodySmall,
-            color = PaczkofastTheme.colors.textMuted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 14.dp),
-        )
-    }
-}
-
-/**
  * State + press handling for a hold-to-open interaction (design 5a/6d): tracks
  * hold [progress] via [HoldProgress] and an [Animatable] fill, fires
  * [onConfirmed] exactly once when a completed hold is detected (with a haptic
@@ -374,20 +291,6 @@ private fun HoldProgressBar(progress: Float) {
                 }
             }
         }
-    }
-}
-
-@PaczkofastPreviews
-@Composable
-private fun HoldToOpenPanelPreview() {
-    PaczkofastTheme {
-        HoldToOpenPanel(
-            distanceText = "8 m",
-            lockerCaption = "to locker WAW01A",
-            subline = "Box pops open below eye level",
-            onConfirmed = {},
-            modifier = Modifier.padding(20.dp),
-        )
     }
 }
 
