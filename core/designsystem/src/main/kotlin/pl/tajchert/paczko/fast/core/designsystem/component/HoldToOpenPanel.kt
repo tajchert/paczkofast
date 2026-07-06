@@ -22,6 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,6 +73,89 @@ fun HoldToOpenPanel(
     enabled: Boolean = true,
     holdDurationMillis: Int = 1200,
 ) {
+    val hold = rememberHoldToOpenState(
+        holdDurationMillis = holdDurationMillis,
+        enabled = enabled,
+        onConfirmed = onConfirmed,
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                stateDescription = if (enabled) {
+                    "Ready to open"
+                } else {
+                    "Disabled"
+                }
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            DistanceRing(
+                progress = hold.progress,
+                distanceText = distanceText ?: "—",
+                caption = lockerCaption,
+            )
+            Column(
+                modifier = Modifier.padding(top = 26.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text(
+                    text = if (hold.isHolding) "Keep holding…" else "Hold to open",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = PaczkofastTheme.colors.textPrimary,
+                    textAlign = TextAlign.Center,
+                )
+                subline?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = PaczkofastTheme.colors.textMuted,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        }
+
+        HoldBar(state = hold)
+        Text(
+            text = "Release to cancel — nothing opens until the ring completes",
+            style = MaterialTheme.typography.bodySmall,
+            color = PaczkofastTheme.colors.textMuted,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 14.dp),
+        )
+    }
+}
+
+/**
+ * State + press handling for a hold-to-open interaction (design 5a/6d): tracks
+ * hold [progress] via [HoldProgress] and an [Animatable] fill, fires
+ * [onConfirmed] exactly once when a completed hold is detected (with a haptic
+ * tick), and animates back to zero when released early. Apply [pressModifier]
+ * to whatever surface should be pressed and held (e.g. [HoldBar]).
+ */
+@Stable
+class HoldToOpenState internal constructor(
+    val progress: Float,
+    val isHolding: Boolean,
+    val pressModifier: Modifier,
+)
+
+@Composable
+fun rememberHoldToOpenState(
+    holdDurationMillis: Int = 1200,
+    enabled: Boolean = true,
+    onConfirmed: () -> Unit,
+): HoldToOpenState {
     val controller = remember(holdDurationMillis) { HoldProgress(holdDurationMillis.toLong()) }
     val fill = remember { Animatable(0f) }
     val haptics = LocalHapticFeedback.current
@@ -100,79 +184,34 @@ fun HoldToOpenPanel(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .semantics {
-                stateDescription = if (enabled) {
-                    "Ready to open"
-                } else {
-                    "Disabled"
-                }
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            DistanceRing(
-                progress = fill.value,
-                distanceText = distanceText ?: "—",
-                caption = lockerCaption,
-            )
-            Column(
-                modifier = Modifier.padding(top = 26.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text(
-                    text = if (pressed && enabled) "Keep holding…" else "Hold to open",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = PaczkofastTheme.colors.textPrimary,
-                    textAlign = TextAlign.Center,
-                )
-                subline?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = PaczkofastTheme.colors.textMuted,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        }
-
-        HoldBar(
-            progress = fill.value,
-            pressed = pressed,
-            enabled = enabled,
-            onPressChange = { pressed = it },
-        )
-        Text(
-            text = "Release to cancel — nothing opens until the ring completes",
-            style = MaterialTheme.typography.bodySmall,
-            color = PaczkofastTheme.colors.textMuted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 14.dp),
-        )
+    val pressModifier = Modifier.pointerInput(enabled) {
+        if (!enabled) return@pointerInput
+        detectTapGestures(onPress = {
+            pressed = true
+            tryAwaitRelease()
+            pressed = false
+        })
     }
+    return HoldToOpenState(
+        progress = fill.value,
+        isHolding = pressed && enabled,
+        pressModifier = pressModifier,
+    )
 }
 
 @Composable
-private fun DistanceRing(
+fun DistanceRing(
     progress: Float,
     distanceText: String,
     caption: String,
+    modifier: Modifier = Modifier,
 ) {
     val trackColor = PaczkofastTheme.colors.trackBackground
     val accent = PaczkofastTheme.colors.accent
     Box(
         modifier = Modifier
             .size(216.dp)
+            .then(modifier)
             .semantics {
                 contentDescription = "$distanceText, $caption"
                 progressBarRangeInfo = ProgressBarRangeInfo(progress.coerceIn(0f, 1f), 0f..1f)
@@ -230,40 +269,27 @@ private fun DistanceRing(
 }
 
 @Composable
-private fun HoldBar(
-    progress: Float,
-    pressed: Boolean,
-    enabled: Boolean,
-    onPressChange: (Boolean) -> Unit,
+fun HoldBar(
+    state: HoldToOpenState,
+    label: String = "Hold to open",
     modifier: Modifier = Modifier,
 ) {
-    val currentOnPressChange by rememberUpdatedState(onPressChange)
-    val holding = pressed && enabled
+    val holding = state.isHolding
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (holding) {
-            HoldProgressBar(progress = progress)
+            HoldProgressBar(progress = state.progress)
         }
         NeoSurface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .pointerInput(enabled) {
-                    if (!enabled) return@pointerInput
-                    detectTapGestures(
-                        onPress = {
-                            currentOnPressChange(true)
-                            tryAwaitRelease()
-                            currentOnPressChange(false)
-                        },
-                    )
-                }
+                .then(state.pressModifier)
                 .semantics {
-                    contentDescription = "Hold to open"
+                    contentDescription = label
                     stateDescription = when {
-                        !enabled -> "Disabled"
                         holding -> "Keep holding"
                         else -> "Press and hold to open"
                     }
@@ -286,7 +312,7 @@ private fun HoldBar(
                     )
                 }
                 Text(
-                    text = "Hold to open",
+                    text = label,
                     style = MaterialTheme.typography.labelLarge,
                     color = PaczkofastTheme.colors.onAccent,
                 )
@@ -367,10 +393,11 @@ private fun HoldToOpenPanelPreview() {
 private fun HoldBarHoldingPreview() {
     PaczkofastTheme {
         HoldBar(
-            progress = 0.6f,
-            pressed = true,
-            enabled = true,
-            onPressChange = {},
+            state = HoldToOpenState(
+                progress = 0.6f,
+                isHolding = true,
+                pressModifier = Modifier,
+            ),
             modifier = Modifier.padding(20.dp),
         )
     }
@@ -381,10 +408,11 @@ private fun HoldBarHoldingPreview() {
 private fun HoldBarIdlePreview() {
     PaczkofastTheme {
         HoldBar(
-            progress = 0f,
-            pressed = false,
-            enabled = true,
-            onPressChange = {},
+            state = HoldToOpenState(
+                progress = 0f,
+                isHolding = false,
+                pressModifier = Modifier,
+            ),
             modifier = Modifier.padding(20.dp),
         )
     }
