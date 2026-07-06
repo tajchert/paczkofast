@@ -1,5 +1,6 @@
 package pl.tajchert.paczko.fast.feature.parcels.impl.list
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -129,6 +130,13 @@ private fun ParcelListContent(
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // On a non-default tab, back returns to Parcels first instead of exiting the
+    // app (the tabs share one back-stack entry, so without this, back on History
+    // pops the start destination and quits).
+    BackHandler(enabled = selectedTab != BottomNavDestination.Parcels) {
+        onSelectTab(BottomNavDestination.Parcels)
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Surface refresh failures as a self-dismissing snackbar, but only when we
