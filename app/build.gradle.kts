@@ -111,6 +111,7 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.core.datastore)
     implementation(projects.core.domain)
+    "demoImplementation"(projects.core.demo)
 
     // Android Core
     implementation(libs.androidx.core.ktx)
