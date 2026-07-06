@@ -31,6 +31,16 @@ https://github.com/tajchert/inpost-api-docs
 Do not use this project in a way that violates service terms, local law, or user
 privacy.
 
+## Install
+
+Signed release APKs are published on the
+[GitHub Releases](https://github.com/tajchert/inpost-fast-app/releases) page.
+Download the latest `paczkofast-<version>.apk`, sideload it on Android, and
+verify the download with the matching `.sha256` file if needed.
+
+Updates use the same app id and signing key, so future GitHub Release APKs can
+be installed over an earlier GitHub Release build without uninstalling.
+
 ## Features
 
 <p align="center">

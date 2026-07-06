@@ -1,0 +1,119 @@
+# Builds, signs, and publishes the prodRelease APK to a GitHub Release.
+#
+# Triggers:
+#   - push of a v* tag: full release (build -> verify -> attach to release)
+#   - workflow_dispatch: dry run. The APK is only uploaded as a workflow
+#     artifact, no release is created.
+#
+# Signing: the private keystore is decoded from the RELEASE_KEYSTORE_BASE64
+# repo secret into the runner's temp dir and passed to Gradle via PACZKOFAST_*
+# env vars. Secrets are never available to fork-triggered workflows; this
+# workflow only runs on tag pushes and manual dispatches by repo writers.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: true
+
+      - name: Run unit tests
+        run: ./gradlew test
+
+      - name: Check tag matches versionName
+        if: github.ref_type == 'tag'
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          GRADLE_VERSION=$(grep -m1 'versionName = ' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          if [ "$TAG_VERSION" != "$GRADLE_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match versionName $GRADLE_VERSION in app/build.gradle.kts" >&2
+            exit 1
+          fi
+
+      - name: Decode release keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "RELEASE_KEYSTORE_BASE64 is not configured." >&2
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      - name: Build signed prodRelease APK
+        env:
+          PACZKOFAST_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          PACZKOFAST_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          PACZKOFAST_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          PACZKOFAST_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew :app:assembleProdRelease
+
+      - name: Verify APK signature
+        run: |
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n1)
+          "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk
+          "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk \
+            | grep -q "CN=Paczkofast Release" \
+            || { echo "APK is not release-signed with the Paczkofast certificate." >&2; exit 1; }
+
+      - name: Stage release artifacts
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="ci-${GITHUB_SHA::7}"
+          fi
+          mkdir -p dist
+          cp app/build/outputs/apk/prod/release/app-prod-release.apk "dist/paczkofast-$VERSION.apk"
+          cd dist
+          shasum -a 256 "paczkofast-$VERSION.apk" > "paczkofast-$VERSION.apk.sha256"
+
+      - name: Create GitHub Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RELEASE_NOTES="$(cat <<'EOF'
+          > **Unofficial app.** Paczkofast is an experimental, unofficial companion app.
+          > It is not affiliated with, endorsed by, or supported by any locker operator.
+          > The API integration is unofficial and may break at any time. Use at your own risk.
+
+          **Install:** download the APK below and sideload it by enabling "install unknown apps" for your browser or file manager. Verify the download against the `.sha256` checksum file.
+          EOF
+          )"
+
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --title "Paczkofast ${GITHUB_REF_NAME#v}" \
+            --generate-notes \
+            --notes "$RELEASE_NOTES" \
+            dist/*.apk dist/*.apk.sha256
+
+      - name: Upload dry-run artifact
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: paczkofast-prod-release-apk
+          path: dist/*

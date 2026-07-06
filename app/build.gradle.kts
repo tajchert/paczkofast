@@ -21,6 +21,8 @@
 // Features are composed here via their navigation contributions.
 // =============================================================================
 
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -28,6 +30,25 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.baselineprofile)
 }
+
+// Release signing. Values come from keystore.properties (local, gitignored) or
+// PACZKOFAST_* environment variables (CI). The keystore itself is private and
+// never committed; see AGENTS.md public-safety rules.
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) {
+        file.inputStream().use(::load)
+    }
+}
+
+fun releaseSigningValue(property: String, envVar: String): String? =
+    keystoreProperties.getProperty(property) ?: System.getenv(envVar)
+
+fun requiredReleaseSigningValue(property: String, envVar: String): String =
+    releaseSigningValue(property, envVar)
+        ?: error("Release signing is configured, but $property/$envVar is missing.")
+
+val releaseStorePath = releaseSigningValue("storeFile", "PACZKOFAST_KEYSTORE_PATH")
 
 android {
     namespace = "pl.tajchert.paczko.fast"
@@ -46,6 +67,23 @@ android {
         }
     }
 
+    signingConfigs {
+        if (releaseStorePath != null) {
+            create("release") {
+                storeFile = rootProject.file(releaseStorePath)
+                storePassword = requiredReleaseSigningValue(
+                    "storePassword",
+                    "PACZKOFAST_KEYSTORE_PASSWORD",
+                )
+                keyAlias = requiredReleaseSigningValue("keyAlias", "PACZKOFAST_KEY_ALIAS")
+                keyPassword = requiredReleaseSigningValue(
+                    "keyPassword",
+                    "PACZKOFAST_KEY_PASSWORD",
+                )
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -54,11 +92,15 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // Debug-signed so release (and the baseline-profile plugin's derived
-            // benchmarkRelease/nonMinifiedRelease variants) can be installed on a
-            // device to record profiles. Replace with a real release keystore
-            // before publishing.
-            signingConfig = signingConfigs.getByName("debug")
+            // Falls back to the debug key when no release keystore is configured,
+            // so release (and the baseline-profile plugin's derived
+            // benchmarkRelease/nonMinifiedRelease variants) stays installable on
+            // a device for profile recording and contributor builds.
+            signingConfig = if (releaseStorePath != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
         debug {
             isDebuggable = true
