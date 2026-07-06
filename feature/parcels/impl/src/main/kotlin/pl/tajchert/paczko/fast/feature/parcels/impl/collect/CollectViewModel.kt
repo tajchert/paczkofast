@@ -15,10 +15,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import pl.tajchert.paczko.fast.core.common.location.LocationProvider
+import pl.tajchert.paczko.fast.core.common.location.isWithinNearbyThreshold
 import pl.tajchert.paczko.fast.core.common.location.metersToLocker
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
+import pl.tajchert.paczko.fast.core.data.repository.UserPreferencesRepository
 import pl.tajchert.paczko.fast.core.domain.CollectParcelUseCase
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
@@ -29,11 +33,13 @@ class CollectViewModel @Inject constructor(
     private val collectParcel: CollectParcelUseCase,
     private val parcelRepository: ParcelRepository,
     private val locationProvider: LocationProvider,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CollectUiState())
     val uiState: StateFlow<CollectUiState> = _uiState.asStateFlow()
 
     private var collectJob: Job? = null
+    private var locationJob: Job? = null
     private var startedShipmentNumber: String? = null
     private var armedShipmentNumber: String? = null
 
@@ -42,25 +48,39 @@ class CollectViewModel @Inject constructor(
         if (startedShipmentNumber == shipmentNumber) return
         armedShipmentNumber = shipmentNumber
         viewModelScope.launch {
+            val mode = userPreferencesRepository.userPreferences.first().lockerOpenMode
             val members = compartmentMembers(shipmentNumber)
             val pickup = members.firstOrNull { it.shipmentNumber == shipmentNumber }?.pickupPoint
                 ?: members.firstOrNull()?.pickupPoint
-            val distance = runCatching {
-                metersToLocker(
-                    from = locationProvider.currentLocation(),
-                    lockerLatitude = pickup?.latitude,
-                    lockerLongitude = pickup?.longitude,
-                )
-            }.getOrNull()
             _uiState.update {
                 if (it.state !is CollectState.Idle) {
                     it
                 } else {
                     it.copy(
+                        openMode = mode,
                         lockerName = pickup?.name,
-                        distanceMeters = distance,
                         members = members.map(::toCollectMember).toImmutableList(),
                     )
+                }
+            }
+            locationJob?.cancel()
+            locationJob = launch {
+                locationProvider.locationUpdates().collect { fix ->
+                    val distance = metersToLocker(
+                        from = fix,
+                        lockerLatitude = pickup?.latitude,
+                        lockerLongitude = pickup?.longitude,
+                    )
+                    _uiState.update {
+                        if (it.state !is CollectState.Idle) {
+                            it
+                        } else {
+                            it.copy(
+                                distanceMeters = distance,
+                                accuracyMeters = fix.accuracy.roundToInt(),
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -71,6 +91,7 @@ class CollectViewModel @Inject constructor(
         if (collectJob?.isActive == true) return
 
         startedShipmentNumber = shipmentNumber
+        locationJob?.cancel()
         collectJob = viewModelScope.launch {
             val members = compartmentMembers(shipmentNumber)
             val parcel = members.firstOrNull { it.shipmentNumber == shipmentNumber }
@@ -127,6 +148,10 @@ class CollectViewModel @Inject constructor(
             )
         }
     }
+
+    override fun onCleared() {
+        locationJob?.cancel()
+    }
 }
 
 @Immutable
@@ -134,8 +159,12 @@ data class CollectUiState(
     val state: CollectState = CollectState.Idle,
     val lockerName: String? = null,
     val distanceMeters: Int? = null,
+    val accuracyMeters: Int? = null,
+    val openMode: LockerOpenMode = LockerOpenMode.HOLD,
     val members: ImmutableList<CollectMember> = persistentListOf(),
-)
+) {
+    val nearbyReady: Boolean get() = isWithinNearbyThreshold(distanceMeters, accuracyMeters)
+}
 
 /** One parcel in the compartment being collected — drives the checklist/summary. */
 @Immutable
