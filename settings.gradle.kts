@@ -69,6 +69,9 @@ include(":core:domain")
 // Test utilities, fakes, rules for unit testing
 include(":core:testing")
 
+// Fully-offline demo fakes powering the `demo` product flavor
+include(":core:demo")
+
 // -----------------------------------------------------------------------------
 // Feature modules - user-facing features with API/impl split
 // -----------------------------------------------------------------------------
