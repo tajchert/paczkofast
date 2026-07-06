@@ -1,5 +1,8 @@
 package pl.tajchert.paczko.fast.core.domain
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -177,4 +180,7 @@ private class FakeLocationProvider(
         failure?.let { throw it }
         return requireNotNull(geoPoint)
     }
+
+    override fun locationUpdates(): Flow<GeoPoint> =
+        geoPoint?.let { flowOf(it) } ?: emptyFlow()
 }

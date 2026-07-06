@@ -51,14 +51,17 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import pl.tajchert.paczko.fast.core.designsystem.component.CheckOffParcelRow
 import pl.tajchert.paczko.fast.core.designsystem.component.DetailTopBar
-import pl.tajchert.paczko.fast.core.designsystem.component.HoldToOpenPanel
+import pl.tajchert.paczko.fast.core.designsystem.component.DistanceRing
+import pl.tajchert.paczko.fast.core.designsystem.component.HoldBar
 import pl.tajchert.paczko.fast.core.designsystem.component.OutlinedActionButton
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastCard
 import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.component.PrimaryActionButton
 import pl.tajchert.paczko.fast.core.designsystem.component.SizeBadge
+import pl.tajchert.paczko.fast.core.designsystem.component.rememberHoldToOpenState
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 
 @Composable
@@ -100,7 +103,6 @@ fun CollectScreen(
     }
 
     CollectContent(
-        shipmentNumber = shipmentNumber,
         uiState = uiState,
         onConfirmed = { viewModel.start(currentShipmentNumber) },
         onBack = onBack,
@@ -113,12 +115,19 @@ private val CollectState.isBoxOpen: Boolean
         this is CollectState.ConfirmingClosed ||
         this is CollectState.Claiming
 
+/** True once the box has closed and we're confirming/claiming — drives "Finishing up…". */
 private val CollectState.isFinishing: Boolean
     get() = this is CollectState.ConfirmingClosed || this is CollectState.Claiming
 
+/**
+ * Drives the fixed [CollectScaffold] from the pure [collectScreenModel] mapping. Every
+ * state renders the same three zones (header / 216.dp hero / bottom action) so switching
+ * idle → holding → box open → success/error — and live distance updates — never moves an
+ * anchor. A single shared [rememberHoldToOpenState] feeds both the Hold action bar and the
+ * Nearby "override with hold", so a hold fills the hero ring in either mode.
+ */
 @Composable
 internal fun CollectContent(
-    shipmentNumber: String,
     uiState: CollectUiState,
     onConfirmed: () -> Unit,
     onBack: () -> Unit,
@@ -137,14 +146,64 @@ internal fun CollectContent(
         }
     }
 
+    // Single hold state shared by Hold mode and the Nearby override — a completed hold
+    // fires start() and fills the hero ring in both modes. Only armable while idle.
+    val holdState = rememberHoldToOpenState(
+        enabled = state is CollectState.Idle,
+        onConfirmed = onConfirmed,
+    )
+
+    val baseModel = collectScreenModel(state, uiState)
+    // Box-already-open failure is presented as a success (with the snackbar caveat above),
+    // so reuse the Completed slots rather than the Error ones.
+    val model = if (collectedButUnconfirmed != null) {
+        baseModel.copy(
+            header = "Box closed".uppercase(),
+            hero = CollectHero.Check,
+            headline = if (uiState.members.size > 1) "All picked up!" else "Picked up!",
+            subline = null,
+            action = CollectAction.BackOnly,
+        )
+    } else {
+        baseModel
+    }
+
+    val showSummary = state is CollectState.Completed || collectedButUnconfirmed != null
+    val detail: (@Composable () -> Unit)? = when {
+        state.isBoxOpen -> {
+            { BoxOpenDetail(members = uiState.members, finishing = state.isFinishing) }
+        }
+        showSummary -> {
+            { CollectedSummary(members = uiState.members) }
+        }
+        // Plain failure (box never opened): wrap the full message in the variable-height
+        // detail slot rather than the clipping single-line subline.
+        state is CollectState.Failed -> {
+            { ErrorDetail(message = state.message) }
+        }
+        else -> null
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            if (state !is CollectState.Completed && collectedButUnconfirmed == null) {
-                DetailTopBar(title = if (state.isBoxOpen) "Box open" else "Open box", onBack = onBack)
-            }
+            // Always render the top bar so its height is reserved in every collect state —
+            // otherwise the box-open → success/box-already-open transition (which used to hide
+            // it) would collapse the Scaffold content padding and shift the whole CollectScaffold
+            // (header/hero/action) upward. On the terminal states the back CONTROL is suppressed
+            // (success's affordance is the "Back to my parcels" button), but the bar HEIGHT stays.
+            val terminal = state is CollectState.Completed || collectedButUnconfirmed != null
+            DetailTopBar(
+                title = when {
+                    terminal -> ""
+                    state.isBoxOpen -> "Box open"
+                    else -> "Open box"
+                },
+                onBack = onBack,
+                showBackButton = !terminal,
+            )
         },
     ) { paddingValues ->
         Box(
@@ -153,202 +212,181 @@ internal fun CollectContent(
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp, vertical = 8.dp),
         ) {
-            when {
-                state is CollectState.Idle -> HoldToOpenPanel(
-                    distanceText = uiState.distanceMeters?.let { "$it m" },
-                    lockerCaption = uiState.lockerName?.let { "to locker $it" } ?: "to the locker",
-                    subline = collectSubline(uiState.members.size),
-                    onConfirmed = onConfirmed,
-                    modifier = Modifier.fillMaxSize(),
-                )
+            CollectScaffold(
+                header = model.header,
+                hero = {
+                    when (model.hero) {
+                        CollectHero.Distance -> DistanceRing(
+                            progress = holdState.progress,
+                            distanceText = uiState.distanceMeters?.let { "$it m" } ?: "—",
+                            caption = uiState.lockerName?.let { "to locker $it" } ?: "to the locker",
+                        )
+                        CollectHero.OpenBox -> OpenBoxBlob()
+                        CollectHero.Check -> CheckBlob(count = uiState.members.size)
+                        CollectHero.Error -> ErrorBlob()
+                    }
+                },
+                heroKey = model.hero,
+                headline = model.headline,
+                subline = model.subline,
+                detail = detail,
+                action = {
+                    when (model.action) {
+                        CollectAction.HoldOnly -> HoldBar(state = holdState)
 
-                // Box opened but a later step failed — treat as collected; the
-                // snackbar above carries the caveat.
-                collectedButUnconfirmed != null -> SuccessScreen(
-                    members = uiState.members,
-                    onBack = onBack,
-                )
+                        CollectAction.NearbyOpen -> Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            PrimaryActionButton(
+                                text = "Open locker",
+                                enabled = model.openEnabled,
+                                onClick = onConfirmed,
+                            )
+                            if (model.showOverrideHold) {
+                                HoldBar(state = holdState, label = "Override with hold")
+                            }
+                        }
 
-                state.isBoxOpen -> BoxOpenScreen(
-                    members = uiState.members,
-                    lockerName = uiState.lockerName,
-                    finishing = state.isFinishing,
-                )
+                        CollectAction.BackOnly -> PrimaryActionButton(
+                            text = if (state is CollectState.Canceled) "Close" else "Back to my parcels",
+                            onClick = onBack,
+                        )
 
-                state is CollectState.Completed -> SuccessScreen(
-                    members = uiState.members,
-                    onBack = onBack,
-                )
+                        CollectAction.RetrySupport -> Column(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            PrimaryActionButton(text = "Try again", onClick = onBack)
+                            OutlinedActionButton(text = "Contact support", onClick = onBack)
+                        }
 
-                // Full-screen error only for failures before the box opened.
-                state is CollectState.Failed -> ErrorScreen(
-                    message = state.message,
-                    lockerName = uiState.lockerName,
-                    onRetry = onBack,
-                    onContactSupport = onBack,
-                )
-
-                else -> CollectStatus(state = state, onClose = onBack)
-            }
-        }
-    }
-}
-
-private fun collectSubline(count: Int): String = when {
-    count > 1 -> "$count parcels share this box — you'll take them all at once"
-    else -> "Stand at the locker before you start"
-}
-
-/**
- * Plain status text for the brief transitional states that have no
- * dedicated mock (validating / opening / waiting-for-open / canceled) —
- * [CollectState.Completed] and [CollectState.Failed] are routed to
- * [SuccessScreen] and [ErrorScreen] respectively before reaching here.
- */
-@Composable
-private fun CollectStatus(
-    state: CollectState,
-    onClose: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = collectMessage(state),
-            style = MaterialTheme.typography.displaySmall,
-            color = PaczkofastTheme.colors.textPrimary,
-            textAlign = TextAlign.Center,
-        )
-        if (state is CollectState.Canceled) {
-            PrimaryActionButton(
-                text = "Close",
-                onClick = onClose,
-                modifier = Modifier.padding(top = 28.dp),
+                        CollectAction.None -> Box(modifier = Modifier)
+                    }
+                },
             )
         }
     }
 }
 
 /**
- * Design 5b/5c — the box is open: a yellow open-box blob, a mono locker
- * caption and either a plain parcel card (single) or a [CheckOffParcelRow]
- * checklist (shared/multi compartment). The door closing (detected by
- * polling) advances the flow to [SuccessScreen] — the checklist here is a
- * safety affordance only, there is no manual "close" action to wire up.
+ * Design 5b/5c detail — either a plain parcel card (single) or a [CheckOffParcelRow]
+ * checklist with a live "checked" counter (shared/multi compartment). The door closing
+ * (detected by polling) advances the flow to the success slot; the checklist is a safety
+ * affordance only, there is no manual "close" action to wire up.
  */
 @Composable
-private fun BoxOpenScreen(
-    members: ImmutableList<CollectMember>,
-    lockerName: String?,
-    finishing: Boolean,
-) {
+private fun BoxOpenDetail(members: ImmutableList<CollectMember>, finishing: Boolean) {
     val colors = PaczkofastTheme.colors
     val checked = remember(members) { mutableStateListOf<String>() }
     val allChecked = members.isNotEmpty() && checked.size == members.size
     val count = members.size
 
+    // Safety guidance above the card/checklist: once the door closes we're confirming, so
+    // switch to "Finishing up…"; otherwise remind the user how to close the compartment.
+    val guidance = when {
+        finishing -> "Finishing up…"
+        count > 1 -> "$count parcels share this box — check off both before you close it."
+        else -> "Close the door firmly — it locks automatically"
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            OpenBoxBlob()
-            Text(
-                text = (lockerName?.let { "Locker $it" } ?: "Locker").uppercase(),
-                style = MonoLabel,
-                color = colors.monoLabel,
-                modifier = Modifier.padding(top = 22.dp),
-            )
-            Text(
-                text = "The box is open",
-                style = MaterialTheme.typography.displaySmall,
-                color = colors.textPrimary,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-            Text(
-                text = if (count > 1) {
-                    "$count parcels share this box — check off both before you close it."
-                } else {
-                    "Take your parcel, then close the door firmly."
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textSecondary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-            if (count > 1) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 22.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    members.forEach { member ->
-                        val isChecked = member.shipmentNumber in checked
-                        CheckOffParcelRow(
-                            sender = member.title,
-                            size = member.sizeLabel ?: "—",
-                            checked = isChecked,
-                            onToggle = {
-                                if (isChecked) checked.remove(member.shipmentNumber)
-                                else checked.add(member.shipmentNumber)
-                            },
-                        )
-                    }
+        Text(
+            text = guidance,
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        if (count > 1) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                members.forEach { member ->
+                    val isChecked = member.shipmentNumber in checked
+                    CheckOffParcelRow(
+                        sender = member.title,
+                        size = member.sizeLabel ?: "—",
+                        checked = isChecked,
+                        onToggle = {
+                            if (isChecked) checked.remove(member.shipmentNumber)
+                            else checked.add(member.shipmentNumber)
+                        },
+                    )
                 }
-            } else {
-                members.firstOrNull()?.let { member ->
-                    PaczkofastCard(modifier = Modifier.padding(top = 22.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            Text(
-                                text = member.title,
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                ),
-                                color = colors.textPrimary,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f),
-                            )
-                            member.sizeLabel?.let { SizeBadge(size = it) }
-                        }
+                Text(
+                    text = if (allChecked) {
+                        "${members.size} of ${members.size} checked".uppercase()
+                    } else {
+                        "${checked.size} of ${members.size} checked — check both to close".uppercase()
+                    },
+                    style = MonoLabel,
+                    color = if (allChecked) colors.monoLabel else colors.alertText,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+                )
+            }
+        } else {
+            members.firstOrNull()?.let { member ->
+                PaczkofastCard {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Text(
+                            text = member.title,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            color = colors.textPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
+                        )
+                        member.sizeLabel?.let { SizeBadge(size = it) }
                     }
                 }
             }
         }
+    }
+}
 
-        if (count > 1) {
-            Text(
-                text = when {
-                    finishing -> "Finishing up…"
-                    allChecked -> "${members.size} of ${members.size} checked".uppercase()
-                    else -> "${checked.size} of ${members.size} checked — check both to close".uppercase()
-                },
-                style = MonoLabel,
-                color = if (allChecked) colors.monoLabel else colors.alertText,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 12.dp),
-            )
-        } else {
-            Text(
-                text = if (finishing) "Finishing up…" else "Close the door firmly — it locks automatically",
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textMuted,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 16.dp),
-            )
+/**
+ * Error detail — the full failure message (wrapping, centered) followed by a "What you can
+ * do" tip card. Rendered in the variable-height detail slot so the whole sentence is visible
+ * instead of clipping in the fixed single-line subline.
+ */
+@Composable
+private fun ErrorDetail(message: String) {
+    val colors = PaczkofastTheme.colors
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        PaczkofastCard {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = "What you can do".uppercase(),
+                    style = MonoLabel,
+                    color = colors.monoLabel,
+                )
+                Text(
+                    text = "Try again — a second attempt usually works.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.textPrimary,
+                )
+            }
         }
     }
 }
@@ -374,76 +412,40 @@ private fun OpenBoxBlob(modifier: Modifier = Modifier) {
 }
 
 /**
- * Design 5d/5e — pickup succeeded: a yellow check blob (with a "×N" badge
- * for multi-parcel pickups), a collected-parcel summary and a way back to
- * the parcel list.
+ * Design 5d/5e detail — the collected-parcel summary card shown on success (and on the
+ * box-already-open caveat case).
  */
 @Composable
-private fun SuccessScreen(
-    members: ImmutableList<CollectMember>,
-    onBack: () -> Unit,
-) {
+private fun CollectedSummary(members: ImmutableList<CollectMember>) {
+    if (members.isEmpty()) return
     val colors = PaczkofastTheme.colors
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            CheckBlob(count = members.size)
+    PaczkofastCard {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = if (members.size > 1) "All picked up!" else "Picked up!",
-                style = MaterialTheme.typography.displayMedium,
-                color = colors.textPrimary,
-                modifier = Modifier.padding(top = 24.dp),
-            )
-            Text(
-                text = "Box closed".uppercase(),
+                text = (if (members.size > 1) "${members.size} parcels collected" else "1 parcel collected").uppercase(),
                 style = MonoLabel,
                 color = colors.monoLabel,
-                modifier = Modifier.padding(top = 6.dp),
             )
-            if (members.isNotEmpty()) {
-                PaczkofastCard(modifier = Modifier.padding(top = 22.dp)) {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(
-                            text = (if (members.size > 1) "${members.size} parcels collected" else "1 parcel collected").uppercase(),
-                            style = MonoLabel,
-                            color = colors.monoLabel,
-                        )
-                        members.forEach { member ->
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Check,
-                                    contentDescription = null,
-                                    tint = colors.borderStrong,
-                                    modifier = Modifier.size(16.dp),
-                                )
-                                Text(
-                                    text = member.title,
-                                    style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.5.sp),
-                                    color = colors.textPrimary,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f),
-                                )
-                                member.sizeLabel?.let { SizeBadge(size = it) }
-                            }
-                        }
-                    }
+            members.forEach { member ->
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = colors.borderStrong,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = member.title,
+                        style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.5.sp),
+                        color = colors.textPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                    )
+                    member.sizeLabel?.let { SizeBadge(size = it) }
                 }
             }
         }
-        PrimaryActionButton(
-            text = "Back to my parcels",
-            onClick = onBack,
-            modifier = Modifier.padding(bottom = 16.dp),
-        )
     }
 }
 
@@ -484,101 +486,24 @@ private fun CheckBlob(count: Int, modifier: Modifier = Modifier) {
     }
 }
 
-/**
- * Design 6a — a reusable error state: a red "!" blob, an error caption, a
- * headline, reassurance text and a "what you can do" tip card, followed by
- * a primary retry action and a secondary support action.
- */
+/** Red "!" blob for the collect error state. */
 @Composable
-private fun ErrorScreen(
-    message: String,
-    lockerName: String?,
-    onRetry: () -> Unit,
-    onContactSupport: () -> Unit,
-) {
+private fun ErrorBlob(modifier: Modifier = Modifier) {
     val colors = PaczkofastTheme.colors
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = modifier
+            .size(150.dp)
+            .background(colors.alertFill, CircleShape)
+            .border(3.dp, colors.borderStrong, CircleShape),
+        contentAlignment = Alignment.Center,
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(colors.alertFill, CircleShape)
-                    .border(3.dp, colors.borderStrong, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.PriorityHigh,
-                    contentDescription = null,
-                    tint = colors.borderStrong,
-                    modifier = Modifier.size(48.dp),
-                )
-            }
-            Text(
-                text = (lockerName?.let { "Error · Locker $it" } ?: "Error").uppercase(),
-                style = MonoLabel,
-                color = colors.monoLabel,
-                modifier = Modifier.padding(top = 22.dp),
-            )
-            Text(
-                text = "The box didn't open",
-                style = MaterialTheme.typography.displaySmall,
-                color = colors.textPrimary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textSecondary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-            PaczkofastCard(modifier = Modifier.padding(top = 22.dp)) {
-                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    Text(
-                        text = "What you can do".uppercase(),
-                        style = MonoLabel,
-                        color = colors.monoLabel,
-                    )
-                    Text(
-                        text = "Try again — a second attempt usually works.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = colors.textPrimary,
-                    )
-                }
-            }
-        }
-        Column(
-            modifier = Modifier.padding(bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            PrimaryActionButton(text = "Try again", onClick = onRetry)
-            OutlinedActionButton(text = "Contact support", onClick = onContactSupport)
-        }
+        Icon(
+            imageVector = Icons.Rounded.PriorityHigh,
+            contentDescription = null,
+            tint = colors.borderStrong,
+            modifier = Modifier.size(48.dp),
+        )
     }
-}
-
-private fun collectMessage(state: CollectState): String = when (state) {
-    CollectState.Idle -> "Ready"
-    CollectState.Validating -> "Checking parcel and location"
-    is CollectState.Opening -> "Opening compartment"
-    is CollectState.WaitingForOpened -> "Waiting for the door to open"
-    is CollectState.Opened -> "Take the parcel and close the door"
-    is CollectState.WaitingForClosed -> "Waiting for the door to close"
-    is CollectState.ConfirmingClosed -> "Confirming closed compartment"
-    is CollectState.Claiming -> "Confirming pickup"
-    CollectState.Completed -> "Parcel collected"
-    is CollectState.Failed -> state.message
-    CollectState.Canceled -> "Collection canceled"
 }
 
 private fun hasLocationPermission(context: Context): Boolean {
@@ -608,65 +533,130 @@ private val PreviewMultiMembers = persistentListOf(
     CollectMember(shipmentNumber = "PREVIEW-2", title = "Example Shop sp. z o.o.", sizeLabel = "S"),
 )
 
+@Composable
+private fun CollectPreview(uiState: CollectUiState) {
+    PaczkofastTheme {
+        CollectContent(uiState = uiState, onConfirmed = {}, onBack = {})
+    }
+}
+
+@PaczkofastPreviews
+@Composable
+private fun HoldIdlePreview() {
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Idle,
+            lockerName = "WAW01A",
+            distanceMeters = 8,
+            openMode = LockerOpenMode.HOLD,
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
+}
+
+@PaczkofastPreviews
+@Composable
+private fun NearbyReadyPreview() {
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Idle,
+            lockerName = "WAW01A",
+            distanceMeters = 4,
+            accuracyMeters = 6,
+            openMode = LockerOpenMode.NEARBY,
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
+}
+
+@PaczkofastPreviews
+@Composable
+private fun NearbyFarPreview() {
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Idle,
+            lockerName = "WAW01A",
+            distanceMeters = 120,
+            accuracyMeters = 8,
+            openMode = LockerOpenMode.NEARBY,
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
+}
+
 @PaczkofastPreviews
 @Composable
 private fun BoxOpenSinglePreview() {
-    PaczkofastTheme {
-        Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
-            BoxOpenScreen(
-                members = persistentListOf(PreviewSingleMember),
-                lockerName = "WAW01A",
-                finishing = false,
-            )
-        }
-    }
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Opened(sessionUuid = "PREVIEW"),
+            lockerName = "WAW01A",
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
 }
 
 @PaczkofastPreviews
 @Composable
 private fun BoxOpenMultiPreview() {
-    PaczkofastTheme {
-        Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
-            BoxOpenScreen(
-                members = PreviewMultiMembers,
-                lockerName = "WAW01A",
-                finishing = false,
-            )
-        }
-    }
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Opened(sessionUuid = "PREVIEW"),
+            lockerName = "WAW01A",
+            members = PreviewMultiMembers,
+        ),
+    )
+}
+
+@PaczkofastPreviews
+@Composable
+private fun BoxOpenFinishingPreview() {
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.ConfirmingClosed(sessionUuid = "PREVIEW"),
+            lockerName = "WAW01A",
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
 }
 
 @PaczkofastPreviews
 @Composable
 private fun SuccessSinglePreview() {
-    PaczkofastTheme {
-        Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
-            SuccessScreen(members = persistentListOf(PreviewSingleMember), onBack = {})
-        }
-    }
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Completed,
+            lockerName = "WAW01A",
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
 }
 
 @PaczkofastPreviews
 @Composable
 private fun SuccessMultiPreview() {
-    PaczkofastTheme {
-        Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
-            SuccessScreen(members = PreviewMultiMembers, onBack = {})
-        }
-    }
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Completed,
+            lockerName = "WAW01A",
+            members = PreviewMultiMembers,
+        ),
+    )
 }
 
 @PaczkofastPreviews
 @Composable
 private fun ErrorPreview() {
-    PaczkofastTheme {
-        Box(modifier = Modifier.background(PaczkofastTheme.colors.background).padding(20.dp)) {
-            ErrorScreen(
-                message = "Nothing happened on our end — your parcel is safe and your pickup code still works.",
-                lockerName = "WAW01A",
-                onRetry = {},
-                onContactSupport = {},
-            )
-        }
-    }
+    CollectPreview(
+        CollectUiState(
+            state = CollectState.Failed(
+                message = "Nothing happened on our end — your parcel is safe and your pickup " +
+                    "code still works. The compartment stayed shut, so no one else can reach " +
+                    "your delivery. Give it another go, or use the code on the locker keypad.",
+                canRetryFromValidation = false,
+            ),
+            lockerName = "WAW01A",
+            members = persistentListOf(PreviewSingleMember),
+        ),
+    )
 }

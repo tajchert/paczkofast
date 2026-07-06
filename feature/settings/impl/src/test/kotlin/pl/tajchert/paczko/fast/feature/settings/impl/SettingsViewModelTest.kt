@@ -8,6 +8,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.data.repository.AuthRepository
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.auth.AuthSession
 import pl.tajchert.paczko.fast.core.model.auth.PhoneNumber
@@ -51,6 +52,35 @@ class SettingsViewModelTest {
 
         assertEquals(1, auth.logoutCount)
         assertEquals(true, doneCalled)
+    }
+
+    @Test
+    fun setLockerOpenModeWritesPreference() = runTest {
+        val prefs = FakeUserPreferencesRepository()
+        val viewModel = SettingsViewModel(prefs, FakeAuthRepository())
+
+        viewModel.setLockerOpenMode(LockerOpenMode.NEARBY)
+        advanceUntilIdle()
+
+        assertEquals(LockerOpenMode.NEARBY, prefs.currentPreferences.lockerOpenMode)
+    }
+
+    @Test
+    fun uiStateReflectsStoredLockerOpenMode() = runTest {
+        val prefs = FakeUserPreferencesRepository()
+        val viewModel = SettingsViewModel(prefs, FakeAuthRepository())
+        prefs.setLockerOpenMode(LockerOpenMode.NEARBY)
+        advanceUntilIdle()
+
+        assertEquals(LockerOpenMode.NEARBY, viewModel.uiState.value.lockerOpenMode)
+    }
+
+    @Test
+    fun defaultLockerOpenModeIsHold() = runTest {
+        val viewModel = SettingsViewModel(FakeUserPreferencesRepository(), FakeAuthRepository())
+        advanceUntilIdle()
+
+        assertEquals(LockerOpenMode.HOLD, viewModel.uiState.value.lockerOpenMode)
     }
 }
 

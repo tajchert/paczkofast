@@ -4,72 +4,95 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
-import android.os.CancellationSignal
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import pl.tajchert.paczko.fast.core.model.collect.GeoPoint
 
 class AndroidLocationProvider @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : LocationProvider {
-    override suspend fun currentLocation(): GeoPoint {
-        val hasFine = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
-        val hasCoarse = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
-        if (!hasFine && !hasCoarse) error("Location permission is required")
 
-        val manager = context.getSystemService(LocationManager::class.java)
-            ?: error("Location service is unavailable")
-        val provider = if (hasFine) LocationManager.GPS_PROVIDER else LocationManager.NETWORK_PROVIDER
-        return currentLocationFromProvider(manager, provider)
+    private val client by lazy { LocationServices.getFusedLocationProviderClient(context) }
+
+    private fun hasPermission(): Boolean {
+        val fine = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+        val coarse = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_COARSE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+        return fine || coarse
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun currentLocationFromProvider(
-        manager: LocationManager,
-        provider: String,
-    ): GeoPoint =
-        suspendCancellableCoroutine { continuation ->
-            val cancellationSignal = CancellationSignal()
-            continuation.invokeOnCancellation {
-                cancellationSignal.cancel()
-            }
-
-            try {
-                manager.getCurrentLocation(provider, cancellationSignal, context.mainExecutor) { location ->
-                    if (continuation.isActive) {
-                        if (location == null) {
-                            continuation.resumeWithException(
-                                IllegalStateException("Current location unavailable"),
-                            )
-                        } else {
-                            continuation.resume(
-                                GeoPoint(
-                                    latitude = location.latitude,
-                                    longitude = location.longitude,
-                                    accuracy = location.accuracy.toDouble(),
-                                ),
-                            )
-                        }
+    override suspend fun currentLocation(): GeoPoint {
+        if (!hasPermission()) error("Location permission is required")
+        return suspendCancellableCoroutine { cont ->
+            val cts = com.google.android.gms.tasks.CancellationTokenSource()
+            cont.invokeOnCancellation { cts.cancel() }
+            client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cts.token)
+                .addOnSuccessListener { location ->
+                    if (!cont.isActive) return@addOnSuccessListener
+                    if (location == null) {
+                        cont.resumeWithException(IllegalStateException("Current location unavailable"))
+                    } else {
+                        cont.resume(location.toGeoPoint())
                     }
                 }
-            } catch (exception: SecurityException) {
-                cancellationSignal.cancel()
-                if (continuation.isActive) {
-                    continuation.resumeWithException(
-                        IllegalStateException("Location permission is required", exception),
-                    )
+                .addOnFailureListener {
+                    // Permission can be revoked between hasPermission() and the fused call (TOCTOU);
+                    // keep the user-facing message clean and consistent with the pre-check.
+                    val error = if (it is SecurityException) {
+                        IllegalStateException("Location permission is required", it)
+                    } else {
+                        it
+                    }
+                    cont.resumeWithException(error)
                 }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun locationUpdates(): Flow<GeoPoint> = callbackFlow {
+        if (!hasPermission()) { close(); return@callbackFlow }
+
+        val callback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                result.lastLocation?.let { trySend(it.toGeoPoint()) }
             }
         }
+        try {
+            client.lastLocation.addOnSuccessListener { last ->
+                if (last != null) trySend(last.toGeoPoint())
+            }
+
+            val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1_000L)
+                .setMinUpdateIntervalMillis(500L)
+                .build()
+            client.requestLocationUpdates(request, callback, context.mainLooper)
+        } catch (e: SecurityException) {
+            // Permission revoked between hasPermission() and the fused call (TOCTOU).
+            close(IllegalStateException("Location permission is required", e))
+            return@callbackFlow
+        }
+        awaitClose { client.removeLocationUpdates(callback) }
+    }
+
+    private fun android.location.Location.toGeoPoint() = GeoPoint(
+        latitude = latitude,
+        longitude = longitude,
+        accuracy = accuracy.toDouble(),
+    )
 }

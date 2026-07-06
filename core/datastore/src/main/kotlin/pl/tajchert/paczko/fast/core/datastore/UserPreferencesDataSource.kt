@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pl.tajchert.paczko.fast.core.datastore.di.UserPreferencesDataStore
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import javax.inject.Inject
@@ -64,7 +65,14 @@ class UserPreferencesDataSource @Inject constructor(
             ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
             ?: ThemeMode.SYSTEM
         val hasSeenOnboarding = preferences[HAS_SEEN_ONBOARDING] ?: false
-        UserPreferences(themeMode = themeMode, hasSeenOnboarding = hasSeenOnboarding)
+        val lockerOpenMode = preferences[LOCKER_OPEN_MODE]
+            ?.let { runCatching { LockerOpenMode.valueOf(it) }.getOrNull() }
+            ?: LockerOpenMode.HOLD
+        UserPreferences(
+            themeMode = themeMode,
+            hasSeenOnboarding = hasSeenOnboarding,
+            lockerOpenMode = lockerOpenMode,
+        )
     }
 
     /**
@@ -92,6 +100,15 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Set the locker open mode preference.
+     */
+    suspend fun setLockerOpenMode(mode: LockerOpenMode) {
+        dataStore.edit { preferences ->
+            preferences[LOCKER_OPEN_MODE] = mode.name
+        }
+    }
+
     companion object {
         /**
          * Preference keys.
@@ -103,5 +120,6 @@ class UserPreferencesDataSource @Inject constructor(
          */
         private val THEME_MODE = stringPreferencesKey("theme_mode")
         private val HAS_SEEN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding")
+        private val LOCKER_OPEN_MODE = stringPreferencesKey("locker_open_mode")
     }
 }

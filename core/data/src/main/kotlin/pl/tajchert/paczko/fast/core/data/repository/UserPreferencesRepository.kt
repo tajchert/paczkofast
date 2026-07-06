@@ -1,6 +1,7 @@
 package pl.tajchert.paczko.fast.core.data.repository
 
 import pl.tajchert.paczko.fast.core.datastore.UserPreferencesDataSource
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 import pl.tajchert.paczko.fast.core.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,8 @@ interface UserPreferencesRepository {
     suspend fun setThemeMode(themeMode: ThemeMode)
 
     suspend fun setHasSeenOnboarding(seen: Boolean)
+
+    suspend fun setLockerOpenMode(mode: LockerOpenMode)
 }
 
 /**
@@ -51,5 +54,9 @@ class DefaultUserPreferencesRepository @Inject constructor(
 
     override suspend fun setHasSeenOnboarding(seen: Boolean) {
         dataSource.setHasSeenOnboarding(seen)
+    }
+
+    override suspend fun setLockerOpenMode(mode: LockerOpenMode) {
+        dataSource.setLockerOpenMode(mode)
     }
 }

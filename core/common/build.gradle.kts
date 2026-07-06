@@ -37,6 +37,9 @@ dependencies {
     // AndroidX
     implementation(libs.androidx.core.ktx)
 
+    // Location (fused provider for fast, refining fixes)
+    implementation(libs.play.services.location)
+
     // Hilt for dependency injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

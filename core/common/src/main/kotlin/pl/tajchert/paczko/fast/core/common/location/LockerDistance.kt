@@ -30,3 +30,17 @@ fun metersToLocker(
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return (EARTH_RADIUS_METERS * c).roundToInt()
 }
+
+/** Max distance (metres) for one-tap "Near locker" opening. */
+const val NEARBY_DISTANCE_METERS = 50
+
+/** Max horizontal accuracy radius (metres) for a fix trustworthy enough to one-tap open. */
+const val NEARBY_ACCURACY_METERS = 30
+
+/**
+ * True when the user is close enough AND the GPS fix is trustworthy enough to open the
+ * locker with a single tap (see [NEARBY_DISTANCE_METERS] / [NEARBY_ACCURACY_METERS]).
+ */
+fun isWithinNearbyThreshold(distanceMeters: Int?, accuracyMeters: Int?): Boolean =
+    distanceMeters != null && distanceMeters < NEARBY_DISTANCE_METERS &&
+        accuracyMeters != null && accuracyMeters <= NEARBY_ACCURACY_METERS

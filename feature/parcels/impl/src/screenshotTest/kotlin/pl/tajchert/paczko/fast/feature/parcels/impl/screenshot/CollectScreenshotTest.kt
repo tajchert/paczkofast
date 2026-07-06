@@ -29,7 +29,6 @@ private val demoMembers = persistentListOf(
 private fun collectPreview(state: CollectState) {
     PaczkofastTheme {
         CollectContent(
-            shipmentNumber = "000000000000000000000001",
             uiState = CollectUiState(
                 state = state,
                 lockerName = "WAW01A",

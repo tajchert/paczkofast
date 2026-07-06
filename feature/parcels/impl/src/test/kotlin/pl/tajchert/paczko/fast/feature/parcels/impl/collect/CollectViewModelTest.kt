@@ -2,7 +2,9 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.collect
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -13,12 +15,14 @@ import pl.tajchert.paczko.fast.core.common.location.LocationProvider
 import pl.tajchert.paczko.fast.core.data.repository.CollectRepository
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
 import pl.tajchert.paczko.fast.core.domain.CollectParcelUseCase
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 import pl.tajchert.paczko.fast.core.model.collect.ExpectedCompartmentStatus
 import pl.tajchert.paczko.fast.core.model.collect.GeoPoint
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.core.testing.repository.FakeUserPreferencesRepository
 import pl.tajchert.paczko.fast.core.testing.util.MainDispatcherRule
 
 class CollectViewModelTest {
@@ -36,7 +40,12 @@ class CollectViewModelTest {
             repository = collectRepository,
             locationProvider = FakeLocationProvider(),
         )
-        val viewModel = CollectViewModel(useCase, parcelRepository, FakeLocationProvider())
+        val viewModel = CollectViewModel(
+            useCase,
+            parcelRepository,
+            FakeLocationProvider(),
+            FakeUserPreferencesRepository(),
+        )
 
         viewModel.start("123")
 
@@ -67,6 +76,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.start("111")
@@ -92,6 +102,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.start("123")
@@ -119,6 +130,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.start("123")
@@ -149,6 +161,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.start("123")
@@ -170,6 +183,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.start("123")
@@ -192,6 +206,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.onLocationPermissionDenied("123")
@@ -222,6 +237,7 @@ class CollectViewModelTest {
             locationProvider = FakeLocationProvider(
                 GeoPoint(latitude = 50.062, longitude = 19.938, accuracy = 5.0),
             ),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.arm("123")
@@ -244,6 +260,7 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
         viewModel.arm("123")
@@ -258,12 +275,34 @@ class CollectViewModelTest {
         val parcelRepository = FakeParcelRepository(
             parcel = parcel(shipmentNumber = "123", openCode = "456"),
         )
+        // Gates the location STREAM (not currentLocation()) so arm()'s
+        // locationJob genuinely suspends on the live code path — arm() now
+        // collects locationProvider.locationUpdates() rather than calling
+        // currentLocation(), so gating the latter (as this test used to)
+        // no longer suspends anything and made the test vacuous.
+        //
+        // With the gate on the stream, start()'s locationJob?.cancel() races
+        // the pending fix: cancelling a coroutine suspended on
+        // CompletableDeferred.await() resolves it with
+        // CancellationException immediately, so in this single-threaded
+        // test dispatcher the cancellation alone already stops the stale
+        // fix from reaching the `it.state !is CollectState.Idle` guard.
+        // On a real device the two can race across threads instead, so both
+        // defenses matter together; removing BOTH — the cancel() call in
+        // start() and the Idle guard in arm()'s locationUpdates().collect —
+        // reopens the clobbering bug and fails this test (verified manually
+        // by deleting both locally: distanceMeters becomes non-null after
+        // completion; restored afterwards, no production change kept).
         val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
         val gatedLocation = object : LocationProvider {
-            override suspend fun currentLocation(): GeoPoint {
-                gate.await()
-                return GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0)
-            }
+            override suspend fun currentLocation(): GeoPoint =
+                GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0)
+
+            override fun locationUpdates(): Flow<GeoPoint> =
+                kotlinx.coroutines.flow.flow {
+                    gate.await()
+                    emit(GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0))
+                }
         }
         val viewModel = CollectViewModel(
             collectParcel = CollectParcelUseCase(
@@ -272,17 +311,70 @@ class CollectViewModelTest {
             ),
             parcelRepository = parcelRepository,
             locationProvider = gatedLocation,
+            userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
-        viewModel.arm("123")        // suspends inside currentLocation() on gate.await()
-        viewModel.start("123")      // runs the collect flow to Completed (instant fakes)
+        viewModel.arm("123")        // starts locationJob, which suspends on gate.await()
+        assertNull(viewModel.uiState.value.distanceMeters)
+
+        viewModel.start("123")      // runs the collect flow to Completed and cancels locationJob
         assertEquals(CollectState.Completed, viewModel.uiState.value.state)
 
-        gate.complete(Unit)         // arm() resumes and updates _uiState
+        gate.complete(Unit)         // release the (now-cancelled) location stream
         testScheduler.advanceUntilIdle()
 
-        // arm() must NOT have reset the completed flow back to Idle
+        // The pending location update must NOT clobber the completed flow.
         assertEquals(CollectState.Completed, viewModel.uiState.value.state)
+        assertNull(viewModel.uiState.value.distanceMeters)
+    }
+
+    @Test
+    fun armLoadsOpenModeFromPreferences() = runTest {
+        val parcelRepository = FakeParcelRepository(
+            parcel = parcel(shipmentNumber = "123", openCode = "456"),
+        )
+        val prefs = FakeUserPreferencesRepository()
+        prefs.setLockerOpenMode(LockerOpenMode.NEARBY)
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(FakeCollectRepository(), FakeLocationProvider()),
+            parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
+            userPreferencesRepository = prefs,
+        )
+
+        viewModel.arm("123")
+        advanceUntilIdle()
+
+        assertEquals(LockerOpenMode.NEARBY, viewModel.uiState.value.openMode)
+    }
+
+    @Test
+    fun armStreamsDistanceAndAccuracyAndFlipsNearbyReady() = runTest {
+        val parcelRepository = FakeParcelRepository(
+            parcel = parcel(
+                shipmentNumber = "123",
+                openCode = "456",
+                latitude = 52.100000,
+                longitude = 21.000000,
+            ),
+        )
+        // First fix is coarse and far; second is close and precise.
+        val far = GeoPoint(latitude = 52.20, longitude = 21.00, accuracy = 60.0)
+        val near = GeoPoint(latitude = 52.100050, longitude = 21.000000, accuracy = 8.0)
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(FakeCollectRepository(), FakeLocationProvider()),
+            parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(location = near, updates = listOf(far, near)),
+            userPreferencesRepository = FakeUserPreferencesRepository(),
+        )
+
+        viewModel.arm("123")
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(8, state.accuracyMeters)
+        assertTrue(state.distanceMeters != null && state.distanceMeters!! < 50)
+        assertTrue(state.nearbyReady)
     }
 }
 
@@ -341,8 +433,10 @@ private class FakeCollectRepository(
 
 private class FakeLocationProvider(
     private val location: GeoPoint = GeoPoint(latitude = 52.1, longitude = 21.0, accuracy = 12.0),
+    private val updates: List<GeoPoint> = listOf(location),
 ) : LocationProvider {
     override suspend fun currentLocation(): GeoPoint = location
+    override fun locationUpdates(): Flow<GeoPoint> = updates.asFlow()
 }
 
 private fun parcel(

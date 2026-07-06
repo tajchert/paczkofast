@@ -40,6 +40,7 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.component.SegmentedControl
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
+import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.ThemeMode
 
 @Composable
@@ -53,9 +54,11 @@ fun SettingsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     SettingsContent(
         themeMode = uiState.themeMode,
+        lockerOpenMode = uiState.lockerOpenMode,
         phoneNumber = uiState.phoneNumber,
         appVersion = appVersion,
         onThemeSelected = viewModel::setThemeMode,
+        onOpenModeSelected = viewModel::setLockerOpenMode,
         onLogout = { viewModel.logout(onLoggedOut) },
         onOpenParcels = onOpenParcels,
         onOpenHistory = onOpenHistory,
@@ -65,9 +68,11 @@ fun SettingsScreen(
 @Composable
 private fun SettingsContent(
     themeMode: ThemeMode,
+    lockerOpenMode: LockerOpenMode,
     phoneNumber: String?,
     appVersion: String,
     onThemeSelected: (ThemeMode) -> Unit,
+    onOpenModeSelected: (LockerOpenMode) -> Unit,
     onLogout: () -> Unit,
     onOpenParcels: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -116,6 +121,27 @@ private fun SettingsContent(
                     // segment, so fall back to showing System as selected.
                     selected = themeMode.takeIf { it in selectableThemeModes } ?: ThemeMode.SYSTEM,
                     onSelect = onThemeSelected,
+                )
+            }
+
+            SectionLabel(text = "Unlock method")
+            PaczkofastCard {
+                Text(
+                    text = "How you open lockers",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = PaczkofastTheme.colors.textPrimary,
+                    modifier = Modifier.padding(bottom = 4.dp),
+                )
+                Text(
+                    text = "How you confirm opening a locker.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = PaczkofastTheme.colors.textFaint,
+                    modifier = Modifier.padding(bottom = 12.dp),
+                )
+                SegmentedControl(
+                    options = LockerOpenMode.entries.map { it to lockerOpenModeLabel(it) },
+                    selected = lockerOpenMode,
+                    onSelect = onOpenModeSelected,
                 )
             }
 
@@ -251,15 +277,22 @@ private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
     ThemeMode.DARK -> "Dark"
 }
 
+private fun lockerOpenModeLabel(mode: LockerOpenMode): String = when (mode) {
+    LockerOpenMode.HOLD -> "Hold to open"
+    LockerOpenMode.NEARBY -> "Near locker"
+}
+
 @PaczkofastPreviews
 @Composable
 private fun SettingsContentPreview() {
     PaczkofastTheme {
         SettingsContent(
             themeMode = ThemeMode.LIGHT,
+            lockerOpenMode = LockerOpenMode.HOLD,
             phoneNumber = "+48 500 100 200",
             appVersion = "1.0.0 (1)",
             onThemeSelected = {},
+            onOpenModeSelected = {},
             onLogout = {},
             onOpenParcels = {},
             onOpenHistory = {},

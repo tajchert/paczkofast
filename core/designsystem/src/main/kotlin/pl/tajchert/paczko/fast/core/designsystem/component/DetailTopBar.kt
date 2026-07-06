@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,6 +38,7 @@ fun DetailTopBar(
     title: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
@@ -47,7 +49,13 @@ fun DetailTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        BackButtonChip(onClick = onBack)
+        // Reserve the back-chip footprint even when hidden, so the bar's height (and thus any
+        // Scaffold content padding below it) stays identical whether or not the control shows.
+        if (showBackButton) {
+            BackButtonChip(onClick = onBack)
+        } else {
+            Spacer(modifier = Modifier.size(34.dp))
+        }
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
