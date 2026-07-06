@@ -103,5 +103,5 @@ private fun CollectFailedHard() =
 @Composable
 private fun CollectFailedSoft() =
     collectPreview(
-        CollectState.Failed(message = "invalidSessionState", canRetryFromValidation = false, boxAlreadyOpen = true),
+        CollectState.Failed(message = "unknown", canRetryFromValidation = false, boxAlreadyOpen = true),
     )

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import pl.tajchert.paczko.fast.core.datastore.AuthTokensDataSource
@@ -34,21 +35,22 @@ class DemoAuthRepositoryTest {
         val tokens = FakeAuthTokensDataSource()
         val repo = DemoAuthRepository(tokens)
 
-        val result = repo.confirmSmsCode(PhoneNumber(prefix = "48", value = "601480312"), smsCode = "000000")
+        val result = repo.confirmSmsCode(PhoneNumber(prefix = "48", value = "500100200"), smsCode = "000000")
 
         assertTrue(result.isAuthenticated)
         assertTrue(repo.observeAuthSession().first().isAuthenticated)
-        assertEquals("48601480312", repo.observePhoneNumber().first())
+        assertEquals("48500100200", repo.observePhoneNumber().first())
     }
 
     @Test
     fun `logout clears the session`() = runTest {
         val tokens = FakeAuthTokensDataSource()
         val repo = DemoAuthRepository(tokens)
-        repo.confirmSmsCode(PhoneNumber("48", "601480312"), "000000")
+        repo.confirmSmsCode(PhoneNumber("48", "500100200"), "000000")
 
         repo.logout()
 
         assertFalse(repo.observeAuthSession().first().isAuthenticated)
+        assertNull(repo.observePhoneNumber().first())
     }
 }

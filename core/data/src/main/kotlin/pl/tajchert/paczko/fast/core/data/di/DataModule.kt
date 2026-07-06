@@ -22,10 +22,9 @@ import javax.inject.Singleton
  *
  * ## Scope
  *
- * Repository is @Singleton because:
- * - It holds no state (stateless operations)
- * - Creating multiple instances wastes memory
- * - All callers should see the same data
+ * Both bindings below ([TokenProvider], [UserPreferencesRepository]) are
+ * @Singleton: they wrap DataStore-backed sources, so a single shared instance
+ * per process is what keeps reads/writes consistent across callers.
  */
 @Module
 @InstallIn(SingletonComponent::class)

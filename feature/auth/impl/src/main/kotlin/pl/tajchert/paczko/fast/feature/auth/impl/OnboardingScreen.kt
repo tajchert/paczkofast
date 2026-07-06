@@ -42,6 +42,8 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
+// Intentionally `internal`, not `private`: the `screenshotTest` source set renders
+// these directly (see feature/auth/impl/src/screenshotTest), so keep this visibility.
 internal const val PAGE_COUNT = 2
 internal const val WELCOME_PAGE = 0
 internal const val DISCLAIMER_PAGE = 1
