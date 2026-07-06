@@ -18,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -233,7 +231,12 @@ private fun ParcelDetailBody(
                 waitLabel = parcel.pickupWaitLabel(),
                 timestamp = formatTimelineTime(parcel.pickUpDate),
             )
-            CollapsedPickupCodeRow()
+            if (!parcel.qrCode.isNullOrBlank() || !parcel.openCode.isNullOrBlank()) {
+                ExpandablePickupCodeRow(
+                    qrCode = parcel.qrCode,
+                    openCode = parcel.openCode,
+                )
+            }
         } else {
             countdown?.let {
                 DeadlineCard(
@@ -337,57 +340,6 @@ private fun PickedUpSummaryCard(
                     Text(text = it, style = MonoLabel, color = colors.textMuted)
                 }
             }
-        }
-    }
-}
-
-/**
- * Collapsed row replacing the QR panel once a parcel has been delivered —
- * "Pickup code & QR / NO LONGER NEEDED" with a trailing chevron, no code
- * value shown since it can no longer be used.
- */
-@Composable
-private fun CollapsedPickupCodeRow(modifier: Modifier = Modifier) {
-    val colors = PaczkofastTheme.colors
-    PaczkofastCard(modifier = modifier) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(26.dp)
-                    .background(colors.background, RoundedCornerShape(7.dp))
-                    .border(2.5.dp, colors.borderStrong, RoundedCornerShape(7.dp)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.QrCode2,
-                    contentDescription = null,
-                    tint = colors.textPrimary,
-                    modifier = Modifier.size(15.dp),
-                )
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.pickup_code_qr),
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = colors.textPrimary,
-                )
-                Text(
-                    text = stringResource(R.string.no_longer_needed),
-                    style = MonoLabel,
-                    color = colors.textMuted,
-                )
-            }
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = colors.textMuted,
-            )
         }
     }
 }
