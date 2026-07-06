@@ -7,6 +7,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Duration
+import java.time.OffsetDateTime
 
 class DemoParcelRepositoryTest {
 
@@ -37,6 +39,20 @@ class DemoParcelRepositoryTest {
         assertEquals("WAW01A", point.name)
         assertNotNull(point.latitude)
         assertNotNull(point.longitude)
+    }
+
+    @Test
+    fun `ready demo parcels have varied pickup deadlines`() = runTest {
+        val now = OffsetDateTime.now()
+        val remainingHours = repository.observeParcels().first()
+            .filter { it.status == "ready_to_pickup" }
+            .mapNotNull { parcel ->
+                parcel.expiryDate?.let { Duration.between(now, OffsetDateTime.parse(it)).toHours() }
+            }
+
+        assertTrue(remainingHours.any { it < 12 })
+        assertTrue(remainingHours.any { it >= 70 })
+        assertTrue(remainingHours.distinct().size >= 4)
     }
 
     @Test

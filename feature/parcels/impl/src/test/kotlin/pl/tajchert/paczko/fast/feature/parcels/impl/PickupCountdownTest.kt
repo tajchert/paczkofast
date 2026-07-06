@@ -23,6 +23,7 @@ class PickupCountdownTest {
         requireNotNull(countdown)
         assertEquals("zostało 46 h", countdown.timeLeftText)
         assertEquals("46 h", countdown.countdownText)
+        assertEquals("46h", countdown.compactTimeLeftText)
         assertFalse(countdown.urgent)
     }
 
@@ -39,6 +40,7 @@ class PickupCountdownTest {
         requireNotNull(countdown)
         assertEquals("9 h — pilne!", countdown.timeLeftText)
         assertEquals("9 h — pilne!", countdown.countdownText)
+        assertEquals("9h!", countdown.compactTimeLeftText)
         assertTrue(countdown.urgent)
     }
 
@@ -56,6 +58,7 @@ class PickupCountdownTest {
         requireNotNull(countdown)
         assertEquals("46 h — pilne!", countdown.timeLeftText)
         assertEquals("46 h — pilne!", countdown.countdownText)
+        assertEquals("46h!", countdown.compactTimeLeftText)
         assertTrue(countdown.urgent)
     }
 }

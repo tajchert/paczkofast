@@ -41,20 +41,22 @@ object DemoData {
     )
 
     val parcels: List<Parcel> = listOf(
-        readyParcel(READY_SUCCESS, senderName = "Example Sender sp. z o.o."),
-        readyParcel(READY_SESSION_EXPIRED, senderName = "Example Books Ltd."),
-        readyParcel(READY_BOX_OFFLINE, senderName = "Example Pharmacy"),
-        readyParcel(READY_SLOW_CLOSE, senderName = "Example Electronics"),
-        readyParcel(READY_POST_OPEN_FAIL, senderName = "Example Fashion"),
+        readyParcel(READY_SUCCESS, senderName = "Example Sender sp. z o.o.", expiryHours = 46),
+        readyParcel(READY_SESSION_EXPIRED, senderName = "Example Books Ltd.", expiryHours = 4),
+        readyParcel(READY_BOX_OFFLINE, senderName = "Example Pharmacy", expiryHours = 9),
+        readyParcel(READY_SLOW_CLOSE, senderName = "Example Electronics", expiryHours = 22),
+        readyParcel(READY_POST_OPEN_FAIL, senderName = "Example Fashion", expiryHours = 72),
         readyParcel(
             MULTI_A,
             senderName = "Example Marketplace",
+            expiryHours = 35,
             multiCompartmentUuid = MULTI_UUID,
             multiPackageShipmentNumbers = listOf(MULTI_A, MULTI_B),
         ),
         readyParcel(
             MULTI_B,
             senderName = "Example Marketplace",
+            expiryHours = 35,
             multiCompartmentUuid = MULTI_UUID,
         ),
         inTransitParcel(IN_TRANSIT, senderName = "Example Toys"),
@@ -77,6 +79,7 @@ object DemoData {
     private fun readyParcel(
         shipmentNumber: String,
         senderName: String,
+        expiryHours: Long,
         multiCompartmentUuid: String? = null,
         multiPackageShipmentNumbers: List<String> = emptyList(),
     ) = Parcel(
@@ -86,7 +89,7 @@ object DemoData {
         openCode = "000000",
         qrCode = "DEMO|$shipmentNumber",
         pickupPoint = demoPickupPoint,
-        expiryDate = hoursFromNow(46),
+        expiryDate = hoursFromNow(expiryHours),
         storedDate = hoursAgo(26),
         operations = ParcelOperations(collect = true),
         multiCompartmentUuid = multiCompartmentUuid,

@@ -569,7 +569,7 @@ private fun CollapsedReadyCard(
     CollapsedReadyParcelCard(
         title = parcelTitle(parcel),
         subtitle = lockerLine(parcel),
-        timeLeftText = countdown?.timeLeftText,
+        timeLeftText = countdown?.compactTimeLeftText,
         progress = countdown?.progress,
         urgent = countdown?.urgent == true || parcel.isPickupReminder,
         actionText = actionText.takeIf { showOpenButton && parcel.canCollectRemotely },

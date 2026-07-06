@@ -180,6 +180,7 @@ internal data class PickupCountdown(
     val deadlineText: String,
     val timeLeftText: String,
     val countdownText: String,
+    val compactTimeLeftText: String,
     val progress: Float,
     val urgent: Boolean,
 )
@@ -213,12 +214,14 @@ internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): Pick
         remaining.toHours() < 72 -> "${remaining.toHours()} h"
         else -> "${remaining.toDays()} d"
     }
+    val compactCountdownText = countdownText.replace(" ", "")
     val urgent = remaining.toHours() < URGENT_THRESHOLD_HOURS || parcel.isPickupReminder
     val displayCountdownText = if (urgent) "$countdownText — pilne!" else countdownText
     return PickupCountdown(
         deadlineText = "Odbierz do " + DEADLINE_FORMAT.format(expiry.atZone(ZoneId.systemDefault())),
         timeLeftText = if (urgent) displayCountdownText else "zostało $countdownText",
         countdownText = displayCountdownText,
+        compactTimeLeftText = if (urgent) "$compactCountdownText!" else compactCountdownText,
         progress = progress,
         urgent = urgent,
     )
