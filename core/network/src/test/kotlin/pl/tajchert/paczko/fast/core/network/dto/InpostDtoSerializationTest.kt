@@ -79,4 +79,80 @@ class InpostDtoSerializationTest {
         assertEquals(listOf("111", "222"), parcel.multiCompartment?.shipmentNumbers)
         assertEquals("SHARED_TO_ME", parcel.ownershipStatus)
     }
+
+    // -------------------------------------------------------------------------
+    // Collect flow wire contract. These bodies drive a physical locker, so a
+    // silent field-name change would break collection with no compile error.
+    // Shapes mirror the real requests captured in OkHttp logs (fake values).
+    // -------------------------------------------------------------------------
+
+    @Test
+    fun validateRequestSerializesParcelAndGeoPoint() {
+        val body = json.encodeToString(
+            CollectValidateRequestDto(
+                parcel = ParcelCompartmentDto(
+                    shipmentNumber = "000000000000000000000000",
+                    openCode = "000000",
+                ),
+                geoPoint = GeoPointDto(latitude = 52.0, longitude = 21.0, accuracy = 10.0),
+            ),
+        )
+
+        assertEquals(
+            """{"parcel":{"shipmentNumber":"000000000000000000000000","openCode":"000000"},""" +
+                """"geoPoint":{"latitude":52.0,"longitude":21.0,"accuracy":10.0}}""",
+            body,
+        )
+    }
+
+    @Test
+    fun statusRequestSerializesExpectedStatus() {
+        val body = json.encodeToString(
+            CollectStatusRequestDto(sessionUuid = "session", expectedStatus = "CLOSED"),
+        )
+
+        assertEquals("""{"sessionUuid":"session","expectedStatus":"CLOSED"}""", body)
+    }
+
+    @Test
+    fun claimRequestSerializesShipmentNumbersArray() {
+        val body = json.encodeToString(
+            CollectClaimRequestDto(
+                sessionUuid = "session",
+                shipmentNumbers = listOf("111", "222"),
+            ),
+        )
+
+        assertEquals("""{"sessionUuid":"session","shipmentNumbers":["111","222"]}""", body)
+    }
+
+    @Test
+    fun validateResponseReadsSessionUuid() {
+        val response = json.decodeFromString<CollectValidateResponseDto>(
+            """{"sessionUuid":"session-abc"}""",
+        )
+
+        assertEquals("session-abc", response.sessionUuid)
+    }
+
+    @Test
+    fun errorResponseDecodesApiErrorCode() {
+        val error = json.decodeFromString<ErrorResponseDto>(
+            """{"error":"sessionExpired","status":400,"description":"expired"}""",
+        )
+
+        assertEquals("sessionExpired", error.error)
+    }
+
+    @Test
+    fun compartmentResponseToleratesUnknownAndMissingFields() {
+        // The status endpoint returns a body we don't consume; unknown/new fields
+        // must not break decoding (mirrors the v4 phantom-field lesson).
+        val response = json.decodeFromString<CompartmentResponseDto>(
+            """{"status":"CLOSED","someFutureField":true,"actionTime":1234}""",
+        )
+
+        assertEquals("CLOSED", response.status)
+        assertEquals(1234L, response.actionTime)
+    }
 }

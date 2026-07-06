@@ -85,6 +85,30 @@ class CollectParcelUseCaseTest {
     }
 
     @Test
+    fun closePollTimeoutAfterOpenIsNonRetryableBoxAlreadyOpen() = runTest {
+        // The exact incident from the logs: the CLOSED long-poll timed out (raw
+        // SocketTimeoutException, not an API error) after the box had opened.
+        val repository = FakeCollectRepository(timeoutOnClosePoll = true)
+        val location = FakeLocationProvider(GeoPoint(52.1, 21.0, 12.0))
+        val useCase = CollectParcelUseCase(repository, location)
+
+        val states = useCase.collect("123", "456").toList()
+
+        assertEquals(
+            CollectState.Failed(
+                message = "timeout",
+                canRetryFromValidation = false,
+                boxAlreadyOpen = true,
+            ),
+            states.last(),
+        )
+        assertEquals(
+            listOf("validate", "open", "status-OPENED", "status-CLOSED"),
+            repository.calls,
+        )
+    }
+
+    @Test
     fun locationFailureEmitsClearNonRetryableFailure() = runTest {
         val repository = FakeCollectRepository()
         val location = FakeLocationProvider(failure = IllegalStateException("Location permission is required"))
@@ -106,6 +130,7 @@ class CollectParcelUseCaseTest {
 private class FakeCollectRepository(
     private val failOnValidate: CollectErrorCode? = null,
     private val failOnClosed: CollectErrorCode? = null,
+    private val timeoutOnClosePoll: Boolean = false,
 ) : CollectRepository {
     val calls = mutableListOf<String>()
 
@@ -126,6 +151,9 @@ private class FakeCollectRepository(
     override suspend fun pollStatus(sessionUuid: String, expectedStatus: ExpectedCompartmentStatus) {
         calls += "status-${expectedStatus.name}"
         assertEquals("session", sessionUuid)
+        if (timeoutOnClosePoll && expectedStatus == ExpectedCompartmentStatus.CLOSED) {
+            throw java.net.SocketTimeoutException("timeout")
+        }
     }
 
     override suspend fun closed(sessionUuid: String) {

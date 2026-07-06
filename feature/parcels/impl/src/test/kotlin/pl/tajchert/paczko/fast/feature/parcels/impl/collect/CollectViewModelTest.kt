@@ -134,6 +134,30 @@ class CollectViewModelTest {
     }
 
     @Test
+    fun closeTimeoutAfterOpenSurfacesBoxAlreadyOpenFailure() = runTest {
+        // Mirrors the real incident: the box opened, then the CLOSED long-poll
+        // timed out. The UI must treat it as collected-but-unconfirmed (snackbar),
+        // not a full-screen error.
+        val parcelRepository = FakeParcelRepository(
+            parcel = parcel(shipmentNumber = "123", openCode = "456"),
+        )
+        val collectRepository = FakeCollectRepository(timeoutOnClosePoll = true)
+        val viewModel = CollectViewModel(
+            collectParcel = CollectParcelUseCase(
+                repository = collectRepository,
+                locationProvider = FakeLocationProvider(),
+            ),
+            parcelRepository = parcelRepository,
+            locationProvider = FakeLocationProvider(),
+        )
+
+        viewModel.start("123")
+
+        val state = viewModel.uiState.value.state
+        assertTrue(state is CollectState.Failed && state.boxAlreadyOpen)
+    }
+
+    @Test
     fun startAfterCompletionDoesNotCollectAgain() = runTest {
         val parcelRepository = FakeParcelRepository(
             parcel = parcel(shipmentNumber = "123", openCode = "456"),
@@ -286,7 +310,9 @@ private class FakeParcelRepository(
     override suspend fun refreshParcelDetails(shipmentNumber: String) = Unit
 }
 
-private class FakeCollectRepository : CollectRepository {
+private class FakeCollectRepository(
+    private val timeoutOnClosePoll: Boolean = false,
+) : CollectRepository {
     var lastOpenCode: String? = null
     var validateCount = 0
 
@@ -298,7 +324,11 @@ private class FakeCollectRepository : CollectRepository {
 
     override suspend fun open(sessionUuid: String) = Unit
 
-    override suspend fun pollStatus(sessionUuid: String, expectedStatus: ExpectedCompartmentStatus) = Unit
+    override suspend fun pollStatus(sessionUuid: String, expectedStatus: ExpectedCompartmentStatus) {
+        if (timeoutOnClosePoll && expectedStatus == ExpectedCompartmentStatus.CLOSED) {
+            throw java.net.SocketTimeoutException("timeout")
+        }
+    }
 
     override suspend fun closed(sessionUuid: String) = Unit
 
