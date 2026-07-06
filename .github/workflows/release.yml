@@ -1,8 +1,8 @@
-# Builds, signs, and publishes the prodRelease APK to a GitHub Release.
+# Builds, signs, and publishes prodRelease and demoRelease APKs to a GitHub Release.
 #
 # Triggers:
 #   - push of a v* tag: full release (build -> verify -> attach to release)
-#   - workflow_dispatch: dry run. The APK is only uploaded as a workflow
+#   - workflow_dispatch: dry run. APKs are only uploaded as a workflow
 #     artifact, no release is created.
 #
 # Signing: the private keystore is decoded from the RELEASE_KEYSTORE_BASE64
@@ -62,21 +62,25 @@ jobs:
           fi
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
 
-      - name: Build signed prodRelease APK
+      - name: Build signed release APKs
         env:
           PACZKOFAST_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           PACZKOFAST_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
           PACZKOFAST_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           PACZKOFAST_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
-        run: ./gradlew :app:assembleProdRelease
+        run: ./gradlew :app:assembleProdRelease :app:assembleDemoRelease
 
-      - name: Verify APK signature
+      - name: Verify APK signatures
         run: |
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n1)
           "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk
           "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk \
             | grep -q "CN=Paczkofast Release" \
-            || { echo "APK is not release-signed with the Paczkofast certificate." >&2; exit 1; }
+            || { echo "prod APK is not release-signed with the Paczkofast certificate." >&2; exit 1; }
+          "$APKSIGNER" verify --print-certs app/build/outputs/apk/demo/release/app-demo-release.apk
+          "$APKSIGNER" verify --print-certs app/build/outputs/apk/demo/release/app-demo-release.apk \
+            | grep -q "CN=Paczkofast Release" \
+            || { echo "demo APK is not release-signed with the Paczkofast certificate." >&2; exit 1; }
 
       - name: Stage release artifacts
         run: |
@@ -87,8 +91,10 @@ jobs:
           fi
           mkdir -p dist
           cp app/build/outputs/apk/prod/release/app-prod-release.apk "dist/paczkofast-$VERSION.apk"
+          cp app/build/outputs/apk/demo/release/app-demo-release.apk "dist/paczkofast-demo-$VERSION.apk"
           cd dist
           shasum -a 256 "paczkofast-$VERSION.apk" > "paczkofast-$VERSION.apk.sha256"
+          shasum -a 256 "paczkofast-demo-$VERSION.apk" > "paczkofast-demo-$VERSION.apk.sha256"
 
       - name: Create GitHub Release
         if: github.ref_type == 'tag'
@@ -100,7 +106,7 @@ jobs:
           > It is not affiliated with, endorsed by, or supported by any locker operator.
           > The API integration is unofficial and may break at any time. Use at your own risk.
 
-          **Install:** download the APK below and sideload it by enabling "install unknown apps" for your browser or file manager. Verify the download against the `.sha256` checksum file.
+          **Install:** download `paczkofast-<version>.apk` for the real app, or `paczkofast-demo-<version>.apk` to try the fully offline demo with mock parcels and locker flows. Sideload by enabling "install unknown apps" for your browser or file manager. Verify downloads against the matching `.sha256` checksum files.
           EOF
           )"
 
@@ -115,5 +121,5 @@ jobs:
         if: github.ref_type != 'tag'
         uses: actions/upload-artifact@v4
         with:
-          name: paczkofast-prod-release-apk
+          name: paczkofast-release-apks
           path: dist/*

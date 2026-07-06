@@ -35,11 +35,15 @@ privacy.
 
 Signed release APKs are published on the
 [GitHub Releases](https://github.com/tajchert/inpost-fast-app/releases) page.
-Download the latest `paczkofast-<version>.apk`, sideload it on Android, and
-verify the download with the matching `.sha256` file if needed.
+Download the latest `paczkofast-<version>.apk` for the real app, or
+`paczkofast-demo-<version>.apk` to try the fully offline demo with mock parcels
+and locker flows. Sideload it on Android, and verify the download with the
+matching `.sha256` file if needed.
 
-Updates use the same app id and signing key, so future GitHub Release APKs can
-be installed over an earlier GitHub Release build without uninstalling.
+Production updates use the same app id and signing key, so future
+`paczkofast-<version>.apk` releases can be installed over an earlier production
+GitHub Release build without uninstalling. Demo APKs use a separate app id and
+can be installed alongside the production app.
 
 ## Features
 
