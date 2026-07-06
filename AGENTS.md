@@ -63,6 +63,182 @@ For collect/open-locker changes, also run:
 ./gradlew :core:domain:test :core:data:testDebugUnitTest :feature:parcels:impl:testDebugUnitTest
 ```
 
+## Release Process
+
+Release APKs are published from GitHub Releases in the public repo:
+
+- Production app: `paczkofast-<version>.apk`.
+- Offline showcase app: `paczkofast-demo-<version>.apk`.
+- Each APK has a matching `.sha256` checksum file.
+
+The production and demo APKs are built from the same commit and signed with the
+same release certificate. They use different app ids, so they can be installed
+side by side.
+
+### Signing Setup
+
+Release signing is wired in `app/build.gradle.kts`.
+
+Local builds read the gitignored root file `keystore.properties`:
+
+```properties
+storeFile=/Users/<user>/keystores/paczkofast-release.jks
+storePassword=<password>
+keyAlias=paczkofast
+keyPassword=<password>
+```
+
+CI reads the same values from GitHub Actions secrets:
+
+- `RELEASE_KEYSTORE_BASE64`
+- `RELEASE_KEYSTORE_PASSWORD`
+- `RELEASE_KEY_ALIAS`
+- `RELEASE_KEY_PASSWORD`
+
+`keystore.properties`, `*.jks`, and `*.keystore` must stay uncommitted. If no
+release keystore is configured, Gradle intentionally falls back to the debug key
+so contributor release builds and baseline-profile derived variants remain
+installable. A public release must always be verified as release-signed before
+uploading.
+
+Expected release certificate:
+
+```text
+CN=Paczkofast Release, O=Tajchert, C=PL
+SHA-256: 7773ed98f254490978d25cb9f8820b711b7d1f8f8f2446f24f735bcfea1ba209
+```
+
+### Versioning
+
+Use tags named `vX.Y.Z`, matching `versionName` in `app/build.gradle.kts`.
+
+For every public release:
+
+- Increment `versionCode` monotonically. Android refuses in-place updates when
+  the installed app has an equal or higher version code.
+- Set `versionName` to the public version without the `v` prefix.
+- Keep `versionNameSuffix = "-demo"` for the demo flavor.
+
+The first public release was `v0.1.0` with `versionCode = 1`.
+
+### Local Release Checklist
+
+1. Start from clean `master`, up to date with `origin/master`.
+
+   ```bash
+   git checkout master
+   git pull --ff-only
+   git status --short
+   ```
+
+2. Update `versionCode` and `versionName` in `app/build.gradle.kts`.
+
+3. Run tests and build both signed release APKs:
+
+   ```bash
+   ./gradlew test
+   ./gradlew :app:assembleProdRelease :app:assembleDemoRelease
+   ```
+
+4. Verify both APKs are signed with the Paczkofast release certificate:
+
+   ```bash
+   APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n1)
+   "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk
+   "$APKSIGNER" verify --print-certs app/build/outputs/apk/demo/release/app-demo-release.apk
+   ```
+
+   The certificate DN must be:
+
+   ```text
+   CN=Paczkofast Release, O=Tajchert, C=PL
+   ```
+
+   If you see `CN=Android Debug`, do not publish. Fix local
+   `keystore.properties` or CI secrets first.
+
+5. Smoke-test the minified APKs before publishing:
+
+   - Production APK: install, complete onboarding, open auth screen, verify the
+     app does not crash before or after login.
+   - Demo APK: install and click through parcel list, parcel detail, multi-box,
+     settings, and collect/open-box demo flows.
+
+   Useful install commands:
+
+   ```bash
+   adb install -r app/build/outputs/apk/prod/release/app-prod-release.apk
+   adb install -r app/build/outputs/apk/demo/release/app-demo-release.apk
+   ```
+
+6. Commit the version bump:
+
+   ```bash
+   git add app/build.gradle.kts
+   git commit -m "chore(release): prepare X.Y.Z"
+   ```
+
+7. Create and push the annotated tag:
+
+   ```bash
+   git tag -a vX.Y.Z -m "Paczkofast X.Y.Z"
+   git push origin master vX.Y.Z
+   ```
+
+The pushed tag triggers `.github/workflows/release.yml`. The workflow runs unit
+tests, builds both release APKs, verifies the signing certificate, creates
+checksums, and publishes or updates the matching GitHub Release.
+
+### Manual Release Fallback
+
+Normally, do not create releases manually; push the version tag and let GitHub
+Actions publish the assets. If GitHub Actions is unavailable, build locally and
+stage artifacts in `/tmp`:
+
+```bash
+VERSION=X.Y.Z
+DIST=/tmp/paczkofast-release-$VERSION
+mkdir -p "$DIST"
+cp app/build/outputs/apk/prod/release/app-prod-release.apk "$DIST/paczkofast-$VERSION.apk"
+cp app/build/outputs/apk/demo/release/app-demo-release.apk "$DIST/paczkofast-demo-$VERSION.apk"
+(cd "$DIST" && shasum -a 256 "paczkofast-$VERSION.apk" > "paczkofast-$VERSION.apk.sha256")
+(cd "$DIST" && shasum -a 256 "paczkofast-demo-$VERSION.apk" > "paczkofast-demo-$VERSION.apk.sha256")
+```
+
+Then create the release with the GitHub CLI:
+
+```bash
+gh release create "v$VERSION" \
+  --repo tajchert/paczkofast \
+  --verify-tag \
+  --title "Paczkofast $VERSION" \
+  --notes-file /tmp/paczkofast-release-notes.md \
+  "$DIST/paczkofast-$VERSION.apk" \
+  "$DIST/paczkofast-$VERSION.apk.sha256" \
+  "$DIST/paczkofast-demo-$VERSION.apk" \
+  "$DIST/paczkofast-demo-$VERSION.apk.sha256"
+```
+
+Every release note must keep the unofficial-app disclaimer near the top:
+
+```markdown
+> **Unofficial app.** Paczkofast is an experimental, unofficial companion app.
+> It is not affiliated with, endorsed by, or supported by InPost or any locker operator.
+> The API integration is unofficial and may break at any time. Use at your own risk.
+```
+
+### Reruns And Existing Releases
+
+The release workflow is idempotent for existing tag releases:
+
+- If the release does not exist, it creates it.
+- If the release already exists, it replaces APK/checksum assets with
+  `gh release upload --clobber`.
+
+This matters when a tag-triggered workflow is rerun after a manual release was
+created. The first public release, `v0.1.0`, was created manually before the
+workflow was made idempotent.
+
 ## Repository State And Public-Safety Rules
 
 This repo has already had history rewritten to remove private artifacts. Do not
