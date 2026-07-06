@@ -18,6 +18,8 @@
     <string name="picked_up">Odebrano</string>
     <string name="picked_up_in">Odebrano po %1$s</string>
     <string name="pickup_code_qr">Kod odbioru i QR</string>
+    <string name="show_pickup_code">Pokaż kod odbioru</string>
+    <string name="hide_pickup_code">Ukryj kod odbioru</string>
     <string name="no_longer_needed">Już niepotrzebne</string>
     <string name="box_details">Szczegóły skrytki</string>
     <string name="one_box_count">Jedna skrytka · ×%1$d</string>
