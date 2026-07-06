@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="docs/readme/hero-banner.png" width="100%"
+       alt="Paczkofast — one tap to your parcel. A fast, no-clutter companion app for parcel lockers. Tags: hold-to-open, live tracking, SMS login.">
+</p>
+
 # Paczkofast
 
 Paczkofast is a small native Android app for checking tracked parcels and
@@ -27,6 +32,11 @@ Do not use this project in a way that violates service terms, local law, or user
 privacy.
 
 ## Features
+
+<p align="center">
+  <img src="docs/readme/feature-strip.png" width="100%"
+       alt="Built for the locker run — why Paczkofast: one hold to open (walk up, hold, pop), live transit stages (sent, transit, out, ready), and codes always at hand (QR plus a 6-digit fallback that works offline).">
+</p>
 
 - SMS login flow.
 - Tracked parcel list.
@@ -111,6 +121,11 @@ Key decisions:
   string route templates.
 
 ## Why It Is Fast
+
+<p align="center">
+  <img src="docs/readme/pickup-flow.png" width="100%"
+       alt="The pickup flow — walk up, hold, done: (1) my parcels list with ready-for-pickup and on-the-way sections, (2) hold-to-open box screen showing distance to the locker, (3) a picked-up success screen.">
+</p>
 
 Paczkofast is fast because the app path is intentionally narrow.
 

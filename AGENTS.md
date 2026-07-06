@@ -117,6 +117,48 @@ Suggested denylist categories:
 - screenshot filenames from live app sessions
 - local design folder names that previously held private data
 
+## README Graphics
+
+The banner and showcase images at the top and inside `README.md` are generated
+from the HTML/CSS design in
+`claude-design-export/project/README Graphics.dc.html` (page "README Graphics",
+frames `1a` hero banner, `1b` feature strip, `1c` pickup flow). The rendered
+PNGs live in `docs/readme/`:
+
+- `docs/readme/hero-banner.png` — frame `1a`, before the title in `README.md`.
+- `docs/readme/feature-strip.png` — frame `1b`, in the `## Features` section.
+- `docs/readme/pickup-flow.png` — frame `1c`, in the `## Why It Is Fast` section.
+
+To create or update them:
+
+1. Open `claude-design-export/project/README Graphics.dc.html` and copy the
+   markup of the frame you need (the `div` with the matching `data-screen-label`)
+   into a standalone HTML file. Include the Google Fonts link for
+   `Space Grotesk` + `Space Mono`, set `html,body{margin:0;background:transparent}`,
+   and drop the design-tool-only tags (`<sc-if>` wrappers, keeping their inner
+   `<span>`). Use the frame's exact pixel `width`/`height`.
+2. Render to a 2x, transparent-corner PNG with headless Chrome:
+
+   ```bash
+   CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+   "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
+     --force-device-scale-factor=2 --default-background-color=00000000 \
+     --window-size=<W>,<H> --screenshot=docs/readme/<name>.png \
+     "file://$PWD/<frame>.html"
+   ```
+
+   `<W>,<H>` are the frame's CSS pixels (e.g. `1280,640` for `1a`); the output
+   is 2x that size for crisp retina rendering.
+3. Reference each image in `README.md` with
+   `<p align="center"><img src="docs/readme/<name>.png" width="100%" alt="..."></p>`.
+   `width="100%"` is the only sizing attribute GitHub honors, so it scales down
+   cleanly on mobile from the high-res source. Always include descriptive alt
+   text.
+
+Keep these images free of live data — the design frames use fake demo values
+(`TechNova Store`, `WAW-04N`, `DEMO STREET 12`), consistent with the privacy
+rules below. Do not screenshot the real app for the README.
+
 ## Tech Stack
 
 Core stack:
