@@ -1152,6 +1152,38 @@ When changing collect, update both:
 - `core/domain/src/test/.../CollectParcelUseCaseTest.kt`
 - `feature/parcels/impl/src/test/.../collect/CollectViewModelTest.kt`
 
+## Screenshots
+
+Two kinds, both committed and **fake-data-only** (public repo).
+
+**Golden screenshot tests** — Compose Preview Screenshot Testing (plugin
+`com.android.compose.screenshot`). `@PreviewTest` previews in a module's
+`src/screenshotTest/` render its stateless content composables; reference PNGs
+live in `<module>/src/screenshotTestDebug/reference/`. Wired per UI module
+(`feature:parcels:impl`, `feature:auth:impl`) via `screenshotTestImplementation`
+deps + `android.experimental.enableScreenshotTest=true` in `gradle.properties`.
+
+```bash
+./gradlew :feature:parcels:impl:updateDebugScreenshotTest    # record/update refs
+./gradlew :feature:parcels:impl:validateDebugScreenshotTest  # verify (CI gate)
+```
+
+- **Add/update when**: a new screen or UI state, or a visual change to a covered
+  composable. Add one `@PreviewTest` per state, re-record, commit the new PNG.
+- Make the rendered content composable `internal` (not `private`) so the
+  same-module `screenshotTest` source set can call it.
+- **Determinism (critical)**: previews must not render `now()`-relative text
+  (pickup countdown, "X ago") — it drifts and fails `validate` later. Use `null`
+  or fixed absolute dates in fixtures.
+- Generated diff/actual images and the HTML report go to `build/` (gitignored);
+  only the reference PNGs are committed.
+
+**README app screens** (`docs/readme/screens/*.png`) are captured from the
+`demoDebug` build on an emulator (`adb exec-out screencap -p`, resized ~640px
+wide), mock data only. Regenerate when the UI changes materially. These differ
+from the `docs/readme/` banners, which are rendered from the design HTML (see
+[README Graphics](#readme-graphics)).
+
 ## Performance
 
 Performance methodology and a dated, append-only results log live in

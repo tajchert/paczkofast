@@ -59,6 +59,19 @@ This app intentionally omits some areas, such as loyalty programs. That choice
 keeps the app focused on one simple, fast core use case instead of spreading
 attention across 100 features. Keeping things simple is the art.
 
+## Screens
+
+Captured from the offline demo build (mock data only). Track a parcel, hold to
+open the locker, done.
+
+<p align="center">
+  <img src="docs/readme/screens/01-parcels.png" width="19%" alt="Parcel list — ready-for-pickup and in-transit parcels, with one-tap remote open">
+  <img src="docs/readme/screens/02-detail.png"  width="19%" alt="Parcel detail — QR code, pickup code, locker address, and the tracking timeline">
+  <img src="docs/readme/screens/03-hold.png"     width="19%" alt="Open box — holding the button to unlock, progress bar and distance ring filling as the compartment opens">
+  <img src="docs/readme/screens/04-success.png"  width="19%" alt="Picked up — the compartment opened and closed and the parcel was collected">
+  <img src="docs/readme/screens/05-multibox.png" width="19%" alt="Multi-package box — several parcels sharing one compartment, one code opens it">
+</p>
+
 ## Tech Stack
 
 This app was built with AI agents (Claude and Codex) and a modern stack:
