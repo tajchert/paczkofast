@@ -42,9 +42,9 @@ import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
-private const val PAGE_COUNT = 2
-private const val WELCOME_PAGE = 0
-private const val DISCLAIMER_PAGE = 1
+internal const val PAGE_COUNT = 2
+internal const val WELCOME_PAGE = 0
+internal const val DISCLAIMER_PAGE = 1
 
 /**
  * First-launch onboarding: a 2-page pager with a welcome page (7a) and an
@@ -93,7 +93,7 @@ fun OnboardingScreen(
 
 /** Page 7a — welcome, logo tile + "wind lines", headline and marketing copy. */
 @Composable
-private fun WelcomePage(modifier: Modifier = Modifier) {
+internal fun WelcomePage(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -141,7 +141,7 @@ private fun WelcomePage(modifier: Modifier = Modifier) {
 
 /** Page 7b — "fan-made, experimental" disclaimer, badge-tagged card graphic. */
 @Composable
-private fun DisclaimerPage(modifier: Modifier = Modifier) {
+internal fun DisclaimerPage(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -255,7 +255,7 @@ private fun UnofficialCardGraphic(modifier: Modifier = Modifier) {
 
 /** Dot indicator + primary action button, shared across both onboarding pages. */
 @Composable
-private fun OnboardingFooter(
+internal fun OnboardingFooter(
     pagerState: PagerState,
     onContinueClicked: () -> Unit,
     onFinishClicked: () -> Unit,
