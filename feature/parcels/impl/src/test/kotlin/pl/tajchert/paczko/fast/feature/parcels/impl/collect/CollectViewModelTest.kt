@@ -16,7 +16,6 @@ import pl.tajchert.paczko.fast.core.data.repository.CollectRepository
 import pl.tajchert.paczko.fast.core.data.repository.ParcelRepository
 import pl.tajchert.paczko.fast.core.domain.CollectParcelUseCase
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
-import pl.tajchert.paczko.fast.core.model.UserPreferences
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 import pl.tajchert.paczko.fast.core.model.collect.ExpectedCompartmentStatus
 import pl.tajchert.paczko.fast.core.model.collect.GeoPoint
@@ -276,15 +275,34 @@ class CollectViewModelTest {
         val parcelRepository = FakeParcelRepository(
             parcel = parcel(shipmentNumber = "123", openCode = "456"),
         )
+        // Gates the location STREAM (not currentLocation()) so arm()'s
+        // locationJob genuinely suspends on the live code path — arm() now
+        // collects locationProvider.locationUpdates() rather than calling
+        // currentLocation(), so gating the latter (as this test used to)
+        // no longer suspends anything and made the test vacuous.
+        //
+        // With the gate on the stream, start()'s locationJob?.cancel() races
+        // the pending fix: cancelling a coroutine suspended on
+        // CompletableDeferred.await() resolves it with
+        // CancellationException immediately, so in this single-threaded
+        // test dispatcher the cancellation alone already stops the stale
+        // fix from reaching the `it.state !is CollectState.Idle` guard.
+        // On a real device the two can race across threads instead, so both
+        // defenses matter together; removing BOTH — the cancel() call in
+        // start() and the Idle guard in arm()'s locationUpdates().collect —
+        // reopens the clobbering bug and fails this test (verified manually
+        // by deleting both locally: distanceMeters becomes non-null after
+        // completion; restored afterwards, no production change kept).
         val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
         val gatedLocation = object : LocationProvider {
-            override suspend fun currentLocation(): GeoPoint {
-                gate.await()
-                return GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0)
-            }
+            override suspend fun currentLocation(): GeoPoint =
+                GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0)
 
             override fun locationUpdates(): Flow<GeoPoint> =
-                kotlinx.coroutines.flow.emptyFlow()
+                kotlinx.coroutines.flow.flow {
+                    gate.await()
+                    emit(GeoPoint(latitude = 50.061, longitude = 19.938, accuracy = 5.0))
+                }
         }
         val viewModel = CollectViewModel(
             collectParcel = CollectParcelUseCase(
@@ -296,15 +314,18 @@ class CollectViewModelTest {
             userPreferencesRepository = FakeUserPreferencesRepository(),
         )
 
-        viewModel.arm("123")        // suspends inside currentLocation() on gate.await()
-        viewModel.start("123")      // runs the collect flow to Completed (instant fakes)
+        viewModel.arm("123")        // starts locationJob, which suspends on gate.await()
+        assertNull(viewModel.uiState.value.distanceMeters)
+
+        viewModel.start("123")      // runs the collect flow to Completed and cancels locationJob
         assertEquals(CollectState.Completed, viewModel.uiState.value.state)
 
-        gate.complete(Unit)         // arm() resumes and updates _uiState
+        gate.complete(Unit)         // release the (now-cancelled) location stream
         testScheduler.advanceUntilIdle()
 
-        // arm() must NOT have reset the completed flow back to Idle
+        // The pending location update must NOT clobber the completed flow.
         assertEquals(CollectState.Completed, viewModel.uiState.value.state)
+        assertNull(viewModel.uiState.value.distanceMeters)
     }
 
     @Test

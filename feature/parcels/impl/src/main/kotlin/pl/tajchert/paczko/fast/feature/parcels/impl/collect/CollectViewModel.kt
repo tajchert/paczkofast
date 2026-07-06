@@ -64,6 +64,9 @@ class CollectViewModel @Inject constructor(
                 }
             }
             locationJob?.cancel()
+            // Intentionally long-lived: this keeps collecting location fixes
+            // (to refresh distance/accuracy) until start()/onCleared() cancels
+            // it. Do not turn this into a single-shot collect.
             locationJob = launch {
                 locationProvider.locationUpdates().collect { fix ->
                     val distance = metersToLocker(
