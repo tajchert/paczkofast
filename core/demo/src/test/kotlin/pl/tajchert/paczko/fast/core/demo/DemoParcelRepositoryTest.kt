@@ -1,0 +1,46 @@
+package pl.tajchert.paczko.fast.core.demo
+
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class DemoParcelRepositoryTest {
+
+    private val repository = DemoParcelRepository()
+
+    @Test
+    fun `observeParcels emits the demo catalog with a collectable ready parcel`() = runTest {
+        val parcels = repository.observeParcels().first()
+        assertEquals(DemoData.parcels.size, parcels.size)
+        assertTrue(parcels.any { it.canCollectRemotely })
+        assertTrue(parcels.any { it.isMultiPackage })
+        assertTrue(parcels.any { it.status == "claimed" }) // history present
+        // Regression guard: the app's FINISHED_STATUSES (feature/parcels/impl
+        // ParcelUiFormatters.kt) recognizes "pickup_time_expired", not "expired".
+        // If this drifts, the expired demo parcel wrongly renders as active.
+        val expired = parcels.first { it.shipmentNumber == DemoData.EXPIRED }
+        assertEquals("pickup_time_expired", expired.status)
+    }
+
+    @Test
+    fun `observeParcel finds a known parcel and returns null for unknown`() = runTest {
+        assertNotNull(repository.observeParcel(DemoData.READY_SUCCESS).first())
+        assertNull(repository.observeParcel("does-not-exist").first())
+    }
+
+    @Test
+    fun `observeParcelDetails returns a timeline`() = runTest {
+        val details = repository.observeParcelDetails(DemoData.READY_SUCCESS).first()
+        assertTrue(details.events.isNotEmpty())
+    }
+
+    @Test
+    fun `refresh is a no-op and does not throw`() = runTest {
+        repository.refreshTrackedParcels()
+        repository.refreshParcelDetails(DemoData.READY_SUCCESS)
+    }
+}
