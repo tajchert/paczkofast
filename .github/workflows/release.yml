@@ -96,7 +96,7 @@ jobs:
           shasum -a 256 "paczkofast-$VERSION.apk" > "paczkofast-$VERSION.apk.sha256"
           shasum -a 256 "paczkofast-demo-$VERSION.apk" > "paczkofast-demo-$VERSION.apk.sha256"
 
-      - name: Create GitHub Release
+      - name: Create or update GitHub Release
         if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -110,12 +110,17 @@ jobs:
           EOF
           )"
 
-          gh release create "$GITHUB_REF_NAME" \
-            --verify-tag \
-            --title "Paczkofast ${GITHUB_REF_NAME#v}" \
-            --generate-notes \
-            --notes "$RELEASE_NOTES" \
-            dist/*.apk dist/*.apk.sha256
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; replacing APK assets."
+            gh release upload "$GITHUB_REF_NAME" dist/*.apk dist/*.apk.sha256 --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --verify-tag \
+              --title "Paczkofast ${GITHUB_REF_NAME#v}" \
+              --generate-notes \
+              --notes "$RELEASE_NOTES" \
+              dist/*.apk dist/*.apk.sha256
+          fi
 
       - name: Upload dry-run artifact
         if: github.ref_type != 'tag'
