@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -62,6 +63,8 @@ fun PhoneLoginScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
+    val phoneContentDescription = stringResource(R.string.phone_number_content_description)
+    val phoneStateDescription = stringResource(R.string.phone_number_state, state.phoneDigits.length)
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
     Column(
@@ -92,8 +95,7 @@ fun PhoneLoginScreen(
                         color = PaczkofastTheme.colors.textPrimary,
                     )
                     Text(
-                        text = "Log in with the phone number your parcels are sent to. " +
-                            "We'll text you a code.",
+                        text = stringResource(R.string.auth_intro),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontSize = 14.5.sp,
                             lineHeight = 22.sp,
@@ -105,7 +107,7 @@ fun PhoneLoginScreen(
 
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    text = "PHONE NUMBER",
+                    text = stringResource(R.string.phone_number_label).uppercase(),
                     style = MonoLabel,
                     color = PaczkofastTheme.colors.textMuted,
                 )
@@ -116,8 +118,8 @@ fun PhoneLoginScreen(
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
                         .semantics {
-                            contentDescription = "Phone number"
-                            stateDescription = "Polish prefix plus 48, ${state.phoneDigits.length} digits entered"
+                            contentDescription = phoneContentDescription
+                            stateDescription = phoneStateDescription
                         },
                     enabled = !state.isLoading,
                     keyboardOptions = KeyboardOptions(
@@ -136,7 +138,7 @@ fun PhoneLoginScreen(
 
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 PaczkofastButton(
-                    text = "Send code",
+                    text = stringResource(R.string.send_code),
                     onClick = onSendCode,
                     enabled = state.canSendCode,
                     isLoading = state.isLoading,
@@ -238,10 +240,10 @@ private fun TermsLine(modifier: Modifier = Modifier) {
     )
     Text(
         text = buildAnnotatedString {
-            append("By continuing you accept the ")
-            withStyle(linkStyle) { append("Terms") }
-            append(" and ")
-            withStyle(linkStyle) { append("Privacy policy") }
+            append(stringResource(R.string.terms_prefix))
+            withStyle(linkStyle) { append(stringResource(R.string.terms)) }
+            append(stringResource(R.string.terms_and))
+            withStyle(linkStyle) { append(stringResource(R.string.privacy_policy)) }
         },
         style = MaterialTheme.typography.bodySmall,
         color = PaczkofastTheme.colors.textFaint,

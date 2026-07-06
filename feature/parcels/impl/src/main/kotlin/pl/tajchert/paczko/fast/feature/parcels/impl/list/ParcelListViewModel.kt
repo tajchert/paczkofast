@@ -52,7 +52,7 @@ class ParcelListViewModel @Inject constructor(
             )
             is Result.Error -> ParcelListUiState(
                 isRefreshing = refreshState.isRefreshing,
-                errorMessage = parcelsResult.exception.message ?: "Unable to load parcels",
+                errorMessage = parcelsResult.exception.message ?: "Nie udało się wczytać paczek",
             )
         }
     }.stateIn(
@@ -70,7 +70,7 @@ class ParcelListViewModel @Inject constructor(
             } catch (exception: Exception) {
                 RefreshState(
                     isRefreshing = false,
-                    errorMessage = exception.message ?: "Unable to refresh parcels",
+                    errorMessage = exception.message ?: "Nie udało się odświeżyć paczek",
                 )
             }
         }

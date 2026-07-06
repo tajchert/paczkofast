@@ -7,9 +7,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -24,9 +26,10 @@ fun LockerCard(
     address: String,
     modifier: Modifier = Modifier,
     note: String? = null,
-    navigateText: String = "Navigate",
+    navigateText: String? = null,
     onNavigate: (() -> Unit)? = null,
 ) {
+    val resolvedNavigateText = navigateText ?: stringResource(R.string.navigate)
     PaczkofastCard(modifier = modifier) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
@@ -52,7 +55,7 @@ fun LockerCard(
                 }
             }
             onNavigate?.let {
-                OutlinedActionButton(text = navigateText, onClick = it)
+                OutlinedActionButton(text = resolvedNavigateText, onClick = it)
             }
         }
     }

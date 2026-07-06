@@ -40,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,6 +68,7 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.LockerOpenMode
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
+import pl.tajchert.paczko.fast.feature.parcels.impl.R
 
 @Composable
 fun CollectScreen(
@@ -137,6 +140,7 @@ internal fun CollectContent(
     modifier: Modifier = Modifier,
 ) {
     val state = uiState.state
+    val lockerOpenedUnconfirmedMessage = stringResource(R.string.locker_opened_unconfirmed)
     // A failure after the box already opened: the parcel is collectable, so show
     // the collected screen with a snackbar instead of a full-screen error.
     val collectedButUnconfirmed = (state as? CollectState.Failed)?.takeIf { it.boxAlreadyOpen }
@@ -144,7 +148,7 @@ internal fun CollectContent(
     LaunchedEffect(collectedButUnconfirmed) {
         if (collectedButUnconfirmed != null) {
             snackbarHostState.showSnackbar(
-                "Locker opened — we couldn't confirm the pickup finished, but your parcel is collected.",
+                lockerOpenedUnconfirmedMessage,
             )
         }
     }
@@ -156,14 +160,18 @@ internal fun CollectContent(
         onConfirmed = onConfirmed,
     )
 
-    val baseModel = collectScreenModel(state, uiState)
+    val baseModel = collectScreenModel(state, uiState).localized(state, uiState)
     // Box-already-open failure is presented as a success (with the snackbar caveat above),
     // so reuse the Completed slots rather than the Error ones.
     val model = if (collectedButUnconfirmed != null) {
         baseModel.copy(
-            header = "Box closed".uppercase(),
+            header = stringResource(R.string.box_closed).uppercase(),
             hero = CollectHero.Check,
-            headline = if (uiState.members.size > 1) "All picked up!" else "Picked up!",
+            headline = if (uiState.members.size > 1) {
+                stringResource(R.string.all_picked_up)
+            } else {
+                stringResource(R.string.picked_up_exclamation)
+            },
             subline = null,
             action = CollectAction.BackOnly,
         )
@@ -199,7 +207,7 @@ internal fun CollectContent(
             // (success's affordance is the "Back to my parcels" button), but the bar HEIGHT stays.
             val terminal = state is CollectState.Completed || collectedButUnconfirmed != null
             DetailTopBar(
-                title = if (terminal) "" else "Open box",
+                title = if (terminal) "" else stringResource(R.string.collect_open_box_title),
                 onBack = onBack,
                 showBackButton = !terminal,
             )
@@ -234,25 +242,29 @@ internal fun CollectContent(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             PrimaryActionButton(
-                                text = "Open locker",
+                                text = stringResource(R.string.open_locker),
                                 enabled = model.openEnabled,
                                 onClick = onConfirmed,
                             )
                             if (model.showOverrideHold) {
-                                HoldBar(state = holdState, label = "Override with hold")
+                                HoldBar(state = holdState, label = stringResource(R.string.collect_override_hold))
                             }
                         }
 
                         CollectAction.BackOnly -> PrimaryActionButton(
-                            text = if (state is CollectState.Canceled) "Close" else "Back to my parcels",
+                            text = if (state is CollectState.Canceled) {
+                                stringResource(R.string.collect_close)
+                            } else {
+                                stringResource(R.string.collect_back_to_parcels)
+                            },
                             onClick = onBack,
                         )
 
                         CollectAction.RetrySupport -> Column(
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
-                            PrimaryActionButton(text = "Try again", onClick = onBack)
-                            OutlinedActionButton(text = "Contact support", onClick = onBack)
+                            PrimaryActionButton(text = stringResource(R.string.try_again), onClick = onBack)
+                            OutlinedActionButton(text = stringResource(R.string.contact_support), onClick = onBack)
                         }
 
                         CollectAction.None -> Box(modifier = Modifier)
@@ -260,6 +272,74 @@ internal fun CollectContent(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun CollectScreenModel.localized(
+    state: CollectState,
+    uiState: CollectUiState,
+): CollectScreenModel {
+    val locker = uiState.lockerName
+    val lockerHeader = (locker?.let { stringResource(R.string.collect_locker_name, it) }
+        ?: stringResource(R.string.collect_locker)).uppercase()
+
+    return when (state) {
+        is CollectState.Idle -> when (uiState.openMode) {
+            LockerOpenMode.HOLD -> copy(
+                header = lockerHeader,
+                headline = uiState.distanceMeters?.let {
+                    stringResource(R.string.collect_distance, it)
+                } ?: stringResource(R.string.collect_hold_to_open),
+                subline = if (uiState.members.size > 1) {
+                    pluralStringResource(
+                        R.plurals.collect_shared_box_subline,
+                        uiState.members.size,
+                        uiState.members.size,
+                    )
+                } else {
+                    stringResource(R.string.collect_stand_at_locker)
+                },
+            )
+            LockerOpenMode.NEARBY -> copy(
+                header = lockerHeader,
+                headline = if (uiState.nearbyReady) {
+                    stringResource(R.string.collect_ready_to_open)
+                } else {
+                    stringResource(R.string.collect_get_closer)
+                },
+                subline = when {
+                    uiState.nearbyReady -> stringResource(R.string.collect_at_locker)
+                    uiState.distanceMeters != null -> stringResource(R.string.collect_move_closer, uiState.distanceMeters)
+                    else -> stringResource(R.string.collect_waiting_gps)
+                },
+            )
+        }
+
+        CollectState.Validating -> copy(header = lockerHeader, headline = stringResource(R.string.collect_checking))
+        is CollectState.Opening -> copy(header = lockerHeader, headline = stringResource(R.string.collect_opening))
+        is CollectState.WaitingForOpened -> copy(header = lockerHeader, headline = stringResource(R.string.collect_waiting_open))
+        is CollectState.Opened,
+        is CollectState.WaitingForClosed,
+        is CollectState.ConfirmingClosed,
+        is CollectState.Claiming -> copy(header = lockerHeader, headline = stringResource(R.string.collect_box_open))
+
+        CollectState.Completed -> copy(
+            header = stringResource(R.string.box_closed).uppercase(),
+            headline = if (uiState.members.size > 1) {
+                stringResource(R.string.all_picked_up)
+            } else {
+                stringResource(R.string.picked_up_exclamation)
+            },
+        )
+
+        is CollectState.Failed -> copy(
+            header = (locker?.let { stringResource(R.string.collect_error_locker, it) }
+                ?: stringResource(R.string.collect_error)).uppercase(),
+            headline = stringResource(R.string.collect_box_didnt_open),
+        )
+
+        CollectState.Canceled -> copy(header = lockerHeader, headline = stringResource(R.string.collect_canceled))
     }
 }
 
@@ -275,13 +355,10 @@ private fun BoxOpenDetail(members: ImmutableList<CollectMember>, finishing: Bool
     val checked = remember(members) { mutableStateListOf<String>() }
     val allChecked = members.isNotEmpty() && checked.size == members.size
     val count = members.size
-
-    // Safety guidance above the card/checklist: once the door closes we're confirming, so
-    // switch to "Finishing up…"; otherwise remind the user how to close the compartment.
     val guidance = when {
-        finishing -> "Finishing up…"
-        count > 1 -> "$count parcels share this box — check off both before you close it."
-        else -> "Close the door firmly — it locks automatically"
+        finishing -> stringResource(R.string.finishing_up)
+        count > 1 -> pluralStringResource(R.plurals.collect_check_before_close, count, count)
+        else -> stringResource(R.string.collect_close_door)
     }
 
     Column(
@@ -314,9 +391,9 @@ private fun BoxOpenDetail(members: ImmutableList<CollectMember>, finishing: Bool
                 }
                 Text(
                     text = if (allChecked) {
-                        "${members.size} of ${members.size} checked".uppercase()
+                        stringResource(R.string.collect_checked_all, members.size, members.size).uppercase()
                     } else {
-                        "${checked.size} of ${members.size} checked — check both to close".uppercase()
+                        stringResource(R.string.collect_checked_prompt, checked.size, members.size).uppercase()
                     },
                     style = MonoLabel,
                     color = if (allChecked) colors.monoLabel else colors.alertText,
@@ -373,12 +450,12 @@ private fun ErrorDetail(message: String) {
         PaczkofastCard {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
-                    text = "What you can do".uppercase(),
+                    text = stringResource(R.string.what_you_can_do).uppercase(),
                     style = MonoLabel,
                     color = colors.monoLabel,
                 )
                 Text(
-                    text = "Try again — a second attempt usually works.",
+                    text = stringResource(R.string.try_again_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colors.textPrimary,
                 )
@@ -435,7 +512,11 @@ private fun CollectedSummary(members: ImmutableList<CollectMember>) {
     PaczkofastCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = (if (members.size > 1) "${members.size} parcels collected" else "1 parcel collected").uppercase(),
+                text = pluralStringResource(
+                    R.plurals.parcels_collected,
+                    members.size,
+                    members.size,
+                ).uppercase(),
                 style = MonoLabel,
                 color = colors.monoLabel,
             )

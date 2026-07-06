@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -69,6 +71,8 @@ private fun RowScope.SegmentedItem(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
+    val selectedDescription = stringResource(R.string.selected)
+    val notSelectedDescription = stringResource(R.string.not_selected)
     val segmentShape = RoundedCornerShape(8.dp)
     Box(
         modifier = Modifier
@@ -96,7 +100,7 @@ private fun RowScope.SegmentedItem(
             )
             .semantics {
                 contentDescription = label
-                stateDescription = if (selected) "Selected" else "Not selected"
+                stateDescription = if (selected) selectedDescription else notSelectedDescription
             },
         contentAlignment = Alignment.Center,
     ) {

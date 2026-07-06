@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -59,6 +60,7 @@ import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
 import pl.tajchert.paczko.fast.core.model.parcel.TrackingEvent
 import pl.tajchert.paczko.fast.core.ui.QrPanel
 import pl.tajchert.paczko.fast.feature.parcels.api.ParcelDetailRoute
+import pl.tajchert.paczko.fast.feature.parcels.impl.R
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatTimelineTime
 import pl.tajchert.paczko.fast.feature.parcels.impl.humanizeStatus
@@ -105,7 +107,7 @@ internal fun ParcelDetailContent(
         containerColor = PaczkofastTheme.colors.background,
         topBar = {
             DetailTopBar(
-                title = "Parcel details",
+                title = stringResource(R.string.parcel_details),
                 onBack = onBack,
             )
         },
@@ -125,7 +127,7 @@ internal fun ParcelDetailContent(
             )
 
             uiState.parcel == null -> PaczkofastErrorState(
-                message = "Parcel not found",
+                message = stringResource(R.string.parcel_not_found),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
@@ -163,6 +165,10 @@ private fun ParcelDetailBody(
     val effectiveSender = senderName?.takeIf { it.isNotBlank() } ?: parcel.senderName
     val effectiveSizeCode = sizeCode ?: parcel.parcelSize
     val delivered = parcel.isPickedUp
+    val deliveredLabel = stringResource(R.string.delivered)
+    val parcelLabel = stringResource(R.string.parcel)
+    val openBoxText = stringResource(R.string.open_box_remotely)
+    val lockerFormat = stringResource(R.string.locker_name, "%s")
 
     Column(
         modifier = modifier
@@ -181,17 +187,20 @@ private fun ParcelDetailBody(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 StatusChip(
-                    text = if (delivered) "Delivered" else humanizeStatus(parcel.status),
+                    text = if (delivered) deliveredLabel else humanizeStatus(parcel.status),
                     style = if (delivered) StatusChipStyle.Ink else StatusChipStyle.Accent,
                     textStyle = MonoLabelLarge,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 parcelSizeLabel(effectiveSizeCode)?.let { sizeLabel ->
-                    OutlinedStatusChip(text = "Size $sizeLabel", textStyle = MonoLabelLarge)
+                    OutlinedStatusChip(
+                        text = stringResource(R.string.size_label, sizeLabel),
+                        textStyle = MonoLabelLarge,
+                    )
                 }
             }
             Text(
-                text = effectiveSender ?: "Parcel",
+                text = effectiveSender ?: parcelLabel,
                 style = MaterialTheme.typography.headlineSmall,
                 color = PaczkofastTheme.colors.textPrimary,
             )
@@ -245,7 +254,7 @@ private fun ParcelDetailBody(
 
             if (parcel.canCollectRemotely) {
                 PaczkofastButton(
-                    text = "Open box remotely",
+                    text = openBoxText,
                     onClick = onCollect,
                 )
             }
@@ -253,7 +262,7 @@ private fun ParcelDetailBody(
 
         parcel.pickupPoint?.let { point ->
             LockerCard(
-                lockerName = "Locker ${point.name}",
+                lockerName = lockerFormat.format(point.name),
                 address = point.addressLine ?: point.name,
                 note = point.locationDescription,
                 onNavigate = navigateAction(point) { intent ->
@@ -270,7 +279,7 @@ private fun ParcelDetailBody(
         if (timeline.isNotEmpty()) {
             Column(modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)) {
                 Text(
-                    text = "TRACKING",
+                    text = stringResource(R.string.tracking).uppercase(),
                     style = MonoLabel,
                     color = PaczkofastTheme.colors.monoLabel,
                     modifier = Modifier.padding(bottom = 14.dp),
@@ -313,7 +322,11 @@ private fun PickedUpSummaryCard(
             }
             Column {
                 Text(
-                    text = if (waitLabel != null) "Picked up in $waitLabel" else "Picked up",
+                    text = if (waitLabel != null) {
+                        stringResource(R.string.picked_up_in, waitLabel)
+                    } else {
+                        stringResource(R.string.picked_up)
+                    },
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
@@ -357,14 +370,18 @@ private fun CollapsedPickupCodeRow(modifier: Modifier = Modifier) {
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Pickup code & QR",
+                    text = stringResource(R.string.pickup_code_qr),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.textPrimary,
                 )
-                Text(text = "No longer needed", style = MonoLabel, color = colors.textMuted)
+                Text(
+                    text = stringResource(R.string.no_longer_needed),
+                    style = MonoLabel,
+                    color = colors.textMuted,
+                )
             }
             Icon(
                 imageVector = Icons.Default.ChevronRight,

@@ -19,9 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -136,7 +138,7 @@ fun PaczkofastErrorState(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Something went wrong",
+            text = stringResource(R.string.error_title),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             color = PaczkofastTheme.colors.textPrimary,
@@ -156,7 +158,7 @@ fun PaczkofastErrorState(
 
             PaczkofastOutlinedButton(
                 onClick = onRetry,
-                text = "Try Again",
+                text = stringResource(R.string.try_again),
             )
         }
     }

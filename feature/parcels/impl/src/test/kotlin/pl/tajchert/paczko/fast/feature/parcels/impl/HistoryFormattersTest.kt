@@ -47,12 +47,12 @@ class HistoryFormattersTest {
     @Test
     fun outcomeLineIncludesLockerForPickedUp() {
         assertEquals(
-            "Picked up · Locker WAW01A",
+            "Odebrano · Paczkomat WAW01A",
             historyOutcomeLine(parcel("claimed", lockerName = "WAW01A")),
         )
-        assertEquals("Picked up", historyOutcomeLine(parcel("claimed")))
-        assertEquals("Expired · returned to sender", historyOutcomeLine(parcel("pickup_time_expired")))
-        assertEquals("Returned to sender", historyOutcomeLine(parcel("returned_to_sender")))
+        assertEquals("Odebrano", historyOutcomeLine(parcel("claimed")))
+        assertEquals("Termin minął · zwrot do nadawcy", historyOutcomeLine(parcel("pickup_time_expired")))
+        assertEquals("Zwrócona do nadawcy", historyOutcomeLine(parcel("returned_to_sender")))
     }
 
     @Test
@@ -60,8 +60,8 @@ class HistoryFormattersTest {
         val thisMonth = parcel("claimed", storedDate = "2026-07-02T12:32:00Z")
         val lastMonth = parcel("claimed", storedDate = "2026-06-28T12:00:00Z")
 
-        assertEquals("2 Jul", historyDateLabel(thisMonth, zone = zone))
-        assertEquals("28 Jun", historyDateLabel(lastMonth, zone = zone))
+        assertEquals("2 lip", historyDateLabel(thisMonth, zone = zone))
+        assertEquals("28 cze", historyDateLabel(lastMonth, zone = zone))
         assertEquals("", historyDateLabel(parcel("claimed"), zone = zone))
     }
 
@@ -73,12 +73,12 @@ class HistoryFormattersTest {
             storedDate = "2026-06-20T08:00:00Z",
             pickUpDate = "2026-07-02T12:32:00Z",
         )
-        assertEquals("2 Jul", historyDateLabel(p, zone = zone))
+        assertEquals("2 lip", historyDateLabel(p, zone = zone))
     }
 
     @Test
     fun monthLabelAddsYearOnlyForOtherYears() {
-        assertEquals("July", historyMonthLabel(YearMonth.of(2026, 7), now = now, zone = zone))
-        assertEquals("June 2025", historyMonthLabel(YearMonth.of(2025, 6), now = now, zone = zone))
+        assertEquals("lipca", historyMonthLabel(YearMonth.of(2026, 7), now = now, zone = zone))
+        assertEquals("czerwca 2025", historyMonthLabel(YearMonth.of(2025, 6), now = now, zone = zone))
     }
 }

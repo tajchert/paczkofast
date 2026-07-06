@@ -37,12 +37,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -138,12 +140,13 @@ fun HoldRing(
 ) {
     val colors = PaczkofastTheme.colors
     val clamped = progress.coerceIn(0f, 1f)
+    val holdToOpen = stringResource(R.string.hold_to_open)
     Box(
         modifier = Modifier
             .size(HeroSize)
             .then(modifier)
             .semantics {
-                contentDescription = "Hold to open"
+                contentDescription = holdToOpen
                 progressBarRangeInfo = ProgressBarRangeInfo(clamped, 0f..1f)
             },
         contentAlignment = Alignment.Center,
@@ -210,21 +213,25 @@ private fun HoldRingLockGlyph() {
 @Composable
 fun HoldBar(
     state: HoldToOpenState,
-    label: String = "Hold to open",
+    label: String? = null,
     modifier: Modifier = Modifier,
 ) {
     val holding = state.isHolding
+    val resolvedLabel = label ?: stringResource(R.string.hold_to_open)
+    val disabled = stringResource(R.string.disabled)
+    val keepHolding = stringResource(R.string.keep_holding)
+    val pressAndHold = stringResource(R.string.press_and_hold_to_open)
     NeoSurface(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .then(state.pressModifier)
             .semantics {
-                contentDescription = label
+                contentDescription = resolvedLabel
                 stateDescription = when {
-                    !state.isEnabled -> "Disabled"
-                    holding -> "Keep holding"
-                    else -> "Press and hold to open"
+                    !state.isEnabled -> disabled
+                    holding -> keepHolding
+                    else -> pressAndHold
                 }
             },
         shape = RoundedCornerShape(14.dp),
@@ -245,7 +252,7 @@ fun HoldBar(
                 )
             }
             Text(
-                text = label,
+                text = resolvedLabel,
                 style = MaterialTheme.typography.labelLarge,
                 color = PaczkofastTheme.colors.onAccent,
             )

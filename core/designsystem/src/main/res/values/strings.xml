@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bottom_nav_parcels">Paczki</string>
+    <string name="bottom_nav_history">Historia</string>
+    <string name="bottom_nav_settings">Ustawienia</string>
+    <string name="selected">Wybrane</string>
+    <string name="not_selected">Niewybrane</string>
+    <string name="loading">Ładowanie</string>
+    <string name="error_title">Coś poszło nie tak</string>
+    <string name="try_again">Spróbuj ponownie</string>
+    <string name="back">Wstecz</string>
+    <string name="navigate_back">Wróć</string>
+    <string name="more_options">Więcej opcji</string>
+    <string name="disabled">Niedostępne</string>
+    <string name="press_and_hold_to_confirm">Przytrzymaj, aby potwierdzić</string>
+    <string name="hold_to_open">Przytrzymaj, aby otworzyć</string>
+    <string name="keep_holding">Trzymaj dalej</string>
+    <string name="press_and_hold_to_open">Przytrzymaj, aby otworzyć</string>
+    <string name="open_parcel_details">Otwórz szczegóły paczki</string>
+    <string name="open_shared_box_details">Otwórz szczegóły skrytki</string>
+    <string name="open_24_7">Czynny 24/7</string>
+    <string name="locker_photo">Zdjęcie automatu</string>
+    <string name="locker">Paczkomat</string>
+    <string name="navigate">Nawiguj</string>
+    <string name="receiver">Odbiorca</string>
+    <string name="you_suffix">Ty</string>
+    <string name="taken">Zabrane</string>
+    <string name="still_in_box">Jeszcze w skrytce?</string>
+    <string name="size_value">Rozmiar %1$s</string>
+    <string name="size_prefix">Rozmiar</string>
+    <string name="urgent">Pilne</string>
+    <string name="ready_for_pickup">Gotowa do odbioru</string>
+    <string name="delivery_steps_complete">%1$d z %2$d etapów dostawy ukończone</string>
+    <string name="current_status">Aktualny status</string>
+    <string name="upcoming">Nadchodzące</string>
+    <string name="completed">Ukończone</string>
+    <plurals name="parcels_one_box">
+        <item quantity="one">%1$d paczka · jedna skrytka</item>
+        <item quantity="few">%1$d paczki · jedna skrytka</item>
+        <item quantity="many">%1$d paczek · jedna skrytka</item>
+        <item quantity="other">%1$d paczki · jedna skrytka</item>
+    </plurals>
+    <plurals name="parcels_in_one_box">
+        <item quantity="one">%1$d paczka w jednej skrytce</item>
+        <item quantity="few">%1$d paczki w jednej skrytce</item>
+        <item quantity="many">%1$d paczek w jednej skrytce</item>
+        <item quantity="other">%1$d paczki w jednej skrytce</item>
+    </plurals>
+    <plurals name="open_box_with_parcels">
+        <item quantity="one">Otwórz skrytkę z %1$d paczką</item>
+        <item quantity="few">Otwórz skrytkę z %1$d paczkami</item>
+        <item quantity="many">Otwórz skrytkę z %1$d paczkami</item>
+        <item quantity="other">Otwórz skrytkę z %1$d paczki</item>
+    </plurals>
+    <plurals name="open_box_parcels">
+        <item quantity="one">Otwórz skrytkę · %1$d paczka</item>
+        <item quantity="few">Otwórz skrytkę · %1$d paczki</item>
+        <item quantity="many">Otwórz skrytkę · %1$d paczek</item>
+        <item quantity="other">Otwórz skrytkę · %1$d paczki</item>
+    </plurals>
+</resources>

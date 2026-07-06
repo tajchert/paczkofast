@@ -23,11 +23,13 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -73,6 +75,9 @@ private fun TimelineRow(
     event: TimelineEvent,
     isLast: Boolean,
 ) {
+    val currentStatus = stringResource(R.string.current_status)
+    val upcoming = stringResource(R.string.upcoming)
+    val completed = stringResource(R.string.completed)
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Min)
@@ -82,9 +87,9 @@ private fun TimelineRow(
                     event.time?.let { add(it) }
                     add(
                         when {
-                            event.isCurrent -> "Current status"
-                            event.isUpcoming -> "Upcoming"
-                            else -> "Completed"
+                            event.isCurrent -> currentStatus
+                            event.isUpcoming -> upcoming
+                            else -> completed
                         },
                     )
                 }.joinToString(", ")

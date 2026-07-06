@@ -35,12 +35,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 private val ActionButtonShape = RoundedCornerShape(12.dp)
@@ -60,6 +62,7 @@ fun PrimaryActionButton(
     accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
+    val loadingDescription = stringResource(R.string.loading)
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val isEnabled = enabled && !isLoading
@@ -76,7 +79,7 @@ fun PrimaryActionButton(
                 onClickLabel = accessibilityLabel,
                 onClick = onClick,
             )
-            .then(Modifier.actionLoadingSemantics(isLoading, accessibilityLabel)),
+            .then(Modifier.actionLoadingSemantics(isLoading, accessibilityLabel, loadingDescription)),
         shape = ActionButtonShape,
         fill = if (isEnabled) colors.accent else colors.accentDisabled,
         borderColor = colors.accentBorder,
@@ -115,6 +118,8 @@ fun OutlinedActionButton(
     accessibilityLabel: String = text,
 ) {
     val colors = PaczkofastTheme.colors
+    val holdDescription = stringResource(R.string.press_and_hold_to_confirm)
+    val disabledDescription = stringResource(R.string.disabled)
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
 
@@ -166,6 +171,8 @@ fun HoldToConfirmButton(
     val haptics = LocalHapticFeedback.current
     val currentOnConfirmed by rememberUpdatedState(onConfirmed)
     var pressed by remember { mutableStateOf(false) }
+    val holdDescription = stringResource(R.string.press_and_hold_to_open)
+    val disabledDescription = stringResource(R.string.disabled)
 
     LaunchedEffect(pressed, enabled) {
         if (!pressed || !enabled) {
@@ -209,9 +216,9 @@ fun HoldToConfirmButton(
             .semantics {
                 contentDescription = accessibilityLabel
                 stateDescription = if (enabled) {
-                    "Press and hold to confirm"
+                    holdDescription
                 } else {
-                    "Disabled"
+                    disabledDescription
                 }
             },
     ) {
@@ -245,11 +252,12 @@ fun HoldToConfirmButton(
 private fun Modifier.actionLoadingSemantics(
     isLoading: Boolean,
     accessibilityLabel: String,
+    loadingDescription: String,
 ): Modifier = if (isLoading) {
     semantics {
         role = Role.Button
         contentDescription = accessibilityLabel
-        stateDescription = "Loading"
+        stateDescription = loadingDescription
     }
 } else {
     semantics { role = Role.Button }

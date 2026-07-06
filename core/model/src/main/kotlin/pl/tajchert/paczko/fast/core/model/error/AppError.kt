@@ -7,5 +7,5 @@ data class AppError(
     val diagnosticId: String?,
 ) {
     val displayMessage: String
-        get() = description ?: code ?: "Unknown error"
+        get() = description ?: code ?: "Nieznany błąd"
 }

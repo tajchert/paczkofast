@@ -19,9 +19,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
@@ -54,10 +57,13 @@ fun MultiPackageCard(
     actionInProgress: Boolean = false,
 ) {
     val colors = PaczkofastTheme.colors
+    val count = members.size
+    val sizePrefix = stringResource(R.string.size_prefix)
+    val urgentLabel = stringResource(R.string.urgent)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
-        onClickLabel = "Open shared box details",
+        onClickLabel = stringResource(R.string.open_shared_box_details),
         accessibilityLabel = multiPackageAccessibilityLabel(
             title = title,
             subtitle = subtitle,
@@ -65,6 +71,8 @@ fun MultiPackageCard(
             deadlineText = deadlineText,
             timeLeftText = timeLeftText,
             urgent = urgent,
+            sizePrefix = sizePrefix,
+            urgentLabel = urgentLabel,
         ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -80,12 +88,12 @@ fun MultiPackageCard(
                     modifier = Modifier.size(16.dp),
                 )
                 Text(
-                    text = "${members.size} parcels · one box".uppercase(),
+                    text = pluralStringResource(R.plurals.parcels_one_box, count, count).uppercase(),
                     style = MonoLabel,
                     color = colors.monoLabel,
                     modifier = Modifier.weight(1f),
                 )
-                CountBadge(count = members.size)
+                CountBadge(count = count)
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
@@ -117,15 +125,16 @@ fun MultiPackageCard(
             }
 
             PrimaryActionButton(
-                text = "Open box · ${members.size} parcels",
+                text = pluralStringResource(R.plurals.open_box_parcels, count, count),
                 onClick = onActionClick,
                 isLoading = actionInProgress,
-                accessibilityLabel = "Open box with ${members.size} parcels",
+                accessibilityLabel = pluralStringResource(R.plurals.open_box_with_parcels, count, count),
             )
         }
     }
 }
 
+@Composable
 private fun multiPackageAccessibilityLabel(
     title: String,
     subtitle: String,
@@ -133,17 +142,23 @@ private fun multiPackageAccessibilityLabel(
     deadlineText: String?,
     timeLeftText: String?,
     urgent: Boolean,
+    sizePrefix: String,
+    urgentLabel: String,
 ): String = buildList {
-    add("${members.size} parcels in one box")
+    val count = members.size
+    add(pluralStringResource(R.plurals.parcels_in_one_box, count, count))
     add(title)
     add(subtitle)
     val memberSummary = members.joinToString { member ->
-        listOfNotNull(member.title, member.sizeLabel?.let { "size $it" }).joinToString(", ")
+        listOfNotNull(
+            member.title,
+            member.sizeLabel?.let { "$sizePrefix $it" },
+        ).joinToString(", ")
     }
     if (memberSummary.isNotBlank()) add(memberSummary)
     deadlineText?.let { add(it) }
     timeLeftText?.let { add(it) }
-    if (urgent) add("Urgent")
+    if (urgent) add(urgentLabel)
 }.joinToString(", ")
 
 /** Small yellow mono "×N" pill used on multi-package cards/rows. */

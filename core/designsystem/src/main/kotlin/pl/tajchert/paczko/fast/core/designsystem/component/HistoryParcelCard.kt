@@ -21,8 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -82,7 +84,7 @@ fun HistoryParcelCard(
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
-        onClickLabel = "Open parcel details",
+        onClickLabel = stringResource(R.string.open_parcel_details),
         accessibilityLabel = "$title, $outcomeLine, $dateText",
     ) {
         Row(

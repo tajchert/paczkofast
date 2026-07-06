@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -66,6 +67,7 @@ import pl.tajchert.paczko.fast.core.designsystem.theme.SpaceGroteskFamily
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
+import pl.tajchert.paczko.fast.feature.parcels.impl.R
 import pl.tajchert.paczko.fast.feature.parcels.impl.TRANSIT_SEGMENTS
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatShipmentNumber
 import pl.tajchert.paczko.fast.feature.parcels.impl.historyMonthKey
@@ -157,7 +159,7 @@ internal fun ParcelListContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (selectedTab == BottomNavDestination.History) {
-                HomeHeader(title = "History", showLogo = false)
+                HomeHeader(title = stringResource(R.string.history), showLogo = false)
             } else {
                 // No refresh action — pull-to-refresh handles reloads.
                 HomeHeader()
@@ -230,8 +232,8 @@ internal fun ParcelListContent(
                         } else {
                             PaczkofastEmptyState(
                                 icon = Icons.Outlined.History,
-                                title = "No history yet",
-                                description = "Delivered and collected parcels will appear here.",
+                                title = stringResource(R.string.no_history_title),
+                                description = stringResource(R.string.no_history_description),
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .verticalScroll(rememberScrollState()),
@@ -249,8 +251,8 @@ internal fun ParcelListContent(
                         } else {
                             PaczkofastEmptyState(
                                 icon = Icons.Outlined.Inbox,
-                                title = "Nothing incoming",
-                                description = "Parcels on the way or ready for pickup will appear here.",
+                                title = stringResource(R.string.nothing_incoming_title),
+                                description = stringResource(R.string.nothing_incoming_description),
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .verticalScroll(rememberScrollState()),
@@ -283,7 +285,7 @@ private fun ParcelSections(
         if (ready.isNotEmpty()) {
             item(key = "ready-header") {
                 ListSectionHeader(
-                    text = "Ready for pickup",
+                    text = stringResource(R.string.ready_for_pickup),
                     modifier = Modifier.animateItem().padding(top = 6.dp),
                 )
             }
@@ -331,7 +333,7 @@ private fun ParcelSections(
         if (onTheWay.isNotEmpty()) {
             item(key = "transit-header") {
                 ListSectionHeader(
-                    text = "On the way",
+                    text = stringResource(R.string.on_the_way),
                     modifier = Modifier.animateItem().padding(top = 10.dp),
                 )
             }
@@ -514,6 +516,7 @@ private fun ExpandedReadyCard(
     modifier: Modifier = Modifier,
 ) {
     val countdown = pickupCountdown(parcel)
+    val actionText = stringResource(R.string.open_box_remotely)
     ReadyParcelCard(
         title = parcelTitle(parcel),
         subtitle = lockerLine(parcel),
@@ -523,7 +526,7 @@ private fun ExpandedReadyCard(
         urgent = countdown?.urgent == true || parcel.isPickupReminder,
         sizeLabel = parcelSizeLabel(parcel.parcelSize),
         qrContent = null,
-        actionText = "Open box remotely".takeIf { parcel.canCollectRemotely },
+        actionText = actionText.takeIf { parcel.canCollectRemotely },
         onActionClick = onCollectClick,
         onClick = onClick,
         modifier = modifier,
@@ -729,7 +732,7 @@ internal val previewHistoryParcels: List<Parcel> = run {
 private fun HistoryListPreview() {
     PaczkofastTheme {
         Column(modifier = Modifier.fillMaxSize().background(PaczkofastTheme.colors.background)) {
-            HomeHeader(title = "History", showLogo = false)
+            HomeHeader(title = stringResource(R.string.history), showLogo = false)
             HistoryList(
                 parcels = previewHistoryParcels
                     .sortedByDescending { it.historySortKey() }

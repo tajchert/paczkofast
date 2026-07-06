@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Ustawienia</string>
+    <string name="appearance">Wygląd</string>
+    <string name="theme">Motyw</string>
+    <string name="unlock_method">Otwieranie</string>
+    <string name="how_you_open_lockers">Jak otwierasz skrytki</string>
+    <string name="how_you_confirm_opening">Sposób potwierdzania otwarcia.</string>
+    <string name="account">Konto</string>
+    <string name="logged_in">Zalogowano</string>
+    <string name="logout">Wyloguj</string>
+    <string name="about">O aplikacji</string>
+    <string name="version">Wersja %1$s</string>
+    <string name="about_disclaimer">Nieoficjalna aplikacja pomocnicza. Nie jest powiązana z operatorem automatów.</string>
+    <string name="logout_question">Wylogować?</string>
+    <string name="logout_message">Przy kolejnym wejściu znów zalogujesz się kodem SMS.</string>
+    <string name="cancel">Anuluj</string>
+    <string name="theme_system">Systemowy</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="open_mode_hold">Przytrzymaj</string>
+    <string name="open_mode_nearby">Przy automacie</string>
+</resources>

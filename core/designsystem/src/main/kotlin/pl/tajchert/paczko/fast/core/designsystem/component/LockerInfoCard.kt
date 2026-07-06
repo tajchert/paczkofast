@@ -21,9 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -69,7 +71,7 @@ fun LockerInfoCard(
                             .border(width = 2.dp, color = colors.borderStrong, shape = FlagPillShape),
                     ) {
                         Text(
-                            text = "LOCKER PHOTO",
+                            text = stringResource(R.string.locker_photo).uppercase(),
                             style = MonoLabel,
                             color = colors.textMuted,
                             modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
@@ -79,7 +81,7 @@ fun LockerInfoCard(
                 // TODO: render the real photo from photoUrl once image loading is wired up.
                 if (isOpen24_7) {
                     StatusChip(
-                        text = "Open 24/7",
+                        text = stringResource(R.string.open_24_7),
                         style = StatusChipStyle.Accent,
                         modifier = Modifier.align(Alignment.TopEnd).padding(12.dp),
                     )
@@ -94,7 +96,8 @@ fun LockerInfoCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     val monoLine = buildString {
-                        append("LOCKER ")
+                        append(stringResource(R.string.locker).uppercase())
+                        append(" ")
                         append(lockerId)
                         if (lockerType != null) {
                             append(" · ")
@@ -113,7 +116,7 @@ fun LockerInfoCard(
                             .border(width = 2.dp, color = colors.borderStrong, shape = FlagPillShape),
                     ) {
                         Text(
-                            text = "LOCKER",
+                            text = stringResource(R.string.locker).uppercase(),
                             style = MonoLabel,
                             color = colors.textPrimary,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp),
@@ -142,7 +145,7 @@ fun LockerInfoCard(
                 }
                 PaczkofastOutlinedButton(
                     onClick = onNavigate,
-                    text = "Navigate",
+                    text = stringResource(R.string.navigate),
                     modifier = Modifier.fillMaxWidth().height(40.dp),
                 )
             }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -83,7 +84,7 @@ internal fun SettingsContent(
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
-        topBar = { HomeHeader(title = "Settings", showLogo = false) },
+        topBar = { HomeHeader(title = stringResource(R.string.settings), showLogo = false) },
         bottomBar = {
             PaczkofastBottomBar(
                 selected = BottomNavDestination.Settings,
@@ -105,10 +106,10 @@ internal fun SettingsContent(
                 .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            SectionLabel(text = "Appearance")
+            SectionLabel(text = stringResource(R.string.appearance))
             PaczkofastCard {
                 Text(
-                    text = "Theme",
+                    text = stringResource(R.string.theme),
                     style = MaterialTheme.typography.titleMedium,
                     color = PaczkofastTheme.colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp),
@@ -120,16 +121,16 @@ internal fun SettingsContent(
                 )
             }
 
-            SectionLabel(text = "Unlock method")
+            SectionLabel(text = stringResource(R.string.unlock_method))
             PaczkofastCard {
                 Text(
-                    text = "How you open lockers",
+                    text = stringResource(R.string.how_you_open_lockers),
                     style = MaterialTheme.typography.titleMedium,
                     color = PaczkofastTheme.colors.textPrimary,
                     modifier = Modifier.padding(bottom = 4.dp),
                 )
                 Text(
-                    text = "How you confirm opening a locker.",
+                    text = stringResource(R.string.how_you_confirm_opening),
                     style = MaterialTheme.typography.bodySmall,
                     color = PaczkofastTheme.colors.textFaint,
                     modifier = Modifier.padding(bottom = 12.dp),
@@ -141,7 +142,7 @@ internal fun SettingsContent(
                 )
             }
 
-            SectionLabel(text = "Account")
+            SectionLabel(text = stringResource(R.string.account))
             // Zero content padding so the logout row can span the whole card —
             // its tap ripple then fills the full width, clipped to the card's
             // rounded corners. The upper block keeps its own inset.
@@ -151,7 +152,7 @@ internal fun SettingsContent(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     Text(
-                        text = "Logged in",
+                        text = stringResource(R.string.logged_in),
                         style = MaterialTheme.typography.titleMedium,
                         color = PaczkofastTheme.colors.textPrimary,
                     )
@@ -175,14 +176,14 @@ internal fun SettingsContent(
                         .fillMaxWidth()
                         .clickable(
                             role = Role.Button,
-                            onClickLabel = "Log out",
+                            onClickLabel = stringResource(R.string.logout),
                         ) { showLogoutDialog = true }
                         .semantics { role = Role.Button }
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Log out",
+                        text = stringResource(R.string.logout),
                         style = MaterialTheme.typography.titleSmall,
                         color = PaczkofastTheme.colors.alertText,
                         modifier = Modifier.weight(1f),
@@ -195,7 +196,7 @@ internal fun SettingsContent(
                 }
             }
 
-            SectionLabel(text = "About")
+            SectionLabel(text = stringResource(R.string.about))
             PaczkofastCard {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -209,14 +210,14 @@ internal fun SettingsContent(
                             color = PaczkofastTheme.colors.textPrimary,
                         )
                         Text(
-                            text = "VERSION $appVersion".uppercase(),
+                            text = stringResource(R.string.version, appVersion).uppercase(),
                             style = MonoLabel,
                             color = PaczkofastTheme.colors.monoLabel,
                         )
                     }
                 }
                 Text(
-                    text = "Unofficial companion app. Not affiliated with or endorsed by the locker operator.",
+                    text = stringResource(R.string.about_disclaimer),
                     style = MaterialTheme.typography.bodySmall,
                     color = PaczkofastTheme.colors.textFaint,
                     modifier = Modifier.padding(top = 10.dp),
@@ -228,8 +229,8 @@ internal fun SettingsContent(
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text(text = "Log out?") },
-            text = { Text(text = "You'll need to sign in with SMS again.") },
+            title = { Text(text = stringResource(R.string.logout_question)) },
+            text = { Text(text = stringResource(R.string.logout_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -237,12 +238,12 @@ internal fun SettingsContent(
                         onLogout()
                     },
                 ) {
-                    Text(text = "Log out")
+                    Text(text = stringResource(R.string.logout))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text(text = "Cancel")
+                    Text(text = stringResource(R.string.cancel))
                 }
             },
         )
@@ -263,15 +264,17 @@ private fun SectionLabel(text: String) {
     )
 }
 
+@Composable
 private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
-    ThemeMode.SYSTEM -> "System"
-    ThemeMode.LIGHT -> "Light"
-    ThemeMode.DARK -> "Dark"
+    ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
+    ThemeMode.LIGHT -> stringResource(R.string.theme_light)
+    ThemeMode.DARK -> stringResource(R.string.theme_dark)
 }
 
+@Composable
 private fun lockerOpenModeLabel(mode: LockerOpenMode): String = when (mode) {
-    LockerOpenMode.HOLD -> "Hold to open"
-    LockerOpenMode.NEARBY -> "Near locker"
+    LockerOpenMode.HOLD -> stringResource(R.string.open_mode_hold)
+    LockerOpenMode.NEARBY -> stringResource(R.string.open_mode_nearby)
 }
 
 @PaczkofastPreviews

@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -46,13 +47,15 @@ fun QrPanel(
     code: String? = null,
     qrSize: Int = 168,
 ) {
+    val qrDescription = stringResource(R.string.pickup_qr_code)
+    val codeDescription = code?.let { stringResource(R.string.pickup_code, formatOpenCode(it)) }
     NeoSurface(
         modifier = modifier
             .fillMaxWidth()
             .semantics(mergeDescendants = true) {
                 contentDescription = buildList {
-                    add("Pickup QR code")
-                    code?.let { add("Pickup code ${formatOpenCode(it)}") }
+                    add(qrDescription)
+                    codeDescription?.let { add(it) }
                 }.joinToString(", ")
             },
         shape = QrPanelShape,
@@ -83,7 +86,7 @@ fun QrPanel(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Text(
-                        text = "CODE",
+                        text = stringResource(R.string.code).uppercase(),
                         style = MonoLabel,
                         color = PaczkofastTheme.colors.qrLabel,
                     )

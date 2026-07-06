@@ -18,8 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -41,16 +44,20 @@ fun MultiPackageHistoryCard(
     modifier: Modifier = Modifier,
 ) {
     val colors = PaczkofastTheme.colors
+    val sizePrefix = stringResource(R.string.size_prefix)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
-        onClickLabel = "Open shared box details",
+        onClickLabel = stringResource(R.string.open_shared_box_details),
         accessibilityLabel = buildList {
-            add("$count parcels in one box")
+            add(pluralStringResource(R.plurals.parcels_in_one_box, count, count))
             add(outcomeLine)
             add(dateText)
             val memberSummary = members.joinToString { member ->
-                listOfNotNull(member.title, member.sizeLabel?.let { "size $it" }).joinToString(", ")
+                listOfNotNull(
+                    member.title,
+                    member.sizeLabel?.let { "$sizePrefix $it" },
+                ).joinToString(", ")
             }
             if (memberSummary.isNotBlank()) add(memberSummary)
         }.joinToString(", "),
@@ -84,7 +91,7 @@ fun MultiPackageHistoryCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
-                            text = "$count parcels · one box",
+                            text = pluralStringResource(R.plurals.parcels_one_box, count, count),
                             style = MaterialTheme.typography.titleMedium,
                             color = colors.textPrimary,
                         )

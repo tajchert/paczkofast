@@ -121,7 +121,7 @@ class AuthViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = error.message ?: "Unable to request SMS code",
+                            errorMessage = error.message ?: "Nie udało się wysłać kodu SMS",
                         )
                     }
                 }
@@ -144,7 +144,7 @@ class AuthViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = error.message ?: "Unable to request SMS code",
+                            errorMessage = error.message ?: "Nie udało się wysłać kodu SMS",
                         )
                     }
                 }
@@ -167,7 +167,7 @@ class AuthViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = error.message ?: "Unable to confirm SMS code",
+                            errorMessage = error.message ?: "Nie udało się potwierdzić kodu SMS",
                         )
                     }
                 }

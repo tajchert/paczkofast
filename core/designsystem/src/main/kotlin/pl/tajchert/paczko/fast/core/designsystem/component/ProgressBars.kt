@@ -18,12 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -127,6 +129,11 @@ fun SegmentedProgressBar(
     etaLabel: String? = null,
 ) {
     val clampedCompleted = completedSegments.coerceIn(0, totalSegments)
+    val stepsDescription = stringResource(
+        R.string.delivery_steps_complete,
+        clampedCompleted,
+        totalSegments,
+    )
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -139,7 +146,7 @@ fun SegmentedProgressBar(
                 stateDescription = listOfNotNull(
                     statusLabel,
                     etaLabel,
-                    "$clampedCompleted of $totalSegments steps complete",
+                    stepsDescription,
                 ).joinToString(", ")
             },
     ) {

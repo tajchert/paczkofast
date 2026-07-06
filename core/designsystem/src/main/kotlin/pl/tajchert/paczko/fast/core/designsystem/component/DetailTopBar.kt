@@ -25,7 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
@@ -76,7 +78,7 @@ internal fun BackButtonChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
-    contentDescription: String = "Back",
+    contentDescription: String? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
@@ -97,7 +99,7 @@ internal fun BackButtonChip(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = contentDescription,
+            contentDescription = contentDescription ?: stringResource(R.string.back),
             tint = PaczkofastTheme.colors.textPrimary,
             modifier = Modifier
                 .align(Alignment.Center)
@@ -117,7 +119,7 @@ fun OverflowAction(
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(
             imageVector = Icons.Default.MoreVert,
-            contentDescription = "More options",
+            contentDescription = stringResource(R.string.more_options),
             tint = PaczkofastTheme.colors.textSecondary,
             modifier = Modifier.size(20.dp),
         )

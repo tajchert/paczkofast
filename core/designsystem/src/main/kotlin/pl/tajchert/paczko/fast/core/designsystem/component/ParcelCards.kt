@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabelLarge
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -49,10 +51,11 @@ fun ReadyParcelCard(
     onActionClick: () -> Unit = {},
     actionInProgress: Boolean = false,
 ) {
+    val openDetails = stringResource(R.string.open_parcel_details)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
-        onClickLabel = "Open parcel details",
+        onClickLabel = openDetails,
         accessibilityLabel = readyParcelAccessibilityLabel(
             title = title,
             subtitle = subtitle,
@@ -122,10 +125,11 @@ fun CollapsedReadyParcelCard(
     progress: Float? = null,
     urgent: Boolean = false,
 ) {
+    val openDetails = stringResource(R.string.open_parcel_details)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
-        onClickLabel = "Open parcel details",
+        onClickLabel = openDetails,
         accessibilityLabel = readyParcelAccessibilityLabel(
             title = title,
             subtitle = subtitle,
@@ -202,10 +206,11 @@ fun TransitParcelCard(
     completedSegments: Int = 0,
     totalSegments: Int = 4,
 ) {
+    val openDetails = stringResource(R.string.open_parcel_details)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
-        onClickLabel = "Open parcel details",
+        onClickLabel = openDetails,
         accessibilityLabel = transitParcelAccessibilityLabel(
             title = title,
             statusText = statusText,
@@ -247,12 +252,12 @@ private fun readyParcelAccessibilityLabel(
     urgent: Boolean,
 ): String = buildList {
     add(title)
-    add("Ready for pickup")
+    add("Gotowa do odbioru")
     add(subtitle)
-    sizeLabel?.let { add("Size $it") }
+    sizeLabel?.let { add("Rozmiar $it") }
     deadlineText?.let { add(it) }
     timeLeftText?.let { add(it) }
-    if (urgent) add("Urgent")
+    if (urgent) add("Pilne")
 }.joinToString(", ")
 
 private fun transitParcelAccessibilityLabel(
@@ -264,8 +269,8 @@ private fun transitParcelAccessibilityLabel(
 ): String = buildList {
     add(title)
     add(statusText)
-    sizeLabel?.let { add("Size $it") }
-    add("${completedSegments.coerceIn(0, totalSegments)} of $totalSegments delivery steps complete")
+    sizeLabel?.let { add("Rozmiar $it") }
+    add("${completedSegments.coerceIn(0, totalSegments)} z $totalSegments etapów dostawy ukończone")
 }.joinToString(", ")
 
 /**

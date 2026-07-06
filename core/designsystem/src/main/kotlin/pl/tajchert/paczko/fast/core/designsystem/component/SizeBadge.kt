@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -34,6 +36,7 @@ fun SizeBadge(
     modifier: Modifier = Modifier,
     highlighted: Boolean = false,
 ) {
+    val description = stringResource(R.string.size_value, size.uppercase())
     // Highlighted (yellow) badges keep an ink border even on dark (accentBorder);
     // outline badges use the neutral, theme-inverting border.
     val borderColor = if (highlighted) {
@@ -46,7 +49,7 @@ fun SizeBadge(
     Box(
         modifier = modifier
             .neoBorderedFill(SizeBadgeShape, fill, borderColor, 2.dp)
-            .semantics { contentDescription = "Size ${size.uppercase()}" },
+            .semantics { contentDescription = description },
     ) {
         Text(
             text = size.uppercase(),

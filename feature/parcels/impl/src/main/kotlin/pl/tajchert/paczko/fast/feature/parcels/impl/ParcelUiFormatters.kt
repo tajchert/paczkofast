@@ -35,7 +35,18 @@ internal val Parcel.isReadyForPickup: Boolean
 
 /** "out_for_delivery" / "DELIVERED" → "Out for delivery" / "Delivered" */
 internal fun humanizeStatus(status: String): String =
-    status.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
+    when (status.lowercase()) {
+        "ready_to_pickup", "pickup_reminder", "pickup_reminder_sent" -> "Gotowa do odbioru"
+        "out_for_delivery" -> "W doręczeniu"
+        "delivered", "claimed", "collected_by_customer" -> "Odebrana"
+        "returned_to_sender" -> "Zwrócona do nadawcy"
+        "pickup_time_expired" -> "Termin minął"
+        "created", "confirmed" -> "Utworzona"
+        "dispatched_by_sender", "collected_from_sender", "taken_by_courier" -> "Odebrana od nadawcy"
+        "adopted_at_source_branch", "adopted_at_sorting_center", "adopted_at_target_branch" -> "W sortowni"
+        "sent_from_source_branch", "sent_from_sorting_center" -> "W drodze"
+        else -> status.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
+    }
 
 /**
  * Visible size badge label for a raw parcelSize wire code (A–J), or null when
@@ -54,14 +65,14 @@ internal fun parcelSizeLabel(code: String?): String? = when (code?.uppercase()) 
  * a humanized form of the raw code for anything unmapped.
  */
 internal fun trackingEventLabel(status: String): String = when (status.uppercase()) {
-    "CREATED", "CONFIRMED" -> "Label created"
-    "DISPATCHED_BY_SENDER", "COLLECTED_FROM_SENDER", "TAKEN_BY_COURIER" -> "Picked up from sender"
-    "ADOPTED_AT_SOURCE_BRANCH", "ADOPTED_AT_SORTING_CENTER", "ADOPTED_AT_TARGET_BRANCH" -> "At logistics center"
-    "SENT_FROM_SOURCE_BRANCH", "SENT_FROM_SORTING_CENTER" -> "In transit"
-    "OUT_FOR_DELIVERY" -> "Out for delivery"
-    "READY_TO_PICKUP" -> "Ready for pickup"
-    "DELIVERED" -> "Delivered"
-    "CLAIMED", "COLLECTED_BY_CUSTOMER" -> "Picked up"
+    "CREATED", "CONFIRMED" -> "Etykieta utworzona"
+    "DISPATCHED_BY_SENDER", "COLLECTED_FROM_SENDER", "TAKEN_BY_COURIER" -> "Odebrana od nadawcy"
+    "ADOPTED_AT_SOURCE_BRANCH", "ADOPTED_AT_SORTING_CENTER", "ADOPTED_AT_TARGET_BRANCH" -> "W sortowni"
+    "SENT_FROM_SOURCE_BRANCH", "SENT_FROM_SORTING_CENTER" -> "W drodze"
+    "OUT_FOR_DELIVERY" -> "W doręczeniu"
+    "READY_TO_PICKUP" -> "Gotowa do odbioru"
+    "DELIVERED" -> "Doręczona"
+    "CLAIMED", "COLLECTED_BY_CUSTOMER" -> "Odebrana"
     else -> humanizeStatus(status)
 }
 
@@ -178,9 +189,11 @@ private const val URGENT_THRESHOLD_HOURS = 12L
 /** Assumed pickup window when the stored date is unknown. */
 private val DEFAULT_PICKUP_WINDOW: Duration = Duration.ofHours(48)
 
-private val DEADLINE_FORMAT = DateTimeFormatter.ofPattern("EEE d MMM, HH:mm", Locale.ENGLISH)
+private val POLISH_LOCALE = Locale.forLanguageTag("pl-PL")
+
+private val DEADLINE_FORMAT = DateTimeFormatter.ofPattern("EEE d MMM, HH:mm", POLISH_LOCALE)
 internal val TIMELINE_TIME_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("dd.MM.yy · HH:mm", Locale.ENGLISH)
+    DateTimeFormatter.ofPattern("dd.MM.yy · HH:mm", POLISH_LOCALE)
 
 internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): PickupCountdown? {
     val expiry = parseInstant(parcel.expiryDate) ?: return null
@@ -201,10 +214,10 @@ internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): Pick
         else -> "${remaining.toDays()} d"
     }
     val urgent = remaining.toHours() < URGENT_THRESHOLD_HOURS || parcel.isPickupReminder
-    val displayCountdownText = if (urgent) "$countdownText — Hurry!" else countdownText
+    val displayCountdownText = if (urgent) "$countdownText — pilne!" else countdownText
     return PickupCountdown(
-        deadlineText = "Pick up by " + DEADLINE_FORMAT.format(expiry.atZone(ZoneId.systemDefault())),
-        timeLeftText = if (urgent) displayCountdownText else "$countdownText left",
+        deadlineText = "Odbierz do " + DEADLINE_FORMAT.format(expiry.atZone(ZoneId.systemDefault())),
+        timeLeftText = if (urgent) displayCountdownText else "zostało $countdownText",
         countdownText = displayCountdownText,
         progress = progress,
         urgent = urgent,
@@ -252,9 +265,9 @@ internal fun parseInstant(value: String?): Instant? {
 
 /** "WAW01A · Example street 12" style locker line for parcel cards. */
 internal fun lockerLine(parcel: Parcel): String {
-    val point = parcel.pickupPoint ?: return "Pickup point pending"
+    val point = parcel.pickupPoint ?: return "Punkt odbioru wkrótce"
     return listOfNotNull(
-        "Locker ${point.name}",
+        "Paczkomat ${point.name}",
         point.addressLine?.takeIf { it.isNotBlank() },
     ).joinToString(" · ")
 }
@@ -307,20 +320,20 @@ internal fun historyOutcome(parcel: Parcel): HistoryOutcome = when (parcel.statu
  */
 internal fun historyOutcomeLine(parcel: Parcel): String = when (historyOutcome(parcel)) {
     HistoryOutcome.PickedUp -> listOfNotNull(
-        "Picked up",
-        parcel.pickupPoint?.name?.let { "Locker $it" },
+        "Odebrano",
+        parcel.pickupPoint?.name?.let { "Paczkomat $it" },
     ).joinToString(" · ")
 
-    HistoryOutcome.Expired -> "Expired · returned to sender"
+    HistoryOutcome.Expired -> "Termin minął · zwrot do nadawcy"
     HistoryOutcome.Returned -> humanizeStatus(parcel.status)
 }
 
 private val HISTORY_DATE_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
+    DateTimeFormatter.ofPattern("d MMM", POLISH_LOCALE)
 private val HISTORY_MONTH_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH)
+    DateTimeFormatter.ofPattern("MMMM", POLISH_LOCALE)
 private val HISTORY_MONTH_YEAR_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
+    DateTimeFormatter.ofPattern("MMMM yyyy", POLISH_LOCALE)
 
 /**
  * Trailing date label for a history row — date only, no time ("28 Jun").

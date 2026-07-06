@@ -27,6 +27,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -36,17 +37,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.annotation.StringRes
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
 /**
  * Destinations of the app's bottom navigation.
  */
 enum class BottomNavDestination(
-    val label: String,
+    @StringRes val labelRes: Int,
 ) {
-    Parcels("Packages"),
-    History("History"),
-    Settings("Settings"),
+    Parcels(R.string.bottom_nav_parcels),
+    History(R.string.bottom_nav_history),
+    Settings(R.string.bottom_nav_settings),
 }
 
 private val NavPillShape = RoundedCornerShape(10.dp)
@@ -97,6 +100,9 @@ private fun RowScope.BottomNavItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val label = stringResource(destination.labelRes)
+    val selectedDescription = stringResource(R.string.selected)
+    val notSelectedDescription = stringResource(R.string.not_selected)
     // Selected tab sits on a yellow pill → ink icon; unselected icons are line-art
     // in the primary (light-on-dark) color.
     val iconTint = if (isSelected) PaczkofastTheme.colors.onAccent else PaczkofastTheme.colors.textPrimary
@@ -118,8 +124,8 @@ private fun RowScope.BottomNavItem(
                 onClick = onClick,
             )
             .semantics {
-                contentDescription = destination.label
-                stateDescription = if (isSelected) "Selected" else "Not selected"
+                contentDescription = label
+                stateDescription = if (isSelected) selectedDescription else notSelectedDescription
             }
             .padding(vertical = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -150,7 +156,7 @@ private fun RowScope.BottomNavItem(
             }
         }
         Text(
-            text = destination.label,
+            text = label,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,

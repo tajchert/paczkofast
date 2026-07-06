@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -64,6 +65,12 @@ fun OtpScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
+    val smsCodeContentDescription = stringResource(R.string.sms_code)
+    val smsCodeStateDescription = stringResource(
+        R.string.sms_code_state,
+        state.codeDigits.length,
+        AuthViewModel.CODE_LENGTH,
+    )
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
     Column(
@@ -73,7 +80,7 @@ fun OtpScreen(
             .navigationBarsPadding()
             .imePadding(),
     ) {
-        DetailTopBar(title = "Enter code", onBack = onBackToPhone)
+        DetailTopBar(title = stringResource(R.string.enter_code), onBack = onBackToPhone)
 
         Column(
             modifier = Modifier
@@ -91,8 +98,8 @@ fun OtpScreen(
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
                         .semantics {
-                            contentDescription = "SMS code"
-                            stateDescription = "${state.codeDigits.length} of ${AuthViewModel.CODE_LENGTH} digits entered"
+                            contentDescription = smsCodeContentDescription
+                            stateDescription = smsCodeStateDescription
                         },
                     enabled = !state.isLoading,
                     keyboardOptions = KeyboardOptions(
@@ -110,7 +117,7 @@ fun OtpScreen(
 
             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 PaczkofastButton(
-                    text = "Verify",
+                    text = stringResource(R.string.verify),
                     onClick = onConfirm,
                     enabled = state.canConfirmCode,
                     isLoading = state.isLoading,
@@ -141,7 +148,7 @@ private fun SentToLine(
 ) {
     Text(
         text = buildAnnotatedString {
-            append("We texted a 6-digit code to ")
+            append(stringResource(R.string.sent_code_to))
             withStyle(
                 SpanStyle(
                     fontFamily = MonoLabel.fontFamily,
@@ -226,32 +233,32 @@ private fun ResendChangeRow(
     ) {
         if (secondsLeft > 0) {
             Text(
-                text = "RESEND IN 0:%02d".format(secondsLeft),
+                text = stringResource(R.string.resend_in, secondsLeft).uppercase(),
                 style = MonoLabel,
                 color = PaczkofastTheme.colors.textMuted,
             )
         } else {
             Text(
-                text = "RESEND CODE",
+                text = stringResource(R.string.resend_code).uppercase(),
                 style = MonoLabel.copy(textDecoration = TextDecoration.Underline),
                 color = PaczkofastTheme.colors.textPrimary,
                 modifier = Modifier
                     .clickable(
                         role = Role.Button,
-                        onClickLabel = "Resend code",
+                        onClickLabel = stringResource(R.string.resend_code),
                         onClick = onResend,
                     )
                     .semantics { role = Role.Button },
             )
         }
         Text(
-            text = "CHANGE NUMBER",
+            text = stringResource(R.string.change_number).uppercase(),
             style = MonoLabel.copy(textDecoration = TextDecoration.Underline),
             color = PaczkofastTheme.colors.textPrimary,
             modifier = Modifier
                 .clickable(
                     role = Role.Button,
-                    onClickLabel = "Change number",
+                    onClickLabel = stringResource(R.string.change_number),
                     onClick = onChangeNumber,
                 )
                 .semantics { role = Role.Button },

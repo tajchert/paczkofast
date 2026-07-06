@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.selection.toggleable
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -52,6 +54,9 @@ fun CheckOffParcelRow(
     modifier: Modifier = Modifier,
 ) {
     val colors = PaczkofastTheme.colors
+    val sizeDescription = stringResource(R.string.size_value, size)
+    val taken = stringResource(R.string.taken)
+    val stillInBox = stringResource(R.string.still_in_box)
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
 
@@ -66,8 +71,8 @@ fun CheckOffParcelRow(
                 onValueChange = { onToggle() },
             )
             .semantics(mergeDescendants = true) {
-                contentDescription = "$sender, size $size"
-                stateDescription = if (checked) "Taken" else "Still in the box"
+                contentDescription = "$sender, $sizeDescription"
+                stateDescription = if (checked) taken else stillInBox
             },
         shape = CheckOffParcelRowShape,
         fill = colors.cardSurface,
@@ -90,7 +95,7 @@ fun CheckOffParcelRow(
                     color = colors.textPrimary,
                 )
                 Text(
-                    text = if (checked) "TAKEN" else "STILL IN THE BOX?",
+                    text = if (checked) taken.uppercase() else stillInBox.uppercase(),
                     style = MonoLabel,
                     color = colors.monoLabel,
                 )

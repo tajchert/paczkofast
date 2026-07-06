@@ -29,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -56,6 +58,7 @@ import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
 import pl.tajchert.paczko.fast.core.model.parcel.PickupPoint
 import pl.tajchert.paczko.fast.core.ui.QrPanel
 import pl.tajchert.paczko.fast.feature.parcels.api.MultiPackageDetailRoute
+import pl.tajchert.paczko.fast.feature.parcels.impl.R
 import pl.tajchert.paczko.fast.feature.parcels.impl.formatTimelineTime
 import pl.tajchert.paczko.fast.feature.parcels.impl.isPickedUp
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupWaitLabel
@@ -96,7 +99,7 @@ internal fun MultiPackageDetailContent(
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
-        topBar = { DetailTopBar(title = "Box details", onBack = onBack) },
+        topBar = { DetailTopBar(title = stringResource(R.string.box_details), onBack = onBack) },
     ) { paddingValues ->
         if (uiState.isLoading) {
             PaczkofastLoadingIndicator(
@@ -132,10 +135,10 @@ internal fun MultiPackageDetailContent(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    OutlinedStatusChip(text = "One box · ×$count")
+                    OutlinedStatusChip(text = stringResource(R.string.one_box_count, count))
                 }
                 Text(
-                    text = if (count == 1) "1 parcel" else "$count parcels",
+                    text = pluralStringResource(R.plurals.parcel_count, count, count),
                     style = MaterialTheme.typography.headlineSmall,
                     color = PaczkofastTheme.colors.textPrimary,
                 )
@@ -176,14 +179,14 @@ internal fun MultiPackageDetailContent(
 
                 if (uiState.canCollect && uiState.representativeShipmentNumber != null) {
                     PaczkofastButton(
-                        text = "One code opens the box",
+                        text = stringResource(R.string.one_code_opens_box),
                         onClick = { onCollect(uiState.representativeShipmentNumber) },
                     )
                 }
             }
 
             Text(
-                text = "Tracking is per parcel — open a parcel above to see its timeline",
+                text = stringResource(R.string.tracking_per_parcel),
                 style = MaterialTheme.typography.bodySmall,
                 color = PaczkofastTheme.colors.textFaint,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
@@ -262,9 +265,8 @@ private fun PickedUpSummaryCard(
 ) {
     val colors = PaczkofastTheme.colors
     val countLabel = when {
-        count <= 1 -> "PARCEL"
-        count == 2 -> "BOTH PARCELS"
-        else -> "ALL $count PARCELS"
+        count <= 1 -> pluralStringResource(R.plurals.parcel_count, 1, 1).uppercase()
+        else -> pluralStringResource(R.plurals.parcel_count, count, count).uppercase()
     }
     PaczkofastCard(modifier = modifier) {
         Row(
@@ -287,7 +289,11 @@ private fun PickedUpSummaryCard(
             }
             Column {
                 Text(
-                    text = if (waitLabel != null) "Picked up in $waitLabel" else "Picked up",
+                    text = if (waitLabel != null) {
+                        stringResource(R.string.picked_up_in, waitLabel)
+                    } else {
+                        stringResource(R.string.picked_up)
+                    },
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
@@ -332,14 +338,18 @@ private fun CollapsedBoxPickupCodeRow(modifier: Modifier = Modifier) {
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Pickup code & QR",
+                    text = stringResource(R.string.pickup_code_qr),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.textPrimary,
                 )
-                Text(text = "No longer needed", style = MonoLabel, color = colors.textMuted)
+                Text(
+                    text = stringResource(R.string.no_longer_needed),
+                    style = MonoLabel,
+                    color = colors.textMuted,
+                )
             }
             Icon(
                 imageVector = Icons.Default.ChevronRight,

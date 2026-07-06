@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -82,7 +83,7 @@ fun QrCodeImage(
     if (qr != null) {
         Image(
             bitmap = qr,
-            contentDescription = "Pickup QR code",
+            contentDescription = stringResource(R.string.pickup_qr_code),
             modifier = modifier,
             contentScale = ContentScale.Fit,
             filterQuality = FilterQuality.None,

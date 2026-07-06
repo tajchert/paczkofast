@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -121,7 +122,7 @@ internal fun WelcomePage(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Welcome to the fast future",
+                text = stringResource(R.string.onboarding_welcome_title),
                 style = MaterialTheme.typography.displayMedium.copy(
                     fontSize = 34.sp,
                     lineHeight = 38.sp,
@@ -131,8 +132,7 @@ internal fun WelcomePage(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "One tap to your parcel. No clutter, no digging through menus " +
-                    "— the box you need is always right on top.",
+                text = stringResource(R.string.onboarding_welcome_body),
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 22.sp),
                 color = PaczkofastTheme.colors.textSecondary,
                 textAlign = TextAlign.Center,
@@ -158,7 +158,7 @@ internal fun DisclaimerPage(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Fan-made, experimental",
+                text = stringResource(R.string.onboarding_disclaimer_title),
                 style = MaterialTheme.typography.displayMedium.copy(
                     fontSize = 34.sp,
                     lineHeight = 38.sp,
@@ -168,9 +168,7 @@ internal fun DisclaimerPage(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Paczkofast is an independent companion app. It is not affiliated " +
-                    "with, endorsed by, or related to InPost or any locker operator " +
-                    "— and things may occasionally break.",
+                text = stringResource(R.string.onboarding_disclaimer_body),
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 22.sp),
                 color = PaczkofastTheme.colors.textSecondary,
                 textAlign = TextAlign.Center,
@@ -244,7 +242,7 @@ private fun UnofficialCardGraphic(modifier: Modifier = Modifier) {
             shadowOffset = 2.dp,
         ) {
             Text(
-                text = "UNOFFICIAL",
+                text = stringResource(R.string.unofficial).uppercase(),
                 style = MonoLabel,
                 color = PaczkofastTheme.colors.onAccent,
                 modifier = Modifier
@@ -277,7 +275,11 @@ internal fun OnboardingFooter(
             modifier = Modifier.fillMaxWidth(),
         )
         PaczkofastButton(
-            text = if (pagerState.currentPage == WELCOME_PAGE) "Continue" else "I understand — let's go",
+            text = if (pagerState.currentPage == WELCOME_PAGE) {
+                stringResource(R.string.continue_button)
+            } else {
+                stringResource(R.string.understand_start)
+            },
             onClick = if (pagerState.currentPage == WELCOME_PAGE) onContinueClicked else onFinishClicked,
         )
     }

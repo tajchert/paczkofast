@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pl.tajchert.paczko.fast.core.designsystem.R
 import pl.tajchert.paczko.fast.core.designsystem.theme.MonoLabel
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 
@@ -49,6 +51,7 @@ fun PaczkofastLoadingIndicator(
             .background(PaczkofastTheme.colors.background),
         contentAlignment = Alignment.Center,
     ) {
+        val loading = stringResource(R.string.loading)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -63,13 +66,13 @@ fun PaczkofastLoadingIndicator(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(22.dp)
-                        .semantics { contentDescription = "Loading" },
+                        .semantics { contentDescription = loading },
                     color = PaczkofastTheme.colors.onAccent,
                     strokeWidth = 2.5.dp,
                 )
             }
             Text(
-                text = "LOADING",
+                text = loading.uppercase(),
                 style = MonoLabel,
                 color = PaczkofastTheme.colors.monoLabel,
             )
@@ -86,10 +89,11 @@ fun PaczkofastLoadingIndicator(
 fun PaczkofastSmallLoadingIndicator(
     modifier: Modifier = Modifier,
 ) {
+    val loading = stringResource(R.string.loading)
     CircularProgressIndicator(
         modifier = modifier
             .size(24.dp)
-            .semantics { contentDescription = "Loading" },
+            .semantics { contentDescription = loading },
         color = PaczkofastTheme.colors.textPrimary,
         strokeWidth = 2.dp,
     )
