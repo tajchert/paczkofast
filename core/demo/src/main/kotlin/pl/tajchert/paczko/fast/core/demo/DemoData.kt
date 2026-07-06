@@ -30,6 +30,16 @@ object DemoData {
     const val DELIVERED = "000000000000000000000009"
     const val EXPIRED = "000000000000000000000010"
 
+    // Declared before `parcels` deliberately: Kotlin initialises object properties
+    // top-to-bottom, so `parcels` would capture a null pickup point if this came later.
+    private val demoPickupPoint = PickupPoint(
+        name = "WAW01A",
+        locationDescription = "Near Example Store",
+        addressLine = "Example street 12, 00-000 Example City",
+        latitude = 52.2402,
+        longitude = 20.9319,
+    )
+
     val parcels: List<Parcel> = listOf(
         readyParcel(READY_SUCCESS, senderName = "Example Sender sp. z o.o."),
         readyParcel(READY_SESSION_EXPIRED, senderName = "Example Books Ltd."),
@@ -62,14 +72,6 @@ object DemoData {
         sizeCode = "A",
         senderName = parcels.firstOrNull { it.shipmentNumber == shipmentNumber }?.senderName,
         shipmentType = "parcel",
-    )
-
-    private val demoPickupPoint = PickupPoint(
-        name = "WAW01A",
-        locationDescription = "Near Example Store",
-        addressLine = "Example street 12, 00-000 Example City",
-        latitude = 52.2402,
-        longitude = 20.9319,
     )
 
     private fun readyParcel(

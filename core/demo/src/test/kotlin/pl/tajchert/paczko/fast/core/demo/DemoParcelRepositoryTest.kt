@@ -27,6 +27,19 @@ class DemoParcelRepositoryTest {
     }
 
     @Test
+    fun `every parcel carries the demo pickup point`() = runTest {
+        // Regression guard for object init-order: `parcels` must be declared AFTER
+        // `demoPickupPoint`, or every parcel captures a null pickup point (and the UI
+        // shows "Pickup point pending" with no locker name/distance on the collect screen).
+        val parcels = repository.observeParcels().first()
+        assertTrue(parcels.all { it.pickupPoint != null })
+        val point = parcels.first().pickupPoint!!
+        assertEquals("WAW01A", point.name)
+        assertNotNull(point.latitude)
+        assertNotNull(point.longitude)
+    }
+
+    @Test
     fun `observeParcel finds a known parcel and returns null for unknown`() = runTest {
         assertNotNull(repository.observeParcel(DemoData.READY_SUCCESS).first())
         assertNull(repository.observeParcel("does-not-exist").first())

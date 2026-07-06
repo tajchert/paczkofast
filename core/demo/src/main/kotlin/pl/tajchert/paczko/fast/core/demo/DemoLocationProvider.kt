@@ -6,7 +6,12 @@ import pl.tajchert.paczko.fast.core.common.location.LocationProvider
 import pl.tajchert.paczko.fast.core.model.collect.GeoPoint
 import javax.inject.Inject
 
-/** Fixed fake location (Warsaw centre) so demo collect is device-independent. */
+/**
+ * Fixed fake location standing a few metres from the demo locker (see
+ * DemoData's pickup point), so the collect screen shows a small, sensible
+ * distance ("~11 m") and Nearby mode reads as "at the locker" — deterministic
+ * and device-independent.
+ */
 class DemoLocationProvider @Inject constructor() : LocationProvider {
     override suspend fun currentLocation(): GeoPoint = DEMO_LOCATION
 
@@ -14,6 +19,7 @@ class DemoLocationProvider @Inject constructor() : LocationProvider {
     override fun locationUpdates(): Flow<GeoPoint> = flowOf(DEMO_LOCATION)
 
     private companion object {
-        val DEMO_LOCATION = GeoPoint(latitude = 52.2297, longitude = 21.0122, accuracy = 5.0)
+        // ~11 m north of the demo locker at (52.2402, 20.9319).
+        val DEMO_LOCATION = GeoPoint(latitude = 52.2403, longitude = 20.9319, accuracy = 8.0)
     }
 }
