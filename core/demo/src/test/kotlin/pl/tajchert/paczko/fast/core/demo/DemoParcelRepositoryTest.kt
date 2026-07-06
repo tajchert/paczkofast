@@ -56,6 +56,40 @@ class DemoParcelRepositoryTest {
     }
 
     @Test
+    fun `demo catalog includes several active in-transit parcels`() = runTest {
+        val transitStatuses = setOf(
+            "in_transit",
+            "created",
+            "dispatched_by_sender",
+            "adopted_at_source_branch",
+            "sent_from_sorting_center",
+            "adopted_at_target_branch",
+            "out_for_delivery",
+        )
+
+        val transitParcels = repository.observeParcels().first()
+            .filter { it.status in transitStatuses }
+
+        assertTrue(transitParcels.size >= 7)
+    }
+
+    @Test
+    fun `demo catalog includes a full history list`() = runTest {
+        val historyStatuses = setOf(
+            "claimed",
+            "returned_to_sender",
+            "pickup_time_expired",
+            "canceled",
+            "undelivered",
+        )
+
+        val historyParcels = repository.observeParcels().first()
+            .filter { it.status in historyStatuses }
+
+        assertTrue(historyParcels.size in 30..40)
+    }
+
+    @Test
     fun `observeParcel finds a known parcel and returns null for unknown`() = runTest {
         assertNotNull(repository.observeParcel(DemoData.READY_SUCCESS).first())
         assertNull(repository.observeParcel("does-not-exist").first())
