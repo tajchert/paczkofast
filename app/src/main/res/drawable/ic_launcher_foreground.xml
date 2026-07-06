@@ -4,28 +4,34 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Geometry mirrors the "App Icon" foreground artboard in
+         claude-design-export: a 25dp ink diamond centred at (39.25, 54) and three
+         "wind lines". The short top/bottom bars tuck in toward the diamond and
+         the long middle bar juts out to the right, so the bars stagger instead of
+         aligning flush. The diamond sits far enough left that every bar clears the
+         box with a gap on the order of the vertical spacing between the bars. -->
     <group
         android:name="diamond"
-        android:pivotX="43"
+        android:pivotX="39.25"
         android:pivotY="54"
         android:rotation="45">
         <path
             android:fillColor="#161511"
-            android:pathData="M36,42 h14 a5,5 0 0 1 5,5 v14 a5,5 0 0 1 -5,5 h-14 a5,5 0 0 1 -5,-5 v-14 a5,5 0 0 1 5,-5 z" />
+            android:pathData="M32.75,41.5 h13 a6,6 0 0 1 6,6 v13 a6,6 0 0 1 -6,6 h-13 a6,6 0 0 1 -6,-6 v-13 a6,6 0 0 1 6,-6 z" />
     </group>
     <path
         android:strokeColor="#161511"
         android:strokeWidth="3.5"
         android:strokeLineCap="round"
-        android:pathData="M60,46.25 h12" />
+        android:pathData="M56.5,45.5 h9.4" />
     <path
         android:strokeColor="#161511"
         android:strokeWidth="3.5"
         android:strokeLineCap="round"
-        android:pathData="M60,54 h20" />
+        android:pathData="M60,54 h19.4" />
     <path
         android:strokeColor="#161511"
         android:strokeWidth="3.5"
         android:strokeLineCap="round"
-        android:pathData="M60,61.75 h12" />
+        android:pathData="M56.5,62.5 h9.4" />
 </vector>
