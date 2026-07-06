@@ -194,11 +194,6 @@ private fun CollectContent(
     }
 }
 
-private fun collectSubline(count: Int): String = when {
-    count > 1 -> "$count parcels share this box — you'll take them all at once"
-    else -> "Stand at the locker before you start"
-}
-
 /**
  * Plain status text for the brief transitional states that have no
  * dedicated mock (validating / opening / waiting-for-open / canceled) —
