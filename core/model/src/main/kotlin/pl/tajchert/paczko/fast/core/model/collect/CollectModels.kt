@@ -21,7 +21,16 @@ sealed interface CollectState {
     data class ConfirmingClosed(val sessionUuid: String) : CollectState
     data class Claiming(val sessionUuid: String) : CollectState
     data object Completed : CollectState
-    data class Failed(val message: String, val canRetryFromValidation: Boolean) : CollectState
+    data class Failed(
+        val message: String,
+        val canRetryFromValidation: Boolean,
+        /**
+         * True when the compartment had already opened before this failure. The
+         * parcel is physically collectable, so the UI surfaces such failures as a
+         * snackbar over the collected screen rather than a full-screen error.
+         */
+        val boxAlreadyOpen: Boolean = false,
+    ) : CollectState
     data object Canceled : CollectState
 }
 

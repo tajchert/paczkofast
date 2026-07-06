@@ -62,6 +62,29 @@ class CollectParcelUseCaseTest {
     }
 
     @Test
+    fun failureAfterBoxOpenedIsMarkedBoxAlreadyOpen() = runTest {
+        val repository = FakeCollectRepository(failOnClosed = CollectErrorCode.Unknown)
+        val location = FakeLocationProvider(GeoPoint(52.1, 21.0, 12.0))
+        val useCase = CollectParcelUseCase(repository, location)
+
+        val states = useCase.collect("123", "456").toList()
+
+        assertEquals(
+            CollectState.Failed(
+                message = "unknown",
+                canRetryFromValidation = false,
+                boxAlreadyOpen = true,
+            ),
+            states.last(),
+        )
+        // Reached the closing step, so the compartment had already opened.
+        assertEquals(
+            listOf("validate", "open", "status-OPENED", "status-CLOSED", "closed"),
+            repository.calls,
+        )
+    }
+
+    @Test
     fun locationFailureEmitsClearNonRetryableFailure() = runTest {
         val repository = FakeCollectRepository()
         val location = FakeLocationProvider(failure = IllegalStateException("Location permission is required"))
@@ -82,6 +105,7 @@ class CollectParcelUseCaseTest {
 
 private class FakeCollectRepository(
     private val failOnValidate: CollectErrorCode? = null,
+    private val failOnClosed: CollectErrorCode? = null,
 ) : CollectRepository {
     val calls = mutableListOf<String>()
 
@@ -107,6 +131,7 @@ private class FakeCollectRepository(
     override suspend fun closed(sessionUuid: String) {
         calls += "closed"
         assertEquals("session", sessionUuid)
+        failOnClosed?.let { throw CollectApiException(it.apiValue) }
     }
 
     override suspend fun claim(sessionUuid: String, shipmentNumbers: List<String>) {

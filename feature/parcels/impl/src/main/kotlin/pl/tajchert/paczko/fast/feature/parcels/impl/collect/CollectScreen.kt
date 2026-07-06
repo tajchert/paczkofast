@@ -24,6 +24,8 @@ import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -123,11 +125,24 @@ private fun CollectContent(
     modifier: Modifier = Modifier,
 ) {
     val state = uiState.state
+    // A failure after the box already opened: the parcel is collectable, so show
+    // the collected screen with a snackbar instead of a full-screen error.
+    val collectedButUnconfirmed = (state as? CollectState.Failed)?.takeIf { it.boxAlreadyOpen }
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(collectedButUnconfirmed) {
+        if (collectedButUnconfirmed != null) {
+            snackbarHostState.showSnackbar(
+                "Locker opened — we couldn't confirm the pickup finished, but your parcel is collected.",
+            )
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = PaczkofastTheme.colors.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            if (state !is CollectState.Completed) {
+            if (state !is CollectState.Completed && collectedButUnconfirmed == null) {
                 DetailTopBar(title = if (state.isBoxOpen) "Box open" else "Open box", onBack = onBack)
             }
         },
@@ -147,6 +162,13 @@ private fun CollectContent(
                     modifier = Modifier.fillMaxSize(),
                 )
 
+                // Box opened but a later step failed — treat as collected; the
+                // snackbar above carries the caveat.
+                collectedButUnconfirmed != null -> SuccessScreen(
+                    members = uiState.members,
+                    onBack = onBack,
+                )
+
                 state.isBoxOpen -> BoxOpenScreen(
                     members = uiState.members,
                     lockerName = uiState.lockerName,
@@ -158,6 +180,7 @@ private fun CollectContent(
                     onBack = onBack,
                 )
 
+                // Full-screen error only for failures before the box opened.
                 state is CollectState.Failed -> ErrorScreen(
                     message = state.message,
                     lockerName = uiState.lockerName,

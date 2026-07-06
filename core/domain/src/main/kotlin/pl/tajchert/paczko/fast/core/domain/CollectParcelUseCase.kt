@@ -20,6 +20,10 @@ class CollectParcelUseCase @Inject constructor(
         openCode: String,
         claimShipmentNumbers: List<String> = listOf(shipmentNumber),
     ): Flow<CollectState> = flow {
+        // Once the compartment opens, the parcel is physically collectable, so a
+        // later failure (closing/claim/network) is a soft, snackbar-level problem
+        // rather than a full-screen error.
+        var boxAlreadyOpen = false
         try {
             emit(CollectState.Validating)
             val geoPoint = locationProvider.currentLocation()
@@ -32,6 +36,7 @@ class CollectParcelUseCase @Inject constructor(
             repository.pollStatus(sessionUuid, ExpectedCompartmentStatus.OPENED)
 
             emit(CollectState.Opened(sessionUuid))
+            boxAlreadyOpen = true
             emit(CollectState.WaitingForClosed(sessionUuid))
             repository.pollStatus(sessionUuid, ExpectedCompartmentStatus.CLOSED)
 
@@ -45,22 +50,24 @@ class CollectParcelUseCase @Inject constructor(
         } catch (throwable: Throwable) {
             if (throwable is CancellationException) throw throwable
 
-            emit(throwable.toFailedState())
+            emit(throwable.toFailedState(boxAlreadyOpen))
         }
     }
 
-    private fun Throwable.toFailedState(): CollectState.Failed {
+    private fun Throwable.toFailedState(boxAlreadyOpen: Boolean): CollectState.Failed {
         if (this is CollectApiException) {
             val code = CollectErrorCode.fromApiValue(apiValue)
             return CollectState.Failed(
                 message = if (code == CollectErrorCode.Unknown) apiValue else code.apiValue,
                 canRetryFromValidation = code.canRestartValidation,
+                boxAlreadyOpen = boxAlreadyOpen,
             )
         }
 
         return CollectState.Failed(
             message = message ?: CollectErrorCode.Unknown.apiValue,
             canRetryFromValidation = false,
+            boxAlreadyOpen = boxAlreadyOpen,
         )
     }
 }

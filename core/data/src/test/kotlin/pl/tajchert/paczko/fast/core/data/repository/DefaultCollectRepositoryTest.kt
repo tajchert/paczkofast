@@ -1,9 +1,11 @@
 package pl.tajchert.paczko.fast.core.data.repository
 
+import java.net.SocketTimeoutException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.test.runTest
+import pl.tajchert.paczko.fast.core.model.collect.ExpectedCompartmentStatus
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -43,6 +45,34 @@ class DefaultCollectRepositoryTest {
 
         assertEquals("sessionExpired", exception.message)
     }
+
+    @Test
+    fun pollStatusReissuesAfterReadTimeoutThenSucceeds() = runTest {
+        val api = FakeCollectApi(statusTimeoutsBeforeSuccess = 2)
+        val repository = DefaultCollectRepository(api = api, json = leniency())
+
+        repository.pollStatus("session", ExpectedCompartmentStatus.CLOSED)
+
+        // Two timeouts + one successful poll.
+        assertEquals(3, api.statusCalls)
+    }
+
+    @Test
+    fun pollStatusGivesUpAfterMaxAttempts() = runTest {
+        val api = FakeCollectApi(statusTimeoutsBeforeSuccess = Int.MAX_VALUE)
+        val repository = DefaultCollectRepository(api = api, json = leniency())
+
+        assertFailsWith<SocketTimeoutException> {
+            repository.pollStatus("session", ExpectedCompartmentStatus.CLOSED)
+        }
+        assertEquals(3, api.statusCalls)
+    }
+}
+
+private fun leniency(): Json = Json {
+    ignoreUnknownKeys = true
+    coerceInputValues = true
+    isLenient = true
 }
 
 private fun httpException(body: String): HttpException =
@@ -55,7 +85,11 @@ private fun httpException(body: String): HttpException =
 
 private class FakeCollectApi(
     private val validateFailure: Throwable? = null,
+    private val statusTimeoutsBeforeSuccess: Int = 0,
 ) : InpostCollectApi {
+    var statusCalls = 0
+        private set
+
     override suspend fun validate(body: CollectValidateRequestDto): CollectValidateResponseDto {
         validateFailure?.let { throw it }
         return CollectValidateResponseDto(sessionUuid = "session")
@@ -64,8 +98,11 @@ private class FakeCollectApi(
     override suspend fun open(body: CollectSessionRequestDto): CompartmentResponseDto =
         CompartmentResponseDto()
 
-    override suspend fun status(body: CollectStatusRequestDto): CompartmentResponseDto =
-        CompartmentResponseDto()
+    override suspend fun status(body: CollectStatusRequestDto): CompartmentResponseDto {
+        statusCalls++
+        if (statusCalls <= statusTimeoutsBeforeSuccess) throw SocketTimeoutException("timeout")
+        return CompartmentResponseDto()
+    }
 
     override suspend fun closed(body: CollectSessionRequestDto): CompartmentResponseDto =
         CompartmentResponseDto()

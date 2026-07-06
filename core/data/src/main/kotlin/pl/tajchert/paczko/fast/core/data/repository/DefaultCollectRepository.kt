@@ -15,6 +15,9 @@ import pl.tajchert.paczko.fast.core.network.dto.ErrorResponseDto
 import pl.tajchert.paczko.fast.core.network.dto.GeoPointDto
 import pl.tajchert.paczko.fast.core.network.dto.ParcelCompartmentDto
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
+
+private const val MAX_STATUS_POLL_ATTEMPTS = 3
 
 class DefaultCollectRepository @Inject constructor(
     private val api: InpostCollectApi,
@@ -36,9 +39,27 @@ class DefaultCollectRepository @Inject constructor(
         }
     }
 
+    /**
+     * The status endpoint is a long-poll that resolves once the compartment
+     * reaches [expectedStatus] — for CLOSED that means waiting for the user to
+     * remove the parcel and shut the door, which can outlast even the extended
+     * per-call read timeout. Re-issue on read timeout up to
+     * [MAX_STATUS_POLL_ATTEMPTS] so a slow user doesn't get a spurious error.
+     * Any real API error ([HttpException] → [CollectApiException]) or
+     * cancellation propagates immediately.
+     */
     override suspend fun pollStatus(sessionUuid: String, expectedStatus: ExpectedCompartmentStatus) {
-        collectApiCall {
-            api.status(CollectStatusRequestDto(sessionUuid, expectedStatus.name))
+        var attempt = 0
+        while (true) {
+            attempt++
+            try {
+                collectApiCall {
+                    api.status(CollectStatusRequestDto(sessionUuid, expectedStatus.name))
+                }
+                return
+            } catch (timeout: SocketTimeoutException) {
+                if (attempt >= MAX_STATUS_POLL_ATTEMPTS) throw timeout
+            }
         }
     }
 

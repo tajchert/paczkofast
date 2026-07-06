@@ -91,6 +91,7 @@ object NetworkModule {
         refreshingAuthenticator: RefreshingAuthenticator,
     ): OkHttpClient = baseOkHttpBuilder()
         .addInterceptor(authHeaderInterceptor)
+        .addInterceptor(compartmentLongPollInterceptor())
         .addInterceptor(loggingInterceptor())
         .authenticator(refreshingAuthenticator)
         .build()
@@ -151,6 +152,21 @@ object NetworkModule {
         chain.proceed(request)
     }
 
+    // The compartment status endpoint is a long-poll that only responds once the
+    // compartment reaches the expected state (notably CLOSED — waiting for the
+    // user to shut the door). The default 5s read timeout is far too short for
+    // that, so extend just this call's read timeout; the repository re-issues it
+    // if even this window is exceeded.
+    private fun compartmentLongPollInterceptor(): Interceptor = Interceptor { chain ->
+        val request = chain.request()
+        if (request.url.encodedPath.endsWith(COMPARTMENT_STATUS_PATH)) {
+            chain.withReadTimeout(LONG_POLL_READ_TIMEOUT_SECONDS.toInt(), TimeUnit.SECONDS)
+                .proceed(request)
+        } else {
+            chain.proceed(request)
+        }
+    }
+
     private fun loggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         redactHeader("Authorization")
         // In production, set this based on BuildConfig.DEBUG
@@ -160,6 +176,12 @@ object NetworkModule {
     // Fail fast on slow/stalled connections so the UI can surface an error
     // (and fall back to cached data) instead of hanging.
     private const val TIMEOUT_SECONDS = 5L
+
+    // Read timeout for the compartment status long-poll only (see
+    // compartmentLongPollInterceptor): long enough for the user to open the door,
+    // take the parcel, and close it.
+    private const val LONG_POLL_READ_TIMEOUT_SECONDS = 35L
+    private const val COMPARTMENT_STATUS_PATH = "/collect/compartment/status"
 
     private const val ACCEPT_HEADER = "Accept"
     private const val APPLICATION_JSON = "application/json"
