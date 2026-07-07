@@ -98,6 +98,7 @@ import java.time.YearMonth
 @Composable
 fun ParcelListScreen(
     selectedTab: BottomNavDestination,
+    isCurrentDestination: Boolean,
     onSelectTab: (BottomNavDestination) -> Unit,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
@@ -110,6 +111,7 @@ fun ParcelListScreen(
     ParcelListContent(
         uiState = uiState,
         selectedTab = selectedTab,
+        isCurrentDestination = isCurrentDestination,
         onSelectTab = onSelectTab,
         onParcelClick = onParcelClick,
         onOpenBox = onOpenBox,
@@ -125,6 +127,7 @@ fun ParcelListScreen(
 internal fun ParcelListContent(
     uiState: ParcelListUiState,
     selectedTab: BottomNavDestination,
+    isCurrentDestination: Boolean,
     onSelectTab: (BottomNavDestination) -> Unit,
     onParcelClick: (shipmentNumber: String) -> Unit,
     onOpenBox: (shipmentNumber: String) -> Unit,
@@ -135,9 +138,11 @@ internal fun ParcelListContent(
     modifier: Modifier = Modifier,
 ) {
     // On a non-default tab, back returns to Parcels first instead of exiting the
-    // app (the tabs share one back-stack entry, so without this, back on History
-    // pops the start destination and quits).
-    BackHandler(enabled = selectedTab != BottomNavDestination.Parcels) {
+    // app. Navigation 3 can keep this list composed under detail routes, so only
+    // enable the handler while the list is actually the visible destination.
+    BackHandler(
+        enabled = isCurrentDestination && selectedTab != BottomNavDestination.Parcels,
+    ) {
         onSelectTab(BottomNavDestination.Parcels)
     }
 
@@ -662,6 +667,7 @@ private fun ParcelListContentPreview(
         ParcelListContent(
             uiState = uiState,
             selectedTab = BottomNavDestination.Parcels,
+            isCurrentDestination = true,
             onSelectTab = {},
             onParcelClick = {},
             onOpenBox = {},

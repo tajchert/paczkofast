@@ -41,6 +41,7 @@ private fun ParcelListScreenshot() {
         ParcelListContent(
             uiState = ParcelListUiState(parcels = screenshotParcels.toImmutableList()),
             selectedTab = BottomNavDestination.Parcels,
+            isCurrentDestination = true,
             onSelectTab = {},
             onParcelClick = {},
             onOpenBox = {},

@@ -104,6 +104,7 @@ fun PaczkofastNavHost(
 
             parcelEntries(
                 selectedTab = { parcelTab },
+                isParcelListVisible = { backStack.lastOrNull() == ParcelListRoute },
                 onSelectTab = { parcelTab = it },
                 onNavigate = { key -> backStack.add(key) },
                 onBack = { backStack.popEntry() },

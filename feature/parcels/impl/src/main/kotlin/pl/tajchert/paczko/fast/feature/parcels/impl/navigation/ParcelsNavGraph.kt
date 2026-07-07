@@ -18,6 +18,7 @@ fun EntryProviderScope<NavKey>.parcelEntries(
     // recomposes it on every change. Passing the value here instead lets
     // NavDisplay's cached NavEntry keep a stale tab (taps appear to do nothing).
     selectedTab: () -> BottomNavDestination,
+    isParcelListVisible: () -> Boolean,
     onSelectTab: (BottomNavDestination) -> Unit,
     onNavigate: (NavKey) -> Unit,
     onBack: () -> Unit,
@@ -26,6 +27,7 @@ fun EntryProviderScope<NavKey>.parcelEntries(
     entry<ParcelListRoute> {
         ParcelListScreen(
             selectedTab = selectedTab(),
+            isCurrentDestination = isParcelListVisible(),
             onSelectTab = onSelectTab,
             onParcelClick = { shipmentNumber ->
                 onNavigate(ParcelDetailRoute(shipmentNumber = shipmentNumber))
