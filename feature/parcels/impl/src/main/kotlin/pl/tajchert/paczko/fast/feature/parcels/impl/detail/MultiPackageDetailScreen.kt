@@ -152,8 +152,8 @@ internal fun MultiPackageDetailContent(
 
             if (delivered) {
                 PickedUpSummaryCard(
-                    waitLabel = uiState.representative?.pickupWaitLabel(),
-                    timestamp = formatTimelineTime(uiState.representative?.pickUpDate),
+                    waitLabel = uiState.representative.pickupWaitLabel(),
+                    timestamp = formatTimelineTime(uiState.representative.pickUpDate),
                     count = count,
                 )
             }
