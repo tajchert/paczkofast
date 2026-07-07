@@ -19,7 +19,7 @@ Recommended environment:
 
 - Android Studio current stable/canary that supports AGP 9.x.
 - JDK 17.
-- Android SDK with compile SDK 37 and min SDK 34 support.
+- Android SDK with compile SDK 37 and min SDK 30 support.
 - Gradle wrapper from this repo. Do not use a system Gradle installation.
 
 Common commands:
@@ -354,7 +354,7 @@ rules below. Do not screenshot the real app for the README.
 The launcher icon is an **adaptive vector**, and should stay vector-only:
 `mipmap-anydpi-v26/ic_launcher.xml` points `<foreground>`/`<monochrome>` at
 `@drawable/ic_launcher_foreground` over `@color/ic_launcher_background`
-(`#FFD400`). minSdk is 34, so the legacy density `mipmap-*/*.webp` are never used
+(`#FFD400`). minSdk is 30, so the legacy density `mipmap-*/*.webp` are never used
 at runtime. Android Studio's *Image Asset* generator silently repoints those XMLs
 to `@mipmap` raster and re-adds the webps — **revert that** and keep `@drawable`.
 `ic_launcher-playstore.png` (512²) is the only raster that matters (Play Store
