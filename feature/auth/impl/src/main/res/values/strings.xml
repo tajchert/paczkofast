@@ -5,10 +5,7 @@
     <string name="phone_number_content_description">Numer telefonu</string>
     <string name="phone_number_state">%1$d z 9 cyfr wpisanych, prefiks +48</string>
     <string name="send_code">Wyślij kod</string>
-    <string name="terms_prefix">Kontynuując, akceptujesz </string>
-    <string name="terms">Regulamin</string>
-    <string name="terms_and"> i </string>
-    <string name="privacy_policy">Politykę prywatności</string>
+    <string name="auth_disclaimer">Aplikacja jest eksperymentalna, autor nie ponosi odpowiedzialności za Twoje użycie tej aplikacji.</string>
     <string name="enter_code">Wpisz kod</string>
     <string name="sms_code">Kod SMS</string>
     <string name="sms_code_state">%1$d z %2$d cyfr wpisanych</string>

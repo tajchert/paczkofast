@@ -35,13 +35,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.tajchert.paczko.fast.core.designsystem.component.NeoSurface
@@ -133,7 +129,7 @@ fun PhoneLoginScreen(
                     cursorBrush = SolidColor(Color.Transparent),
                     decorationBox = { PhoneInputRow(phoneDigits = state.phoneDigits) },
                 )
-                TermsLine()
+                DisclaimerLine()
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -233,18 +229,9 @@ private fun PhoneInputRow(
 }
 
 @Composable
-private fun TermsLine(modifier: Modifier = Modifier) {
-    val linkStyle = SpanStyle(
-        color = PaczkofastTheme.colors.textMuted,
-        textDecoration = TextDecoration.Underline,
-    )
+private fun DisclaimerLine(modifier: Modifier = Modifier) {
     Text(
-        text = buildAnnotatedString {
-            append(stringResource(R.string.terms_prefix))
-            withStyle(linkStyle) { append(stringResource(R.string.terms)) }
-            append(stringResource(R.string.terms_and))
-            withStyle(linkStyle) { append(stringResource(R.string.privacy_policy)) }
-        },
+        text = stringResource(R.string.auth_disclaimer),
         style = MaterialTheme.typography.bodySmall,
         color = PaczkofastTheme.colors.textFaint,
         modifier = modifier,
