@@ -78,7 +78,7 @@ class HistoryFormattersTest {
 
     @Test
     fun monthLabelAddsYearOnlyForOtherYears() {
-        assertEquals("lipca", historyMonthLabel(YearMonth.of(2026, 7), now = now, zone = zone))
-        assertEquals("czerwca 2025", historyMonthLabel(YearMonth.of(2025, 6), now = now, zone = zone))
+        assertEquals("Lipiec", historyMonthLabel(YearMonth.of(2026, 7), now = now, zone = zone))
+        assertEquals("Czerwiec 2025", historyMonthLabel(YearMonth.of(2025, 6), now = now, zone = zone))
     }
 }

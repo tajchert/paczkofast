@@ -100,4 +100,17 @@ class ParcelStatusPartitionTest {
             parcel("some_future_status"),
         ).forEach { assertFalse("expected active: ${it.status}", it.isFinished) }
     }
+
+    @Test
+    fun transitSortKeyPutsLaterDeliveryStagesFirst() {
+        val new = parcel("created", shipmentNumber = "new")
+        val sortingCenter = parcel("adopted_at_sorting_center", shipmentNumber = "sorting")
+        val outForDelivery = parcel("out_for_delivery", shipmentNumber = "almost-ready")
+
+        val sorted = listOf(new, sortingCenter, outForDelivery)
+            .sortedByDescending { it.transitSortKey() }
+            .map { it.shipmentNumber }
+
+        assertEquals(listOf("almost-ready", "sorting", "new"), sorted)
+    }
 }

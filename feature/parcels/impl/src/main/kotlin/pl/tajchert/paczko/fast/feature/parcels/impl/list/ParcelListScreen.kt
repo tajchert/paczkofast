@@ -89,6 +89,7 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.parcelSizeLabel
 import pl.tajchert.paczko.fast.feature.parcels.impl.parcelTitle
 import pl.tajchert.paczko.fast.feature.parcels.impl.pickupCountdown
 import pl.tajchert.paczko.fast.feature.parcels.impl.transitCompletedSegments
+import pl.tajchert.paczko.fast.feature.parcels.impl.transitSortKey
 import java.time.YearMonth
 
 /**
@@ -283,6 +284,9 @@ private fun ParcelSections(
     val (ready, onTheWay) = remember(parcels) {
         parcels.partition { it.isReadyForPickup }
     }
+    val sortedOnTheWay = remember(onTheWay) {
+        onTheWay.sortedByDescending { it.transitSortKey() }
+    }
     val readyItems = remember(ready) { groupByCompartment(ready) }
 
     LazyColumn(
@@ -355,14 +359,14 @@ private fun ParcelSections(
             }
         }
 
-        if (onTheWay.isNotEmpty()) {
+        if (sortedOnTheWay.isNotEmpty()) {
             item(key = "transit-header") {
                 ListSectionHeader(
                     text = stringResource(R.string.on_the_way),
                     modifier = Modifier.animateItem().padding(top = 10.dp),
                 )
             }
-            items(items = onTheWay, key = Parcel::shipmentNumber) { parcel ->
+            items(items = sortedOnTheWay, key = Parcel::shipmentNumber) { parcel ->
                 TransitParcelCard(
                     title = parcelTitle(parcel),
                     statusText = humanizeStatus(parcel.status),
@@ -457,7 +461,7 @@ private fun MonthHeader(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = label.uppercase(),
+        text = label,
         style = MonoLabel,
         color = PaczkofastTheme.colors.monoLabel,
         modifier = modifier.padding(horizontal = 4.dp),

@@ -170,6 +170,12 @@ internal fun transitCompletedSegments(status: String): Int = when (status.lowerc
 }
 
 /**
+ * Higher values are closer to pickup and should appear first in the in-transit
+ * section.
+ */
+internal fun Parcel.transitSortKey(): Int = transitCompletedSegments(status)
+
+/**
  * Pickup deadline presentation for a ready-for-pickup parcel.
  *
  * @param progress Fraction of the pickup window still remaining (1f = just
@@ -334,9 +340,9 @@ internal fun historyOutcomeLine(parcel: Parcel): String = when (historyOutcome(p
 private val HISTORY_DATE_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d MMM", POLISH_LOCALE)
 private val HISTORY_MONTH_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("MMMM", POLISH_LOCALE)
+    DateTimeFormatter.ofPattern("LLLL", POLISH_LOCALE)
 private val HISTORY_MONTH_YEAR_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("MMMM yyyy", POLISH_LOCALE)
+    DateTimeFormatter.ofPattern("LLLL yyyy", POLISH_LOCALE)
 
 /**
  * Trailing date label for a history row — date only, no time ("28 Jun").
@@ -370,7 +376,7 @@ internal fun historyMonthLabel(
     } else {
         HISTORY_MONTH_YEAR_FORMAT
     }
-    return format.format(yearMonth)
+    return format.format(yearMonth).replaceFirstChar { it.titlecase(POLISH_LOCALE) }
 }
 
 private fun historyInstant(parcel: Parcel): Instant? = parcel.historyCompletionInstant()
