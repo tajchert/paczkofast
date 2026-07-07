@@ -52,6 +52,9 @@ fun ReadyParcelCard(
     actionInProgress: Boolean = false,
 ) {
     val openDetails = stringResource(R.string.open_parcel_details)
+    val readyLabel = stringResource(R.string.ready_for_pickup)
+    val sizePrefix = stringResource(R.string.size_prefix)
+    val urgentLabel = stringResource(R.string.urgent)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
@@ -63,6 +66,9 @@ fun ReadyParcelCard(
             timeLeftText = timeLeftText,
             sizeLabel = sizeLabel,
             urgent = urgent,
+            readyLabel = readyLabel,
+            sizePrefix = sizePrefix,
+            urgentLabel = urgentLabel,
         ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -129,6 +135,9 @@ fun CollapsedReadyParcelCard(
     actionInProgress: Boolean = false,
 ) {
     val openDetails = stringResource(R.string.open_parcel_details)
+    val readyLabel = stringResource(R.string.ready_for_pickup)
+    val sizePrefix = stringResource(R.string.size_prefix)
+    val urgentLabel = stringResource(R.string.urgent)
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
@@ -140,6 +149,9 @@ fun CollapsedReadyParcelCard(
             timeLeftText = timeLeftText,
             sizeLabel = null,
             urgent = urgent,
+            readyLabel = readyLabel,
+            sizePrefix = sizePrefix,
+            urgentLabel = urgentLabel,
         ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -220,6 +232,12 @@ fun TransitParcelCard(
     totalSegments: Int = 4,
 ) {
     val openDetails = stringResource(R.string.open_parcel_details)
+    val sizePrefix = stringResource(R.string.size_prefix)
+    val deliverySteps = stringResource(
+        R.string.delivery_steps_complete,
+        completedSegments.coerceIn(0, totalSegments),
+        totalSegments,
+    )
     PaczkofastCard(
         modifier = modifier,
         onClick = onClick,
@@ -228,8 +246,8 @@ fun TransitParcelCard(
             title = title,
             statusText = statusText,
             sizeLabel = sizeLabel,
-            completedSegments = completedSegments,
-            totalSegments = totalSegments,
+            sizePrefix = sizePrefix,
+            deliverySteps = deliverySteps,
         ),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -263,27 +281,30 @@ private fun readyParcelAccessibilityLabel(
     timeLeftText: String?,
     sizeLabel: String?,
     urgent: Boolean,
+    readyLabel: String,
+    sizePrefix: String,
+    urgentLabel: String,
 ): String = buildList {
     add(title)
-    add("Gotowa do odbioru")
+    add(readyLabel)
     add(subtitle)
-    sizeLabel?.let { add("Rozmiar $it") }
+    sizeLabel?.let { add("$sizePrefix $it") }
     deadlineText?.let { add(it) }
     timeLeftText?.let { add(it) }
-    if (urgent) add("Pilne")
+    if (urgent) add(urgentLabel)
 }.joinToString(", ")
 
 private fun transitParcelAccessibilityLabel(
     title: String,
     statusText: String,
     sizeLabel: String?,
-    completedSegments: Int,
-    totalSegments: Int,
+    sizePrefix: String,
+    deliverySteps: String,
 ): String = buildList {
     add(title)
     add(statusText)
-    sizeLabel?.let { add("Rozmiar $it") }
-    add("${completedSegments.coerceIn(0, totalSegments)} z $totalSegments etapów dostawy ukończone")
+    sizeLabel?.let { add("$sizePrefix $it") }
+    add(deliverySteps)
 }.joinToString(", ")
 
 /**

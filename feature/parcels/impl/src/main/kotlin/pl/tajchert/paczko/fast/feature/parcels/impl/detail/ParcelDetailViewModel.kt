@@ -54,7 +54,7 @@ class ParcelDetailViewModel @AssistedInject constructor(
             is Result.Success -> base.copy(parcel = result.data, isLoading = false)
             is Result.Error -> base.copy(
                 isLoading = false,
-                errorMessage = result.exception.message ?: "Nie udało się wczytać paczki",
+                errorMessage = result.exception.message ?: "Unable to load parcel",
             )
         }
     }

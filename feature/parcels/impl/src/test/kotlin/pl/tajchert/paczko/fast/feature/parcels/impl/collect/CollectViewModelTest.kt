@@ -109,7 +109,7 @@ class CollectViewModelTest {
 
         assertEquals(
             CollectState.Failed(
-                message = "Tej paczki nie można otworzyć zdalnie",
+                message = "Parcel cannot be opened remotely",
                 canRetryFromValidation = false,
             ),
             viewModel.uiState.value.state,
@@ -137,7 +137,7 @@ class CollectViewModelTest {
 
         assertEquals(
             CollectState.Failed(
-                message = "Tej paczki nie można otworzyć zdalnie",
+                message = "Parcel cannot be opened remotely",
                 canRetryFromValidation = false,
             ),
             viewModel.uiState.value.state,
@@ -214,7 +214,7 @@ class CollectViewModelTest {
 
         assertEquals(
             CollectState.Failed(
-                message = "Włącz dostęp do lokalizacji",
+                message = "Location permission is required",
                 canRetryFromValidation = false,
             ),
             viewModel.uiState.value.state,

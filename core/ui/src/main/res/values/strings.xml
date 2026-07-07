@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pickup_qr_code">Kod QR odbioru</string>
-    <string name="pickup_code">Kod odbioru %1$s</string>
-    <string name="code">Kod</string>
+    <string name="pickup_qr_code">Pickup QR code</string>
+    <string name="pickup_code">Pickup code %1$s</string>
+    <string name="code">Code</string>
 </resources>

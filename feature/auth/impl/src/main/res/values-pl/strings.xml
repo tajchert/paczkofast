@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_intro">Zaloguj się numerem telefonu, na który przychodzą paczki. Wyślemy kod SMS.</string>
+    <string name="phone_number_label">Numer telefonu</string>
+    <string name="phone_number_content_description">Numer telefonu</string>
+    <string name="phone_number_state">%1$d z 9 cyfr wpisanych, prefiks +48</string>
+    <string name="send_code">Wyślij kod</string>
+    <string name="auth_disclaimer">Aplikacja jest eksperymentalna, autor nie ponosi odpowiedzialności za Twoje użycie tej aplikacji.</string>
+    <string name="enter_code">Wpisz kod</string>
+    <string name="sms_code">Kod SMS</string>
+    <string name="sms_code_state">%1$d z %2$d cyfr wpisanych</string>
+    <string name="verify">Potwierdź</string>
+    <string name="sent_code_to">Wysłaliśmy 6-cyfrowy kod na </string>
+    <string name="resend_in">Wyślij ponownie za 0:%1$02d</string>
+    <string name="resend_code">Wyślij ponownie</string>
+    <string name="change_number">Zmień numer</string>
+    <string name="onboarding_welcome_title">Szybki odbiór paczek</string>
+    <string name="onboarding_welcome_body">Jedno dotknięcie do paczki. Bez szukania w menu — właściwa skrytka jest od razu pod ręką.</string>
+    <string name="onboarding_disclaimer_title">Eksperyment</string>
+    <string name="onboarding_disclaimer_body">Paczkofast to niezależna aplikacja. Nie jest powiązana z InPostem ani żadnym operatorem automatów paczkowych. Coś może czasem nie zadziałać.</string>
+    <string name="unofficial">Nieoficjalne</string>
+    <string name="continue_button">Dalej</string>
+    <string name="understand_start">Rozumiem, zaczynamy</string>
+</resources>

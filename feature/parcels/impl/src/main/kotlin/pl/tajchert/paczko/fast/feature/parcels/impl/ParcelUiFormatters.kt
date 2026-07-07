@@ -36,15 +36,22 @@ internal val Parcel.isReadyForPickup: Boolean
 /** "out_for_delivery" / "DELIVERED" → "Out for delivery" / "Delivered" */
 internal fun humanizeStatus(status: String): String =
     when (status.lowercase()) {
-        "ready_to_pickup", "pickup_reminder", "pickup_reminder_sent" -> "Gotowa do odbioru"
-        "out_for_delivery" -> "W doręczeniu"
-        "delivered", "claimed", "collected_by_customer" -> "Odebrana"
-        "returned_to_sender" -> "Zwrócona do nadawcy"
-        "pickup_time_expired" -> "Termin minął"
-        "created", "confirmed" -> "Utworzona"
-        "dispatched_by_sender", "collected_from_sender", "taken_by_courier" -> "Odebrana od nadawcy"
-        "adopted_at_source_branch", "adopted_at_sorting_center", "adopted_at_target_branch" -> "W sortowni"
-        "sent_from_source_branch", "sent_from_sorting_center" -> "W drodze"
+        "ready_to_pickup", "pickup_reminder", "pickup_reminder_sent" -> localized(
+            en = "Ready for pickup",
+            pl = "Gotowa do odbioru",
+        )
+        "out_for_delivery" -> localized(en = "Out for delivery", pl = "W doręczeniu")
+        "delivered", "claimed", "collected_by_customer" -> localized(en = "Picked up", pl = "Odebrana")
+        "returned_to_sender" -> localized(en = "Returned to sender", pl = "Zwrócona do nadawcy")
+        "pickup_time_expired" -> localized(en = "Expired", pl = "Termin minął")
+        "created", "confirmed" -> localized(en = "Created", pl = "Utworzona")
+        "dispatched_by_sender", "collected_from_sender", "taken_by_courier" -> localized(
+            en = "Picked up from sender",
+            pl = "Odebrana od nadawcy",
+        )
+        "adopted_at_source_branch", "adopted_at_sorting_center", "adopted_at_target_branch" ->
+            localized(en = "At logistics center", pl = "W sortowni")
+        "sent_from_source_branch", "sent_from_sorting_center" -> localized(en = "In transit", pl = "W drodze")
         else -> status.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
     }
 
@@ -65,14 +72,18 @@ internal fun parcelSizeLabel(code: String?): String? = when (code?.uppercase()) 
  * a humanized form of the raw code for anything unmapped.
  */
 internal fun trackingEventLabel(status: String): String = when (status.uppercase()) {
-    "CREATED", "CONFIRMED" -> "Etykieta utworzona"
-    "DISPATCHED_BY_SENDER", "COLLECTED_FROM_SENDER", "TAKEN_BY_COURIER" -> "Odebrana od nadawcy"
-    "ADOPTED_AT_SOURCE_BRANCH", "ADOPTED_AT_SORTING_CENTER", "ADOPTED_AT_TARGET_BRANCH" -> "W sortowni"
-    "SENT_FROM_SOURCE_BRANCH", "SENT_FROM_SORTING_CENTER" -> "W drodze"
-    "OUT_FOR_DELIVERY" -> "W doręczeniu"
-    "READY_TO_PICKUP" -> "Gotowa do odbioru"
-    "DELIVERED" -> "Doręczona"
-    "CLAIMED", "COLLECTED_BY_CUSTOMER" -> "Odebrana"
+    "CREATED", "CONFIRMED" -> localized(en = "Label created", pl = "Etykieta utworzona")
+    "DISPATCHED_BY_SENDER", "COLLECTED_FROM_SENDER", "TAKEN_BY_COURIER" -> localized(
+        en = "Picked up from sender",
+        pl = "Odebrana od nadawcy",
+    )
+    "ADOPTED_AT_SOURCE_BRANCH", "ADOPTED_AT_SORTING_CENTER", "ADOPTED_AT_TARGET_BRANCH" ->
+        localized(en = "At logistics center", pl = "W sortowni")
+    "SENT_FROM_SOURCE_BRANCH", "SENT_FROM_SORTING_CENTER" -> localized(en = "In transit", pl = "W drodze")
+    "OUT_FOR_DELIVERY" -> localized(en = "Out for delivery", pl = "W doręczeniu")
+    "READY_TO_PICKUP" -> localized(en = "Ready for pickup", pl = "Gotowa do odbioru")
+    "DELIVERED" -> localized(en = "Delivered", pl = "Doręczona")
+    "CLAIMED", "COLLECTED_BY_CUSTOMER" -> localized(en = "Picked up", pl = "Odebrana")
     else -> humanizeStatus(status)
 }
 
@@ -196,11 +207,11 @@ private const val URGENT_THRESHOLD_HOURS = 12L
 /** Assumed pickup window when the stored date is unknown. */
 private val DEFAULT_PICKUP_WINDOW: Duration = Duration.ofHours(48)
 
+private val ENGLISH_LOCALE = Locale.ENGLISH
 private val POLISH_LOCALE = Locale.forLanguageTag("pl-PL")
 
-private val DEADLINE_FORMAT = DateTimeFormatter.ofPattern("EEE d MMM, HH:mm", POLISH_LOCALE)
 internal val TIMELINE_TIME_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("dd.MM.yy · HH:mm", POLISH_LOCALE)
+    DateTimeFormatter.ofPattern("dd.MM.yy · HH:mm", ENGLISH_LOCALE)
 
 internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): PickupCountdown? {
     val expiry = parseInstant(parcel.expiryDate) ?: return null
@@ -222,10 +233,18 @@ internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): Pick
     }
     val compactCountdownText = countdownText.replace(" ", "")
     val urgent = remaining.toHours() < URGENT_THRESHOLD_HOURS || parcel.isPickupReminder
-    val displayCountdownText = if (urgent) "$countdownText — pilne!" else countdownText
+    val displayCountdownText = if (urgent) {
+        if (isPolishLocale()) "$countdownText — pilne!" else "$countdownText — hurry!"
+    } else {
+        countdownText
+    }
+    val deadlinePrefix = localized(en = "Pick up by ", pl = "Odbierz do ")
     return PickupCountdown(
-        deadlineText = "Odbierz do " + DEADLINE_FORMAT.format(expiry.atZone(ZoneId.systemDefault())),
-        timeLeftText = if (urgent) displayCountdownText else "zostało $countdownText",
+        deadlineText = deadlinePrefix + deadlineFormat().format(expiry.atZone(ZoneId.systemDefault())),
+        timeLeftText = if (urgent) displayCountdownText else localized(
+            en = "$countdownText left",
+            pl = "zostało $countdownText",
+        ),
         countdownText = displayCountdownText,
         compactTimeLeftText = if (urgent) "$compactCountdownText!" else compactCountdownText,
         progress = progress,
@@ -234,7 +253,7 @@ internal fun pickupCountdown(parcel: Parcel, now: Instant = Instant.now()): Pick
 }
 
 internal fun formatTimelineTime(value: String?): String? =
-    parseInstant(value)?.let { TIMELINE_TIME_FORMAT.format(it.atZone(ZoneId.systemDefault())) }
+    parseInstant(value)?.let { timelineTimeFormat().format(it.atZone(ZoneId.systemDefault())) }
 
 /**
  * How long a collected locker parcel sat between becoming ready for pickup
@@ -274,9 +293,9 @@ internal fun parseInstant(value: String?): Instant? {
 
 /** "WAW01A · Example street 12" style locker line for parcel cards. */
 internal fun lockerLine(parcel: Parcel): String {
-    val point = parcel.pickupPoint ?: return "Punkt odbioru wkrótce"
+    val point = parcel.pickupPoint ?: return localized(en = "Pickup point pending", pl = "Punkt odbioru wkrótce")
     return listOfNotNull(
-        "Paczkomat ${point.name}",
+        localized(en = "Locker ${point.name}", pl = "Paczkomat ${point.name}"),
         point.addressLine?.takeIf { it.isNotBlank() },
     ).joinToString(" · ")
 }
@@ -329,20 +348,13 @@ internal fun historyOutcome(parcel: Parcel): HistoryOutcome = when (parcel.statu
  */
 internal fun historyOutcomeLine(parcel: Parcel): String = when (historyOutcome(parcel)) {
     HistoryOutcome.PickedUp -> listOfNotNull(
-        "Odebrano",
-        parcel.pickupPoint?.name?.let { "Paczkomat $it" },
+        localized(en = "Picked up", pl = "Odebrano"),
+        parcel.pickupPoint?.name?.let { localized(en = "Locker $it", pl = "Paczkomat $it") },
     ).joinToString(" · ")
 
-    HistoryOutcome.Expired -> "Termin minął · zwrot do nadawcy"
+    HistoryOutcome.Expired -> localized(en = "Expired · returned to sender", pl = "Termin minął · zwrot do nadawcy")
     HistoryOutcome.Returned -> humanizeStatus(parcel.status)
 }
-
-private val HISTORY_DATE_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("d MMM", POLISH_LOCALE)
-private val HISTORY_MONTH_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("LLLL", POLISH_LOCALE)
-private val HISTORY_MONTH_YEAR_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("LLLL yyyy", POLISH_LOCALE)
 
 /**
  * Trailing date label for a history row — date only, no time ("28 Jun").
@@ -353,7 +365,7 @@ internal fun historyDateLabel(
     zone: ZoneId = ZoneId.systemDefault(),
 ): String {
     val instant = historyInstant(parcel) ?: return ""
-    return HISTORY_DATE_FORMAT.format(instant.atZone(zone))
+    return historyDateFormat().format(instant.atZone(zone))
 }
 
 /** Grouping key for the History tab's month sections, newest month first. */
@@ -372,11 +384,36 @@ internal fun historyMonthLabel(
     zone: ZoneId = ZoneId.systemDefault(),
 ): String {
     val format = if (yearMonth.year == now.atZone(zone).year) {
-        HISTORY_MONTH_FORMAT
+        historyMonthFormat()
     } else {
-        HISTORY_MONTH_YEAR_FORMAT
+        historyMonthYearFormat()
     }
-    return format.format(yearMonth).replaceFirstChar { it.titlecase(POLISH_LOCALE) }
+    val locale = currentLocale()
+    return format.format(yearMonth).replaceFirstChar { it.titlecase(locale) }
 }
 
 private fun historyInstant(parcel: Parcel): Instant? = parcel.historyCompletionInstant()
+
+private fun localized(en: String, pl: String): String =
+    if (isPolishLocale()) pl else en
+
+private fun isPolishLocale(locale: Locale = currentLocale()): Boolean =
+    locale.language.equals(POLISH_LOCALE.language, ignoreCase = true)
+
+private fun currentLocale(): Locale =
+    Locale.getDefault().takeIf { it.language.isNotBlank() } ?: ENGLISH_LOCALE
+
+private fun deadlineFormat(): DateTimeFormatter =
+    DateTimeFormatter.ofPattern("EEE d MMM, HH:mm", currentLocale())
+
+private fun timelineTimeFormat(): DateTimeFormatter =
+    DateTimeFormatter.ofPattern("dd.MM.yy · HH:mm", currentLocale())
+
+private fun historyDateFormat(): DateTimeFormatter =
+    DateTimeFormatter.ofPattern("d MMM", currentLocale())
+
+private fun historyMonthFormat(): DateTimeFormatter =
+    DateTimeFormatter.ofPattern("LLLL", currentLocale())
+
+private fun historyMonthYearFormat(): DateTimeFormatter =
+    DateTimeFormatter.ofPattern("LLLL yyyy", currentLocale())

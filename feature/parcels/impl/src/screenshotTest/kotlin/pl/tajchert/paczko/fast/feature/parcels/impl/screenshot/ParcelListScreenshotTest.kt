@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
 import kotlinx.collections.immutable.toImmutableList
 import pl.tajchert.paczko.fast.core.designsystem.component.BottomNavDestination
-import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.parcel.Parcel
 import pl.tajchert.paczko.fast.core.model.parcel.ParcelOperations
@@ -34,22 +33,24 @@ import pl.tajchert.paczko.fast.feature.parcels.impl.list.ParcelListUiState
  * shipment numbers, `WAW01A`, "Example ..." sender/address placeholders.
  */
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun ParcelListScreenshot() {
-    PaczkofastTheme {
-        ParcelListContent(
-            uiState = ParcelListUiState(parcels = screenshotParcels.toImmutableList()),
-            selectedTab = BottomNavDestination.Parcels,
-            isCurrentDestination = true,
-            onSelectTab = {},
-            onParcelClick = {},
-            onOpenBox = {},
-            onCollectClick = {},
-            onRefreshClick = {},
-            onOpenSettings = {},
-            onErrorShown = {},
-        )
+    EnglishScreenshotContent {
+        PaczkofastTheme {
+            ParcelListContent(
+                uiState = ParcelListUiState(parcels = screenshotParcels.toImmutableList()),
+                selectedTab = BottomNavDestination.Parcels,
+                isCurrentDestination = true,
+                onSelectTab = {},
+                onParcelClick = {},
+                onOpenBox = {},
+                onCollectClick = {},
+                onRefreshClick = {},
+                onOpenSettings = {},
+                onErrorShown = {},
+            )
+        }
     }
 }
 

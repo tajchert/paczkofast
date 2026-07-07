@@ -104,7 +104,7 @@ class CollectViewModel @Inject constructor(
                 _uiState.update {
                     CollectUiState(
                         state = CollectState.Failed(
-                            message = "Tej paczki nie można otworzyć zdalnie",
+                            message = "Parcel cannot be opened remotely",
                             canRetryFromValidation = false,
                         ),
                         members = memberUi,
@@ -145,7 +145,7 @@ class CollectViewModel @Inject constructor(
         _uiState.update {
             CollectUiState(
                 state = CollectState.Failed(
-                    message = "Włącz dostęp do lokalizacji",
+                    message = "Location permission is required",
                     canRetryFromValidation = false,
                 ),
             )

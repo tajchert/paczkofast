@@ -3,7 +3,6 @@ package pl.tajchert.paczko.fast.feature.parcels.impl.screenshot
 import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
 import kotlinx.collections.immutable.persistentListOf
-import pl.tajchert.paczko.fast.core.designsystem.component.PaczkofastPreviews
 import pl.tajchert.paczko.fast.core.designsystem.theme.PaczkofastTheme
 import pl.tajchert.paczko.fast.core.model.collect.CollectState
 import pl.tajchert.paczko.fast.feature.parcels.impl.collect.CollectContent
@@ -27,78 +26,80 @@ private val demoMembers = persistentListOf(
 
 @Composable
 private fun collectPreview(state: CollectState) {
-    PaczkofastTheme {
-        CollectContent(
-            uiState = CollectUiState(
-                state = state,
-                lockerName = "WAW01A",
-                distanceMeters = 12,
-                members = demoMembers,
-            ),
-            onConfirmed = {},
-            onBack = {},
-        )
+    EnglishScreenshotContent {
+        PaczkofastTheme {
+            CollectContent(
+                uiState = CollectUiState(
+                    state = state,
+                    lockerName = "WAW01A",
+                    distanceMeters = 12,
+                    members = demoMembers,
+                ),
+                onConfirmed = {},
+                onBack = {},
+            )
+        }
     }
 }
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectIdle() = collectPreview(CollectState.Idle)
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectValidating() = collectPreview(CollectState.Validating)
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectOpening() = collectPreview(CollectState.Opening("demo"))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectWaitingOpened() = collectPreview(CollectState.WaitingForOpened("demo"))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectOpened() = collectPreview(CollectState.Opened("demo"))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectWaitingClosed() = collectPreview(CollectState.WaitingForClosed("demo"))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectConfirmingClosed() = collectPreview(CollectState.ConfirmingClosed("demo"))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectClaiming() = collectPreview(CollectState.Claiming("demo"))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectCompleted() = collectPreview(CollectState.Completed)
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectCanceled() = collectPreview(CollectState.Canceled)
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectFailedHard() =
     collectPreview(CollectState.Failed(message = "boxMachineNotFound", canRetryFromValidation = false))
 
 @PreviewTest
-@PaczkofastPreviews
+@EnglishPaczkofastPreviews
 @Composable
 private fun CollectFailedSoft() =
     collectPreview(
