@@ -210,7 +210,7 @@ private fun CodeBoxes(
 
                     isActive -> BlinkingCursor(
                         height = 26.dp,
-                        color = PaczkofastTheme.colors.borderStrong,
+                        color = PaczkofastTheme.colors.onAccent,
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
