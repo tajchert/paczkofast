@@ -254,20 +254,21 @@ internal data class PackagesIconGeometry(
 
 /**
  * Vertices of the Packages icon for a given [openFraction] (0 = closed cube,
- * 1 = open box), expressed in the 32x32 design space. Each point lerps between
- * its closed and open position; at 0 the union of strokes is the exact closed
- * design frame and at 1 the exact open frame. Pure and deterministic so it can
- * be unit-tested without rendering.
+ * 1 = open box), expressed in the 32x32 design space. At 0 the union of strokes
+ * is the exact closed design frame. The box's bottom trapezoid is pinned so the
+ * box stays put and only the top rim and lid animate open. Pure and
+ * deterministic so it can be unit-tested without rendering.
  */
 internal fun packagesIconGeometry(openFraction: Float): PackagesIconGeometry {
     val t = openFraction.coerceIn(0f, 1f)
     fun morph(closed: Offset, open: Offset): Offset = lerp(closed, open, t)
 
-    // Box body: closed = lower cube hexagon + top-face V; open = open box body.
+    // Box body. The bottom trapezoid (bBL/bBot/bBR) is pinned so the box never
+    // slides down when opening — only the top rim descends and the lid opens.
     val bTL = morph(Offset(3.5f, 9f), Offset(3.5f, 13.5f))
-    val bBL = morph(Offset(3.5f, 21f), Offset(3.5f, 23f))
-    val bBot = morph(Offset(16f, 27.5f), Offset(16f, 29.5f))
-    val bBR = morph(Offset(28.5f, 21f), Offset(28.5f, 23f))
+    val bBL = Offset(3.5f, 21f)
+    val bBot = Offset(16f, 27.5f)
+    val bBR = Offset(28.5f, 21f)
     val bTR = morph(Offset(28.5f, 9f), Offset(28.5f, 13.5f))
     val bTC = morph(Offset(16f, 15.5f), Offset(16f, 20f))
 

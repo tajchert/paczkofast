@@ -38,17 +38,17 @@ class PackagesIconGeometryTest {
     }
 
     @Test
-    fun `open frame reproduces the open design vertices`() {
+    fun `open frame opens the top while the base stays pinned`() {
         val g = packagesIconGeometry(openFraction = 1f)
 
         assertPoints(
             listOf(
-                Offset(3.5f, 13.5f), Offset(3.5f, 23f), Offset(16f, 29.5f),
-                Offset(28.5f, 23f), Offset(28.5f, 13.5f), Offset(16f, 20f),
+                Offset(3.5f, 13.5f), Offset(3.5f, 21f), Offset(16f, 27.5f),
+                Offset(28.5f, 21f), Offset(28.5f, 13.5f), Offset(16f, 20f),
             ),
             g.body,
         )
-        assertPoints(listOf(Offset(16f, 20f), Offset(16f, 29.5f)), g.centerEdge)
+        assertPoints(listOf(Offset(16f, 20f), Offset(16f, 27.5f)), g.centerEdge)
         assertPoints(listOf(Offset(3.5f, 13.5f), Offset(16f, 7f), Offset(28.5f, 13.5f)), g.openingV)
         assertPoints(
             listOf(Offset(3.5f, 13.5f), Offset(2f, 9f), Offset(14.5f, 15.5f), Offset(16f, 20f)),
@@ -59,6 +59,18 @@ class PackagesIconGeometryTest {
             g.rightFlap,
         )
         assertEquals(0f, g.strapAlpha, EPS)
+    }
+
+    @Test
+    fun `box bottom trapezoid never moves while opening`() {
+        // bBL, bBot, bBR (indices 1, 2, 3) are pinned across the whole animation.
+        listOf(0f, 0.25f, 0.5f, 0.75f, 1f).forEach { fraction ->
+            val body = packagesIconGeometry(openFraction = fraction).body
+            assertPoints(
+                listOf(Offset(3.5f, 21f), Offset(16f, 27.5f), Offset(28.5f, 21f)),
+                listOf(body[1], body[2], body[3]),
+            )
+        }
     }
 
     @Test
