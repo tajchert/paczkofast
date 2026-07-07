@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="auth_intro">Log in with the phone number your parcels are sent to. We\'ll text you a code.</string>
+    <string name="phone_number_label">Phone number</string>
+    <string name="phone_number_content_description">Phone number</string>
+    <string name="phone_number_state">%1$d of 9 digits entered, +48 prefix</string>
+    <string name="send_code">Send code</string>
     <string name="auth_disclaimer">This app is experimental. The author is not responsible for your use of this app.</string>
+    <string name="enter_code">Enter code</string>
+    <string name="sms_code">SMS code</string>
+    <string name="sms_code_state" tools:ignore="PluralsCandidate">%1$d of %2$d digits entered</string>
+    <string name="verify">Verify</string>
+    <string name="sent_code_to">We texted a 6-digit code to </string>
+    <string name="resend_in">Resend in 0:%1$02d</string>
+    <string name="resend_code">Resend code</string>
+    <string name="change_number">Change number</string>
+    <string name="onboarding_welcome_title">Fast parcel pickup</string>
+    <string name="onboarding_welcome_body">One tap to your parcel. No menu digging - the right box is always close at hand.</string>
+    <string name="onboarding_disclaimer_title">Experimental</string>
+    <string name="onboarding_disclaimer_body">Paczkofast is an independent app. It is not affiliated with InPost or any locker operator. Things may break sometimes.</string>
+    <string name="unofficial">Unofficial</string>
+    <string name="continue_button">Continue</string>
+    <string name="understand_start">I understand, let\'s go</string>
 </resources>

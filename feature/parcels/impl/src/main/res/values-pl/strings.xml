@@ -42,7 +42,7 @@
     <string name="close">Zamknij</string>
     <string name="back_to_parcels">Wróć do paczek</string>
     <string name="contact_support">Pomoc</string>
-    <string name="finishing_up">Kończymy...</string>
+    <string name="finishing_up">Kończymy&#8230;</string>
     <string name="single_box_guidance">Domknij drzwiczki. Zablokują się automatycznie.</string>
     <plurals name="multi_box_guidance">
         <item quantity="one">%1$d paczka jest w tej skrytce. Odznacz ją przed zamknięciem.</item>
@@ -73,7 +73,7 @@
     <string name="collect_hold_to_open">Przytrzymaj, aby otworzyć</string>
     <string name="collect_at_locker">Jesteś przy automacie. Dotknij, aby otworzyć.</string>
     <string name="collect_move_closer">Podejdź bliżej — %1$d m</string>
-    <string name="collect_waiting_gps">Czekamy na dokładną lokalizację...</string>
+    <string name="collect_waiting_gps">Czekamy na dokładną lokalizację&#8230;</string>
     <string name="collect_stand_at_locker">Stań przy automacie przed startem.</string>
     <plurals name="collect_shared_box_subline">
         <item quantity="one">%1$d paczka w tej skrytce. Odbierzesz ją za jednym razem.</item>

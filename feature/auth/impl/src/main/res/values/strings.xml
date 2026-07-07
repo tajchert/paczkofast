@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="auth_intro">Log in with the phone number your parcels are sent to. We\'ll text you a code.</string>
     <string name="phone_number_label">Phone number</string>
     <string name="phone_number_content_description">Phone number</string>
@@ -8,7 +8,7 @@
     <string name="auth_disclaimer">This app is experimental. The author is not responsible for your use of this app.</string>
     <string name="enter_code">Enter code</string>
     <string name="sms_code">SMS code</string>
-    <string name="sms_code_state">%1$d of %2$d digits entered</string>
+    <string name="sms_code_state" tools:ignore="PluralsCandidate">%1$d of %2$d digits entered</string>
     <string name="verify">Verify</string>
     <string name="sent_code_to">We texted a 6-digit code to </string>
     <string name="resend_in">Resend in 0:%1$02d</string>

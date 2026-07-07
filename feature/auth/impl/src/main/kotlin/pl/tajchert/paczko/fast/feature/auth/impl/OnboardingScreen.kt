@@ -1,5 +1,6 @@
 package pl.tajchert.paczko.fast.feature.auth.impl
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -254,6 +255,7 @@ private fun UnofficialCardGraphic(modifier: Modifier = Modifier) {
 }
 
 /** Dot indicator + primary action button, shared across both onboarding pages. */
+@SuppressLint("FrequentlyChangingValue")
 @Composable
 internal fun OnboardingFooter(
     pagerState: PagerState,

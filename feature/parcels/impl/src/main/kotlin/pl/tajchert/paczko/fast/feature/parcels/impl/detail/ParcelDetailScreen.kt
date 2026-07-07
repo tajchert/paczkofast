@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.tajchert.paczko.fast.core.designsystem.component.DeadlineCard
@@ -361,7 +362,7 @@ private fun navigateAction(
 
         else -> return null
     }
-    return { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri))) }
+    return { startActivity(Intent(Intent.ACTION_VIEW, uri.toUri())) }
 }
 
 /**

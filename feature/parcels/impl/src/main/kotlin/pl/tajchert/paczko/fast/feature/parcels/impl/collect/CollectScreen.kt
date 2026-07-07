@@ -221,8 +221,8 @@ internal fun CollectContent(
         ) {
             CollectScaffold(
                 header = model.header,
-                hero = {
-                    when (model.hero) {
+                hero = { hero ->
+                    when (hero) {
                         // The hold fills the concentric ring; the distance moved to the headline.
                         CollectHero.Distance -> HoldRing(progress = holdState.progress)
                         CollectHero.OpenBox -> OpenBoxBlob()

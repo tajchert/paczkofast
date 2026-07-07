@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="history">History</string>
     <string name="no_history_title">No history yet</string>
     <string name="no_history_description">Delivered and collected parcels will appear here.</string>
@@ -40,14 +40,14 @@
     <string name="close">Close</string>
     <string name="back_to_parcels">Back to parcels</string>
     <string name="contact_support">Support</string>
-    <string name="finishing_up">Finishing up...</string>
+    <string name="finishing_up">Finishing up&#8230;</string>
     <string name="single_box_guidance">Close the door firmly. It locks automatically.</string>
     <plurals name="multi_box_guidance">
         <item quantity="one">%1$d parcel is in this box. Check it off before closing.</item>
         <item quantity="other">%1$d parcels are in this box. Check them off before closing.</item>
     </plurals>
-    <string name="checked_all">%1$d of %2$d checked</string>
-    <string name="checked_prompt">%1$d of %2$d checked - check all</string>
+    <string name="checked_all" tools:ignore="PluralsCandidate">%1$d of %2$d checked</string>
+    <string name="checked_prompt" tools:ignore="PluralsCandidate">%1$d of %2$d checked - check all</string>
     <string name="what_you_can_do">What you can do</string>
     <string name="try_again">Try again</string>
     <string name="try_again_hint">Try again. A second attempt usually helps.</string>
@@ -69,7 +69,7 @@
     <string name="collect_hold_to_open">Hold to open</string>
     <string name="collect_at_locker">You are at the locker. Tap to open.</string>
     <string name="collect_move_closer">Move closer - %1$d m</string>
-    <string name="collect_waiting_gps">Waiting for accurate location...</string>
+    <string name="collect_waiting_gps">Waiting for accurate location&#8230;</string>
     <string name="collect_stand_at_locker">Stand by the locker before starting.</string>
     <plurals name="collect_shared_box_subline">
         <item quantity="one">%1$d parcel in this box. You will pick it up in one go.</item>
@@ -83,8 +83,8 @@
         <item quantity="one">%1$d parcel is in this box. Check it off before closing.</item>
         <item quantity="other">%1$d parcels are in this box. Check them off before closing.</item>
     </plurals>
-    <string name="collect_checked_all">%1$d of %2$d checked</string>
-    <string name="collect_checked_prompt">%1$d of %2$d checked - check all</string>
+    <string name="collect_checked_all" tools:ignore="PluralsCandidate">%1$d of %2$d checked</string>
+    <string name="collect_checked_prompt" tools:ignore="PluralsCandidate">%1$d of %2$d checked - check all</string>
     <plurals name="parcels_collected">
         <item quantity="one">%1$d parcel collected</item>
         <item quantity="other">%1$d parcels collected</item>

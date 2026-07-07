@@ -54,8 +54,8 @@ private val ActionZoneHeight = 200.dp
 @Composable
 fun CollectScaffold(
     header: String,
-    hero: @Composable () -> Unit,
-    heroKey: Any,
+    hero: @Composable (CollectHero) -> Unit,
+    heroKey: CollectHero,
     headline: String,
     subline: String?,
     detail: (@Composable () -> Unit)?,
@@ -73,7 +73,9 @@ fun CollectScaffold(
             modifier = Modifier.size(216.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Crossfade(targetState = heroKey, label = "collect-hero") { _ -> hero() }
+            Crossfade(targetState = heroKey, label = "collect-hero") { targetHero ->
+                hero(targetHero)
+            }
         }
         // Reserved caption slot under the hero (design order: ring → LOCKER label → headline).
         Box(
