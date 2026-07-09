@@ -5,6 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.SerializationException
 import pl.tajchert.paczko.fast.core.model.collect.ExpectedCompartmentStatus
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -44,6 +45,29 @@ class DefaultCollectRepositoryTest {
         }
 
         assertEquals("sessionExpired", exception.message)
+    }
+
+    @Test
+    fun validateMapsUnparseableSuccessBodyToTypedError() = runTest {
+        val parserError = SerializationException(
+            "Field 'sessionUuid' is required for type 'CollectValidateResponseDto', but it was missing",
+        )
+        val repository = DefaultCollectRepository(
+            api = FakeCollectApi(validateFailure = parserError),
+            json = leniency(),
+        )
+
+        val exception = assertFailsWith<CollectUnexpectedResponseException> {
+            repository.validate(
+                shipmentNumber = "123",
+                openCode = "456",
+                geoPoint = GeoPoint(52.1, 21.0, 12.0),
+            )
+        }
+
+        // Human-readable — this message reaches the error screen verbatim.
+        assertEquals("Unexpected response from the locker service", exception.message)
+        assertEquals(parserError, exception.cause)
     }
 
     @Test

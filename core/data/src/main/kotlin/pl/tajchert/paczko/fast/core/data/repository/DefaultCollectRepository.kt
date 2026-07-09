@@ -80,6 +80,8 @@ class DefaultCollectRepository @Inject constructor(
             return block()
         } catch (exception: HttpException) {
             throw exception.toCollectApiException()
+        } catch (exception: SerializationException) {
+            throw CollectUnexpectedResponseException(exception)
         }
     }
 
